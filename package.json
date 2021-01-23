@@ -1,0 +1,21 @@
+{
+  "name": "sanble-functions",
+  "version": "0.0.1",
+  "description": "API Functions (Serverless) - Management and information of gastronomic fairs and entrepreneurship fairs in the state of Nueva Esparta - Venezuela [Degree work]",
+  "license": "MIT",
+  "author": {
+    "name": "Juan Villarroel",
+    "email": "me@juanlvs.ml",
+    "url": "https://juanlvs.ml"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "url": "https://github.com/juanlvs21/sanble-functions"
+  },
+  "bugs": {
+    "url": "https://github.com/juanlvs21/sanble-functions/issues",
+    "email": "me@juanlvs.ml"
+  }
+}
