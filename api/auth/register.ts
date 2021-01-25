@@ -10,7 +10,7 @@ import { v1 as uuidv1 } from "uuid";
 // Utils
 import { makeConnection } from "../../utils/mongoose";
 import { generateAndSignToken } from "../../utils/session";
-import { validatorSignup } from "../../utils/validator";
+import { valid } from "../../utils/validator";
 
 // Models
 import User from "../../models/User";
@@ -20,7 +20,7 @@ export default async (req: NowRequest, res: NowResponse) => {
     if (req.method === "POST") {
       await makeConnection(); // Connected to the database
 
-      const validator = await validatorSignup(req.body, {
+      const validator = await valid(req.body, {
         username: ["required", "min:4"],
         name: ["required"],
         email: ["required", "email"],
@@ -82,7 +82,7 @@ export default async (req: NowRequest, res: NowResponse) => {
       });
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({
       status: INTERNAL_SERVER_ERROR,
       message: "Internal Server Error",

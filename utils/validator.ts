@@ -86,7 +86,7 @@ const prepareRule = (val: string) => {
   return data;
 };
 
-export const validatorSignup = (body: object, rules: object) => {
+export const valid = (body: object, rules: object) => {
   let errors = [];
 
   if (typeof body == "object" && Object.keys(body).length !== 0) {
