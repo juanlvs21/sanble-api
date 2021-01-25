@@ -1,8 +1,5 @@
 import validator from "validator";
 
-// Models
-import User from "../models/User";
-
 const fields = {
   username: "Usuario",
   name: "Nombre",
