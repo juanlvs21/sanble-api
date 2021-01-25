@@ -1,5 +1,6 @@
 import { NowRequest, NowResponse } from "@vercel/node";
 import { OK, METHOD_NOT_ALLOWED, INTERNAL_SERVER_ERROR } from "http-status";
+import validator from "node-input-validator";
 
 // Config
 import { makeConnection } from "../../config/mongoose";
@@ -15,7 +16,7 @@ export default async (req: NowRequest, res: NowResponse) => {
       });
     } else {
       res.status(405).json({
-        status: METHOD_NOT_ALLOWED.toString,
+        status: METHOD_NOT_ALLOWED,
         message: "Method Not Allowed",
       });
     }

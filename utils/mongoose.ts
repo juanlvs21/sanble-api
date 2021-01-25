@@ -9,8 +9,9 @@ export const makeConnection = async () => {
     await mongoose.connect(MONGODB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
+      useCreateIndex: true,
     });
-    console.log(`Database is connected✔️`);
+    console.info(`Database is connected✔️`);
   } catch (error) {
     console.error(error);
   }
