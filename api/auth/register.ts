@@ -7,6 +7,9 @@ import {
 } from "http-status";
 import { v1 as uuidv1 } from "uuid";
 
+// Middlewares
+import corsMiddleware from "../../middlewares/cors";
+
 // Utils
 import { makeConnection } from "../../utils/mongoose";
 import { generateAndSignToken } from "../../utils/session";
@@ -16,11 +19,15 @@ import { valid } from "../../utils/validator";
 import User from "../../models/User";
 
 export default async (req: NowRequest, res: NowResponse) => {
+  await corsMiddleware(req, res);
+
+  const body = JSON.parse(req.body);
+
   try {
     if (req.method === "POST") {
       await makeConnection(); // Connected to the database
 
-      const validator = await valid(req.body, {
+      const validator = await valid(body, {
         username: ["required", "min:4"],
         name: ["required"],
         email: ["required", "email"],
@@ -35,7 +42,7 @@ export default async (req: NowRequest, res: NowResponse) => {
         });
 
       // Extract data
-      const { username, name, email, password, confirmPassword } = req.body;
+      const { username, name, email, password, confirmPassword } = body;
 
       //User already exist
       const exitUsername = await User.findOne({ username }).exec();
