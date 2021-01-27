@@ -1,8 +1,8 @@
 Arguments: 
-  /usr/bin/node /usr/bin/yarn add -E -D @types/validator
+  /usr/bin/node /usr/bin/yarn add -E -D @types/cors
 
 PATH: 
-  /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/juanl/.yarn/bin:/mnt/Documentos/Proyectos/sanble/functions/flutter/bin:/home/juanl/Android/Sdk/emulator:/home/juanl/Android/Sdk/tools:/home/juanl/Android/Sdk/tools/bin:/home/juanl/Android/Sdk/platform-tools
+  /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/juanl/.yarn/bin:/home/juanl/flutter/bin:/home/juanl/Android/Sdk/emulator:/home/juanl/Android/Sdk/tools:/home/juanl/Android/Sdk/tools/bin:/home/juanl/Android/Sdk/platform-tools:/home/juanl/.yarn/bin:/mnt/Documentos/Proyectos/sanble/functions/flutter/bin:/home/juanl/Android/Sdk/emulator:/home/juanl/Android/Sdk/tools:/home/juanl/Android/Sdk/tools/bin:/home/juanl/Android/Sdk/platform-tools
 
 Yarn version: 
   1.22.10
@@ -38,6 +38,7 @@ npm manifest:
     },
     "dependencies": {
       "bcrypt": "5.0.0",
+      "cors": "2.8.5",
       "dotenv": "8.2.0",
       "firebase": "8.2.4",
       "http-status": "1.5.0",
@@ -55,6 +56,7 @@ npm manifest:
       "@types/mongoose": "5.10.3",
       "@types/nodemailer": "6.4.0",
       "@types/uuid": "8.3.0",
+      "@types/validator": "13.1.3",
       "@vercel/node": "1.9.0"
     },
     "repository": {
@@ -449,6 +451,11 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-8.3.0.tgz#215c231dff736d5ba92410e6d602050cce7e273f"
     integrity sha512-eQ9qFW/fhfGJF8WKHGEHZEyVWfZxrT+6CLIJGBcZPfxUh/+BnEj+UCGYMlr9qZuX/2AltsvwrGqp0LhEW8D0zQ==
   
+  "@types/validator@13.1.3":
+    version "13.1.3"
+    resolved "https://registry.yarnpkg.com/@types/validator/-/validator-13.1.3.tgz#366b394aa3fbeed2392bf0a20ded606fa4a3d35e"
+    integrity sha512-DaOWN1zf7j+8nHhqXhIgNmS+ltAC53NXqGxYuBhWqWgqolRhddKzfZU814lkHQSTG0IUfQxU7Cg0gb8fFWo2mA==
+  
   "@vercel/node@1.9.0":
     version "1.9.0"
     resolved "https://registry.yarnpkg.com/@vercel/node/-/node-1.9.0.tgz#6b64f3b9a962ddb1089276fad00f441a1f4b9cf0"
@@ -598,6 +605,14 @@ Lockfile:
     version "1.0.2"
     resolved "https://registry.yarnpkg.com/core-util-is/-/core-util-is-1.0.2.tgz#b5fd54220aa2bc5ab57aab7140c940754503c1a7"
     integrity sha1-tf1UIgqivFq1eqtxQMlAdUUDwac=
+  
+  cors@2.8.5:
+    version "2.8.5"
+    resolved "https://registry.yarnpkg.com/cors/-/cors-2.8.5.tgz#eac11da51592dd86b9f06f6e7ac293b3df875d29"
+    integrity sha512-KIHbLJqu73RGr/hnbrO9uBeixNGuvSQjul/jdFvS/KFSIH1hWVd1ng7zOHx+YrEfInLG7q4n6GHQ9cDtxv/P6g==
+    dependencies:
+      object-assign "^4"
+      vary "^1"
   
   debug@3.1.0:
     version "3.1.0"
@@ -1194,7 +1209,7 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/number-is-nan/-/number-is-nan-1.0.1.tgz#097b602b53422a522c1afb8790318336941a011d"
     integrity sha1-CXtgK1NCKlIsGvuHkDGDNpQaAR0=
   
-  object-assign@^4.1.0:
+  object-assign@^4, object-assign@^4.1.0:
     version "4.1.1"
     resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
     integrity sha1-IQmtx5ZYh8/AXLvUQsrIv7s2CGM=
@@ -1474,6 +1489,11 @@ Lockfile:
     version "13.5.2"
     resolved "https://registry.yarnpkg.com/validator/-/validator-13.5.2.tgz#c97ae63ed4224999fb6f42c91eaca9567fe69a46"
     integrity sha512-mD45p0rvHVBlY2Zuy3F3ESIe1h5X58GPfAtslBjY7EtTqGquZTj+VX/J4RnHWN8FKq0C9WRVt1oWAcytWRuYLQ==
+  
+  vary@^1:
+    version "1.1.2"
+    resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
+    integrity sha1-IpnwLG3tMNSllhsLn3RSShj2NPw=
   
   websocket-driver@>=0.5.1:
     version "0.7.4"
