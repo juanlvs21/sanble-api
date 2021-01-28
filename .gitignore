@@ -6,3 +6,6 @@ node_modules/
 
 # Vercel 
 .vercel
+
+# Build production
+dist/
