@@ -1,3 +1,5 @@
+type TMongoDocument = import("mongoose").Document;
+
 interface IPayload {
   user: {
     id: string;
@@ -21,4 +23,10 @@ interface IUser extends TMongoDocument {
 
   encryptPassword(password: string): Promise<void>;
   comparePassword(password: string): Promise<boolean>;
+}
+
+interface IPasswordReset extends TMongoDocument {
+  password_reset: string;
+  password_reset_used: boolean;
+  password_reset_date: Date;
 }
