@@ -1,5 +1,3 @@
-// Copyright 2020 Dofusturas ~ All rights reserved.
-
 import "module-alias/register";
 import { config } from "dotenv";
 config();

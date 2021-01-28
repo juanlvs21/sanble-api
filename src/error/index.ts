@@ -1,5 +1,3 @@
-// Copyright 2020 Dofusturas ~ All rights reserved.
-
 import { Response, Request, NextFunction } from "express";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "http-status";
 import { MongoError } from "mongodb";

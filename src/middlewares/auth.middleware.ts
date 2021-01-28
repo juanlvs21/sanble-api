@@ -1,5 +1,3 @@
-// Copyright 2020 Dofusturas ~ All rights reserved.
-
 import { UNAUTHORIZED } from "http-status";
 import jwt from "jsonwebtoken";
 

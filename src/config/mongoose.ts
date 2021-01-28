@@ -1,5 +1,3 @@
-// Copyright 2020 Dofusturas ~ All rights reserved.
-
 import mongoose from "mongoose";
 import { MONGODB_URI } from "@/config";
 

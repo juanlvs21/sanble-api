@@ -1,5 +1,3 @@
-// Copyright 2020 Dofusturas ~ All rights reserved.
-
 import { Response, Request, NextFunction } from "express";
 
 import { handleError } from "@/error";
