@@ -1,6 +1,9 @@
 import { Schema, model } from "mongoose";
 import bcrypt from "bcrypt";
 
+// Interfaces
+import IUser from "../interfaces/IUser";
+
 const UserSchema: Schema<IUser> = new Schema<IUser>(
   {
     uuid: {
