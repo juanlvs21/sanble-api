@@ -31,7 +31,7 @@ export default async (req: NowRequest, res: NowResponse) => {
         confirmPassword: ["required"],
       });
       if (!validator.valid)
-        return res.status(422).json({
+        return res.status(UNPROCESSABLE_ENTITY).json({
           statusCode: UNPROCESSABLE_ENTITY,
           message: "Fields validation error",
           data: validator.errors,
@@ -48,7 +48,7 @@ export default async (req: NowRequest, res: NowResponse) => {
         if (exitUsername) existErrors.push("El usuario ya existe.");
         if (emailUsername) existErrors.push("El correo electrónico ya existe.");
 
-        return res.status(422).json({
+        return res.status(UNPROCESSABLE_ENTITY).json({
           statusCode: UNPROCESSABLE_ENTITY,
           message: "User already exist",
           data: existErrors,
@@ -57,7 +57,7 @@ export default async (req: NowRequest, res: NowResponse) => {
 
       // The password does not match
       if (password !== confirmPassword)
-        return res.status(422).json({
+        return res.status(UNPROCESSABLE_ENTITY).json({
           statusCode: UNPROCESSABLE_ENTITY,
           message: "The password does not match",
           data: ["La contraseña no coincide"],
@@ -79,14 +79,14 @@ export default async (req: NowRequest, res: NowResponse) => {
         },
       });
     } else {
-      res.status(405).json({
+      res.status(METHOD_NOT_ALLOWED).json({
         statusCode: METHOD_NOT_ALLOWED,
         message: "Method Not Allowed",
       });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({
+    res.status(INTERNAL_SERVER_ERROR).json({
       statusCode: INTERNAL_SERVER_ERROR,
       message: "Internal Server Error",
     });
