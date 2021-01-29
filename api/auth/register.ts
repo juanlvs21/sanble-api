@@ -20,7 +20,10 @@ export default async (req: NowRequest, res: NowResponse) => {
     if (req.method === "POST") {
       await makeConnection(); // Connected to the database
 
-      const validator = await valid(req.body, {
+      const body =
+        typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+
+      const validator = await valid(body, {
         username: ["required", "min:4"],
         name: ["required"],
         email: ["required", "email"],
@@ -35,7 +38,7 @@ export default async (req: NowRequest, res: NowResponse) => {
         });
 
       // Extract data
-      const { username, name, email, password, confirmPassword } = req.body;
+      const { username, name, email, password, confirmPassword } = body;
 
       //User already exist
       const exitUsername = await User.findOne({ username }).exec();
