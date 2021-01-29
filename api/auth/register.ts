@@ -18,7 +18,7 @@ import User from "../../models/User";
 export default async (req: NowRequest, res: NowResponse) => {
   try {
     if (req.method === "POST") {
-      await makeConnection(); // Connected to the database
+      await makeConnection(res); // Connected to the database
 
       const body =
         typeof req.body === "string" ? JSON.parse(req.body) : req.body;
