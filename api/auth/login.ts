@@ -7,9 +7,6 @@ import {
   INTERNAL_SERVER_ERROR,
 } from "http-status";
 
-// Middlewares
-import corsMiddleware from "../../middlewares/cors";
-
 // Utils
 import { makeConnection } from "../../utils/mongoose";
 import { generateAndSignToken } from "../../utils/session";
@@ -19,8 +16,6 @@ import { valid } from "../../utils/validator";
 import User from "../../models/User";
 
 export default async (req: NowRequest, res: NowResponse) => {
-  await corsMiddleware(req, res);
-
   try {
     if (req.method === "POST") {
       await makeConnection(); // Connected to the database
