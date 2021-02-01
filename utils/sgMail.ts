@@ -16,11 +16,10 @@ export const welcomeEmail = (to: string) => {
   return new Promise(async (resolve, rejects) => {
     await sgMail
       .send(msg)
-      .then(() => {
-        console.log("Email sent");
-      })
+      .then(() => resolve("Email sent successfully"))
       .catch((error) => {
         console.error(error);
+        rejects(null);
       });
   });
 };

@@ -71,7 +71,12 @@ export default async (req: NowRequest, res: NowResponse) => {
       const newUser = await user.save();
       const token = await generateAndSignToken({ user: { id: newUser.id } });
 
-      await welcomeEmail(email);
+      const emailOk = await welcomeEmail(email);
+      if (!emailOk)
+        return res.status(INTERNAL_SERVER_ERROR).json({
+          statusCode: INTERNAL_SERVER_ERROR,
+          message: "Internal Server Error",
+        });
 
       res.status(200).json({
         statusCode: OK,
