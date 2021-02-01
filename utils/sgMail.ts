@@ -18,7 +18,8 @@ export const welcomeEmail = (to: string) => {
       .send(msg)
       .then(() => resolve("Email sent successfully"))
       .catch((error) => {
-        console.error(error);
+        if (error.response) console.error(error.response.body);
+        else console.error(error);
         rejects(null);
       });
   });
