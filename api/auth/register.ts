@@ -11,6 +11,7 @@ import { v1 as uuidv1 } from "uuid";
 import { makeConnection } from "../../utils/mongoose";
 import { generateAndSignToken } from "../../utils/session";
 import { valid } from "../../utils/validator";
+import { welcomeEmail } from "../../utils/sgMail";
 
 // Models
 import User from "../../models/User";
@@ -69,6 +70,8 @@ export default async (req: NowRequest, res: NowResponse) => {
 
       const newUser = await user.save();
       const token = await generateAndSignToken({ user: { id: newUser.id } });
+
+      await welcomeEmail(email);
 
       res.status(200).json({
         statusCode: OK,
