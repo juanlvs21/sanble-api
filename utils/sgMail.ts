@@ -1,13 +1,13 @@
 import sgMail from "@sendgrid/mail";
 
-import { SENDGRID_KEY } from "./env";
+import { SENDGRID_KEY, SENDGRID_EMAIL_FROM } from "./env";
 
 sgMail.setApiKey(SENDGRID_KEY);
 
 export const welcomeEmail = (to: string) => {
   const msg = {
     to,
-    from: "Equipo de Sanble <em1273.mail.sanble.ml>",
+    from: SENDGRID_EMAIL_FROM,
     subject: "Bienvenido a Sanble",
     text: "and easy to do anywhere, even with Node.js",
     html: "<strong>and easy to do anywhere, even with Node.js</strong>",
