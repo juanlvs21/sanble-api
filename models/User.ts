@@ -48,6 +48,11 @@ const UserSchema: Schema<IUser> = new Schema<IUser>(
       type: Date,
       default: null,
     },
+    token_email_verified: {
+      type: String,
+      default: null,
+      required: true,
+    },
     password_reset: {
       type: Object,
       default: null,

@@ -65,19 +65,30 @@ export default async (req: NowRequest, res: NowResponse) => {
         });
 
       const uuid = uuidv1();
-      const user = new User({ uuid, name, username, email, password });
+      const token_email_verified =
+        uuidv1().replace("-", "") + Math.random().toString(36).substr(2);
+      const user = new User({
+        uuid,
+        name,
+        username,
+        email,
+        password,
+        token_email_verified,
+      });
       await user.encryptPassword(password);
 
       const newUser = await user.save();
 
-      await welcomeEmail(newUser.email, newUser.name, "askdjaksjdkasd").catch(
-        async (error: any) => {
-          await User.deleteOne({ _id: newUser._id });
-          throw new Error(
-            typeof error === "string" ? error : JSON.stringify(error)
-          );
-        }
-      );
+      await welcomeEmail(
+        newUser.email,
+        newUser.name,
+        token_email_verified
+      ).catch(async (error: any) => {
+        await User.deleteOne({ _id: newUser._id });
+        throw new Error(
+          typeof error === "string" ? error : JSON.stringify(error)
+        );
+      });
 
       const token = await generateAndSignToken({ user: { id: newUser.id } });
 
