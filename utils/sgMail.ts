@@ -10,8 +10,7 @@ sgMail.setApiKey(SENDGRID_KEY);
 export const welcomeEmail = (to: string, name: string, token: string) => {
   const msg = {
     to,
-    // from: `Equipo Sanble <welcome${SENDGRID_DOMAIN}>`,
-    from: `Equipo Sanble <welcome@prueba>`,
+    from: `Equipo Sanble <welcome${SENDGRID_DOMAIN}>`,
     subject: "Bienvenido a Sanble",
     html: welcome(name, token),
   };
