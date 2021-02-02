@@ -1,16 +1,19 @@
 import sgMail from "@sendgrid/mail";
 
-import { SENDGRID_KEY, SENDGRID_EMAIL_FROM } from "./env";
+import { SENDGRID_KEY, SENDGRID_DOMAIN } from "./env";
+
+// Templates
+import welcome from "../templates/welcome";
 
 sgMail.setApiKey(SENDGRID_KEY);
 
-export const welcomeEmail = (to: string) => {
+export const welcomeEmail = (to: string, name: string, token: string) => {
   const msg = {
     to,
-    from: SENDGRID_EMAIL_FROM,
+    // from: `Equipo Sanble <welcome${SENDGRID_DOMAIN}>`,
+    from: `Equipo Sanble <welcome@prueba>`,
     subject: "Bienvenido a Sanble",
-    text: "and easy to do anywhere, even with Node.js",
-    html: "<strong>and easy to do anywhere, even with Node.js</strong>",
+    html: welcome(name, token),
   };
 
   return new Promise(async (resolve, rejects) => {
@@ -18,9 +21,8 @@ export const welcomeEmail = (to: string) => {
       .send(msg)
       .then(() => resolve("Email sent successfully"))
       .catch((error) => {
-        if (error.response) console.error(error.response.body);
-        else console.error(error);
-        rejects(null);
+        if (error.response) rejects(error.response.body.errors);
+        else rejects(error);
       });
   });
 };

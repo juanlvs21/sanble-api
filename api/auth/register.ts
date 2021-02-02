@@ -69,14 +69,17 @@ export default async (req: NowRequest, res: NowResponse) => {
       await user.encryptPassword(password);
 
       const newUser = await user.save();
-      const token = await generateAndSignToken({ user: { id: newUser.id } });
 
-      const emailOk = await welcomeEmail(email);
-      if (!emailOk)
-        return res.status(INTERNAL_SERVER_ERROR).json({
-          statusCode: INTERNAL_SERVER_ERROR,
-          message: "Internal Server Error",
-        });
+      await welcomeEmail(newUser.email, newUser.name, "askdjaksjdkasd").catch(
+        async (error: any) => {
+          await User.deleteOne({ _id: newUser._id });
+          throw new Error(
+            typeof error === "string" ? error : JSON.stringify(error)
+          );
+        }
+      );
+
+      const token = await generateAndSignToken({ user: { id: newUser.id } });
 
       res.status(200).json({
         statusCode: OK,
