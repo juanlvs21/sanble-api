@@ -71,7 +71,6 @@ export default async (req: NowRequest, res: NowResponse) => {
             username: user.username,
             email: user.email,
             createdAt: user.createdAt,
-            updatedAt: user.updatedAt,
           },
           meta: { token },
         },

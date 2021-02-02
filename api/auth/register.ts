@@ -12,6 +12,7 @@ import { makeConnection } from "../../utils/mongoose";
 import { generateAndSignToken } from "../../utils/session";
 import { valid } from "../../utils/validator";
 import { welcomeEmail } from "../../utils/sgMail";
+import generateToken from "../../utils/generateToken";
 
 // Models
 import User from "../../models/User";
@@ -65,8 +66,7 @@ export default async (req: NowRequest, res: NowResponse) => {
         });
 
       const uuid = uuidv1();
-      const token_email_verified =
-        uuidv1().replace("-", "") + Math.random().toString(36).substr(2);
+      const token_email_verified = generateToken();
       const user = new User({
         uuid,
         name,
@@ -96,7 +96,17 @@ export default async (req: NowRequest, res: NowResponse) => {
         statusCode: OK,
         message: "Successfully registered user",
         data: {
-          user: newUser,
+          user: {
+            url_avatar: newUser.url_avatar,
+            is_active: newUser.is_active,
+            admin: newUser.admin,
+            email_verified_at: newUser.email_verified_at,
+            uuid: newUser.uuid,
+            name: newUser.name,
+            username: newUser.username,
+            email: newUser.email,
+            createdAt: newUser.createdAt,
+          },
           meta: { token },
         },
       });
