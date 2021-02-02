@@ -99,7 +99,7 @@ export default async (req: NowRequest, res: NowResponse) => {
           user: {
             url_avatar: newUser.url_avatar,
             is_active: newUser.is_active,
-            admin: newUser.admin,
+            is_admin: newUser.is_admin,
             email_verified_at: newUser.email_verified_at,
             uuid: newUser.uuid,
             name: newUser.name,

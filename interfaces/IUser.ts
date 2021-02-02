@@ -8,7 +8,7 @@ export default interface IUser extends TMongoDocument {
   password: string;
   url_avatar: string;
   is_active: boolean;
-  admin: boolean;
+  is_admin: boolean;
   email_verified_at: string;
   token_email_verified: string;
   password_reset: object;

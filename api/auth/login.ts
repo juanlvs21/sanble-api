@@ -64,7 +64,7 @@ export default async (req: NowRequest, res: NowResponse) => {
           user: {
             url_avatar: user.url_avatar,
             is_active: user.is_active,
-            admin: user.admin,
+            is_admin: user.is_admin,
             email_verified_at: user.email_verified_at,
             uuid: user.uuid,
             name: user.name,
