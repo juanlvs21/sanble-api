@@ -92,7 +92,7 @@ export default async (req: NowRequest, res: NowResponse) => {
 
       const token = await generateAndSignToken({ user: { id: newUser.id } });
 
-      res.status(200).json({
+      res.status(OK).json({
         statusCode: OK,
         message: "Successfully registered user",
         data: {

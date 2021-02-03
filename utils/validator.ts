@@ -19,7 +19,7 @@ const messageReturn = (
     validF: `Debe ingresar una ${fields[field]} válida.`,
     min: `El campo ${fields[field]} debe tener mínimo ${value} caracteres.`,
     max: `El campo ${fields[field]} debe tener máximo ${value} caracteres.`,
-    password: `La contraseña debe contener 8 caracteres, 1 mayuscula, 1 numero y 1 símbolo.`,
+    password: `La contraseña debe contener 8 caracteres, 1 minuscula, 1 mayuscula, 1 número y 1 símbolo.`,
   };
 
   return messages[type];
