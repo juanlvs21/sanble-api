@@ -23,7 +23,7 @@ export default async (req: NowRequest, res: NowResponse) => {
 
       const session = await authMiddleware(req, res);
 
-      if (session.id) {
+      if (session && session.id) {
         const user = await User.findById(session.id).exec();
 
         if (!user)
@@ -37,7 +37,7 @@ export default async (req: NowRequest, res: NowResponse) => {
 
         res.status(OK).json({
           statusCode: OK,
-          message: "Successful authentication",
+          message: "Successful check authentication",
           data: {
             user: {
               url_avatar: user.url_avatar,
