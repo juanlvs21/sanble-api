@@ -2,8 +2,8 @@ import { NowRequest, NowResponse } from "@vercel/node";
 import {
   OK,
   METHOD_NOT_ALLOWED,
-  UNAUTHORIZED,
   INTERNAL_SERVER_ERROR,
+  UNAUTHORIZED,
 } from "http-status";
 
 // Middlewares
@@ -18,10 +18,12 @@ import User from "../../models/User";
 
 export default async (req: NowRequest, res: NowResponse) => {
   try {
-    if (req.method === "POST") {
+    if (req.method === "OPTIONS") {
+      res.status(OK).end();
+    } else if (req.method === "POST") {
       await makeConnection(res); // Connected to the database
 
-      const session = await authMiddleware(req, res);
+      let session: any = await authMiddleware(req, res);
 
       if (session && session.id) {
         const user = await User.findById(session.id).exec();
@@ -29,8 +31,7 @@ export default async (req: NowRequest, res: NowResponse) => {
         if (!user)
           return res.status(UNAUTHORIZED).json({
             statusCode: UNAUTHORIZED,
-            message: "Invalid token",
-            data: ["Sesión inválida"],
+            message: "Access token is missing or invalid",
           });
 
         const token = await generateAndSignToken({ user: { id: session.id } });
