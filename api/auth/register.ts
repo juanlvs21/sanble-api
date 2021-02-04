@@ -19,7 +19,9 @@ import User from "../../models/User";
 
 export default async (req: NowRequest, res: NowResponse) => {
   try {
-    if (req.method === "POST") {
+    if (req.method === "OPTIONS") {
+      res.status(OK).end();
+    } else if (req.method === "POST") {
       await makeConnection(res); // Connected to the database
 
       const body =
