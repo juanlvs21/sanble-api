@@ -4,6 +4,7 @@ import {
   METHOD_NOT_ALLOWED,
   UNPROCESSABLE_ENTITY,
   INTERNAL_SERVER_ERROR,
+  CREATED,
 } from "http-status";
 import { v1 as uuidv1 } from "uuid";
 
@@ -94,8 +95,8 @@ export default async (req: NowRequest, res: NowResponse) => {
 
       const token = await generateAndSignToken({ user: { id: newUser.id } });
 
-      res.status(OK).json({
-        statusCode: OK,
+      res.status(CREATED).json({
+        statusCode: CREATED,
         message: "Successfully registered user",
         data: {
           user: {
