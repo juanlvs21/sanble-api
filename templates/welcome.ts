@@ -90,7 +90,7 @@ const welcomeTemplate = (name: string, token: string) => `
             <div class="sanble-card-image">
               <img
                 src="https://i.imgur.com/9nZiaba.png"
-                width="200"
+                width="100"
                 alt="Email"
               />
             </div>
