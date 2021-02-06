@@ -32,9 +32,7 @@ const UserSchema: Schema<IUser> = new Schema<IUser>(
     },
     url_avatar: {
       type: String,
-      required: true,
-      default:
-        "https://firebasestorage.googleapis.com/v0/b/sanble-app.appspot.com/o/accounts%2Fprofile.png?alt=media&token=b19a5e07-6651-4639-a1d6-5ba60f12c16a",
+      default: null,
     },
     is_active: {
       type: Boolean,
