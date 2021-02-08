@@ -51,7 +51,7 @@ export default async (req: NowRequest, res: NowResponse) => {
       const uuid = uuidv1();
 
       try {
-        const user = await auth.createUser({
+        const user: UserRecord = await auth.createUser({
           uid: uuid,
           email,
           emailVerified: false,
@@ -93,6 +93,12 @@ export default async (req: NowRequest, res: NowResponse) => {
               statusCode: INTERNAL_SERVER_ERROR,
               message: "Firebase:auth/internal-error",
               data: ["Error interno del servidor."],
+            });
+          else
+            return res.status(INTERNAL_SERVER_ERROR).json({
+              statusCode: INTERNAL_SERVER_ERROR,
+              message: "Firebase:Unknown error",
+              data: ["Error desconocido."],
             });
         } else {
           return res.status(INTERNAL_SERVER_ERROR).json({
