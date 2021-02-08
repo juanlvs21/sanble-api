@@ -1,6 +1,6 @@
 const year = new Date().getFullYear();
 
-const welcomeTemplate = (displayName: string, link: string) => `
+const recoverPasswordTemplate = (displayName: string, link: string) => `
 <!DOCTYPE html>
 <html lang="es">
   <head>
@@ -32,7 +32,7 @@ const welcomeTemplate = (displayName: string, link: string) => `
         text-align: center;
       }
       .sanble-text {
-        text-align: center;
+        text-align: left;
       }
       .sanble-card-image {
         text-align: center;
@@ -68,6 +68,9 @@ const welcomeTemplate = (displayName: string, link: string) => `
         margin-top: 20px;
         text-align: center;
       }
+      .sanble-not-forgot {
+        color: #ff7315;
+      }
     </style>
   </head>
   <body>
@@ -83,26 +86,24 @@ const welcomeTemplate = (displayName: string, link: string) => `
           <div class="sanble-card-body">
             <div class="sanble-card-image">
               <img
-                src="https://i.imgur.com/9nZiaba.png"
+                src="https://i.imgur.com/A4U3Sht.png"
                 width="100"
                 alt="Email"
               />
             </div>
-            <h1 class="sanble-title">
-                Por favor verifique su dirección de correo electrónico.
-            </h1>
+            <h1 class="sanble-title">¿Problemas para entrar?</h1>
             <p class="sanble-text">
-                Bienvenido, <b>${displayName}</b>.
-                ¡Gracias por registrarte en Sanble! Estamos emocionados de tenerte como uno de nuestros usuarios.
+              Hola, <b>${displayName}</b>. <br />
+              Restablecer su contraseña es fácil. Simplemente presione el botón
+              de abajo y siga las instrucciones. Lo tendremos listo y
+              funcionando en poco tiempo.
             </p>
             <div class="sanble-btn-container">
-              <a
-                href="${link}"
-                target="_blank"
-              >
-              Verificar ahora
-              </a>
+              <a href="${link}" target="_blank"> Restablecer la contraseña </a>
             </div>
+            <p class="sanble-not-forgot">
+              Si no olvidó su contraseña, puede ignorar este correo electrónico
+            </p>
             <div class="sanble-thanks">
               <p>Gracias,</p>
               <p>Equipo de Sanble.</p>
@@ -110,7 +111,10 @@ const welcomeTemplate = (displayName: string, link: string) => `
           </div>
           <hr />
           <div class="sanble-card-footer">
-            <p>Si tiene problemas para hacer clic en el botón, copie y pegue la URL a continuación en su navegador web</p>
+            <p>
+              Si tiene problemas para hacer clic en el botón, copie y pegue la
+              URL a continuación en su navegador web
+            </p>
             <span>${link}</span>
           </div>
         </div>
@@ -123,4 +127,4 @@ const welcomeTemplate = (displayName: string, link: string) => `
 </html>
 `;
 
-export default welcomeTemplate;
+export default recoverPasswordTemplate;
