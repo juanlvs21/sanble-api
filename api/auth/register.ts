@@ -8,29 +8,26 @@ import {
 } from "http-status";
 import { v1 as uuidv1 } from "uuid";
 
-// Utils
-import { makeConnection } from "../../utils/mongoose";
-import { generateAndSignToken } from "../../utils/session";
-import { valid } from "../../utils/validator";
-import { welcomeEmail } from "../../utils/sgMail";
-import generateToken from "../../utils/generateToken";
+// Interfaces
+import { UserRecord } from "../../interfaces/UserRecord";
 
-// Models
-import User from "../../models/User";
+// Utils
+import { valid } from "../../utils/validator";
+import { auth } from "../../utils/firebase";
+import { welcomeEmail } from "../../utils/sgMain";
 
 export default async (req: NowRequest, res: NowResponse) => {
   try {
     if (req.method === "OPTIONS") {
       res.status(OK).end();
     } else if (req.method === "POST") {
-      await makeConnection(res); // Connected to the database
+      // await makeConnection(res); // Connected to the database
 
       const body =
         typeof req.body === "string" ? JSON.parse(req.body) : req.body;
 
       const validator = await valid(body, {
-        username: ["required", "min:4"],
-        name: ["required"],
+        displayName: ["required"],
         email: ["required", "email"],
         password: ["required", "password"],
         confirmPassword: ["required"],
@@ -43,22 +40,7 @@ export default async (req: NowRequest, res: NowResponse) => {
         });
 
       // Extract data
-      const { username, name, email, password, confirmPassword } = body;
-
-      //User already exist
-      const exitUsername = await User.findOne({ username }).exec();
-      const emailUsername = await User.findOne({ email }).exec();
-      if (exitUsername || emailUsername) {
-        const existErrors = [];
-        if (exitUsername) existErrors.push("El usuario ya existe.");
-        if (emailUsername) existErrors.push("El correo electrónico ya existe.");
-
-        return res.status(UNPROCESSABLE_ENTITY).json({
-          statusCode: UNPROCESSABLE_ENTITY,
-          message: "User already exist",
-          data: existErrors,
-        });
-      }
+      const { displayName, email, password, confirmPassword } = body;
 
       // The password does not match
       if (password !== confirmPassword)
@@ -69,50 +51,60 @@ export default async (req: NowRequest, res: NowResponse) => {
         });
 
       const uuid = uuidv1();
-      const token_email_verified = generateToken();
-      const user = new User({
-        uuid,
-        name,
-        username,
-        email,
-        password,
-        token_email_verified,
-      });
-      await user.encryptPassword(password);
 
-      const newUser = await user.save();
+      await auth
+        .createUser({
+          uid: uuid,
+          email,
+          emailVerified: false,
+          password,
+          displayName,
+          disabled: false,
+        })
+        .then(async (user: UserRecord) => {
+          const verificationLink: string = await auth.generateEmailVerificationLink(
+            user.email
+          );
 
-      await welcomeEmail(
-        newUser.email,
-        newUser.name,
-        token_email_verified
-      ).catch(async (error: any) => {
-        await User.deleteOne({ _id: newUser._id });
-        throw new Error(
-          typeof error === "string" ? error : JSON.stringify(error)
-        );
-      });
+          await welcomeEmail(user.email, user.displayName, verificationLink);
 
-      const token = await generateAndSignToken({ user: { id: newUser.id } });
-
-      res.status(CREATED).json({
-        statusCode: CREATED,
-        message: "Successfully registered user",
-        data: {
-          user: {
-            url_avatar: newUser.url_avatar,
-            is_active: newUser.is_active,
-            is_admin: newUser.is_admin,
-            email_verified_at: newUser.email_verified_at,
-            uuid: newUser.uuid,
-            name: newUser.name,
-            username: newUser.username,
-            email: newUser.email,
-            createdAt: newUser.createdAt,
-          },
-          meta: { token },
-        },
-      });
+          res.status(CREATED).json({
+            statusCode: CREATED,
+            message: "Successfully registered user",
+            data: {
+              user: {
+                uid: user.uid,
+                email: user.email,
+                emailVerified: user.emailVerified,
+                displayName: user.displayName,
+                disabled: user.disabled,
+                metadata: user.metadata,
+              },
+            },
+          });
+        })
+        .catch((errors) => {
+          if (errors.errorInfo) {
+            if (errors.errorInfo.code === "auth/email-already-exists")
+              return res.status(UNPROCESSABLE_ENTITY).json({
+                statusCode: UNPROCESSABLE_ENTITY,
+                message: "Firebase:auth/email-already-exists",
+                data: ["El correo electrónico ya se encuentra en uso."],
+              });
+            else if (errors.errorInfo.code === "auth/internal-error")
+              return res.status(INTERNAL_SERVER_ERROR).json({
+                statusCode: INTERNAL_SERVER_ERROR,
+                message: "Firebase:auth/internal-error",
+                data: ["Error interno del servidor."],
+              });
+          } else {
+            return res.status(INTERNAL_SERVER_ERROR).json({
+              statusCode: INTERNAL_SERVER_ERROR,
+              message: "Firebase:Unknown error",
+              data: ["Error desconocido."],
+            });
+          }
+        });
     } else {
       res.status(METHOD_NOT_ALLOWED).json({
         statusCode: METHOD_NOT_ALLOWED,

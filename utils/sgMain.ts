@@ -7,12 +7,12 @@ import welcome from "../templates/welcome";
 
 sgMail.setApiKey(SENDGRID_KEY);
 
-export const welcomeEmail = (to: string, name: string, token: string) => {
+export const welcomeEmail = (to: string, displayName: string, link: string) => {
   const msg = {
     to,
     from: `Equipo Sanble <welcome${SENDGRID_DOMAIN}>`,
     subject: "Bienvenido a Sanble",
-    html: welcome(name, token),
+    html: welcome(displayName, link),
   };
 
   return new Promise(async (resolve, rejects) => {

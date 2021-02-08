@@ -1,28 +1,22 @@
-import firebase from "firebase";
-// import "firebase/storage";
+import * as admin from "firebase-admin";
 
 import {
-  FIREBASE_API_KEY,
-  FIREBASE_AUTH_DOMAIN,
   FIREBASE_PROJECT_ID,
-  FIREBASE_STORAGE_BUCKET,
-  FIREBASE_MESSAGING_SENDER_ID,
-  FIREBASE_APP_ID,
-  FIREBASE_MEASUREMENT_ID,
+  FIREBASE_PRIVATE_KEY,
+  FIREBASE_CLIENT_EMAIL,
 } from "./env";
 
-const firebaseConfig: any = {
-  apiKey: FIREBASE_API_KEY,
-  authDomain: FIREBASE_AUTH_DOMAIN,
+const serviceAccount: admin.ServiceAccount = {
   projectId: FIREBASE_PROJECT_ID,
-  storageBucket: FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: FIREBASE_MESSAGING_SENDER_ID,
-  appId: FIREBASE_APP_ID,
-  measurementId: FIREBASE_MEASUREMENT_ID,
+  clientEmail: FIREBASE_CLIENT_EMAIL,
+  privateKey: FIREBASE_PRIVATE_KEY,
 };
 
-firebase.initializeApp(firebaseConfig);
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
 
-export const storage = firebase.storage();
+export const db = admin.firestore();
+export const auth = admin.auth();
 
-export default firebase;
+export default admin;
