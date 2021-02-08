@@ -21,8 +21,6 @@ export default async (req: NowRequest, res: NowResponse) => {
     if (req.method === "OPTIONS") {
       res.status(OK).end();
     } else if (req.method === "POST") {
-      // await makeConnection(res); // Connected to the database
-
       const body =
         typeof req.body === "string" ? JSON.parse(req.body) : req.body;
 
@@ -52,59 +50,58 @@ export default async (req: NowRequest, res: NowResponse) => {
 
       const uuid = uuidv1();
 
-      await auth
-        .createUser({
+      try {
+        const user = await auth.createUser({
           uid: uuid,
           email,
           emailVerified: false,
           password,
           displayName,
           disabled: false,
-        })
-        .then(async (user: UserRecord) => {
-          const verificationLink: string = await auth.generateEmailVerificationLink(
-            user.email
-          );
+        });
 
-          await welcomeEmail(user.email, user.displayName, verificationLink);
+        const verificationLink: string = await auth.generateEmailVerificationLink(
+          user.email
+        );
 
-          res.status(CREATED).json({
-            statusCode: CREATED,
-            message: "Successfully registered user",
-            data: {
-              user: {
-                uid: user.uid,
-                email: user.email,
-                emailVerified: user.emailVerified,
-                displayName: user.displayName,
-                disabled: user.disabled,
-                metadata: user.metadata,
-              },
+        await welcomeEmail(user.email, user.displayName, verificationLink);
+
+        res.status(CREATED).json({
+          statusCode: CREATED,
+          message: "Successfully registered user",
+          data: {
+            user: {
+              uid: user.uid,
+              email: user.email,
+              emailVerified: user.emailVerified,
+              displayName: user.displayName,
+              disabled: user.disabled,
+              metadata: user.metadata,
             },
-          });
-        })
-        .catch((errors) => {
-          if (errors.errorInfo) {
-            if (errors.errorInfo.code === "auth/email-already-exists")
-              return res.status(UNPROCESSABLE_ENTITY).json({
-                statusCode: UNPROCESSABLE_ENTITY,
-                message: "Firebase:auth/email-already-exists",
-                data: ["El correo electrónico ya se encuentra en uso."],
-              });
-            else if (errors.errorInfo.code === "auth/internal-error")
-              return res.status(INTERNAL_SERVER_ERROR).json({
-                statusCode: INTERNAL_SERVER_ERROR,
-                message: "Firebase:auth/internal-error",
-                data: ["Error interno del servidor."],
-              });
-          } else {
+          },
+        });
+      } catch (error) {
+        if (error.errorInfo) {
+          if (error.errorInfo.code === "auth/email-already-exists")
+            return res.status(UNPROCESSABLE_ENTITY).json({
+              statusCode: UNPROCESSABLE_ENTITY,
+              message: "Firebase:auth/email-already-exists",
+              data: ["El correo electrónico ya se encuentra en uso."],
+            });
+          else if (error.errorInfo.code === "auth/internal-error")
             return res.status(INTERNAL_SERVER_ERROR).json({
               statusCode: INTERNAL_SERVER_ERROR,
-              message: "Firebase:Unknown error",
-              data: ["Error desconocido."],
+              message: "Firebase:auth/internal-error",
+              data: ["Error interno del servidor."],
             });
-          }
-        });
+        } else {
+          return res.status(INTERNAL_SERVER_ERROR).json({
+            statusCode: INTERNAL_SERVER_ERROR,
+            message: "Firebase:Unknown error",
+            data: ["Error desconocido."],
+          });
+        }
+      }
     } else {
       res.status(METHOD_NOT_ALLOWED).json({
         statusCode: METHOD_NOT_ALLOWED,
