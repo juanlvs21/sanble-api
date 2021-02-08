@@ -1,8 +1,6 @@
-import { URL_FRONTEND } from "../utils/env";
-
 const year = new Date().getFullYear();
 
-const welcomeTemplate = (name: string, token: string) => `
+const welcomeTemplate = (displayName: string, link: string) => `
 <!DOCTYPE html>
 <html lang="es">
   <head>
@@ -98,12 +96,12 @@ const welcomeTemplate = (name: string, token: string) => `
                 Por favor verifique su dirección de correo electrónico.
             </h1>
             <p class="sanble-text">
-                Bienvenido, <b>${name}</b>.
+                Bienvenido, <b>${displayName}</b>.
                 ¡Gracias por registrarte en Sanble! Estamos emocionados de tenerte como uno de nuestros usuarios.
             </p>
             <div class="sanble-btn-container">
               <a
-                href="${URL_FRONTEND}/activate?token=${token}"
+                href="${link}"
                 target="_blank"
               >
               Verificar ahora
@@ -117,7 +115,7 @@ const welcomeTemplate = (name: string, token: string) => `
           <hr />
           <div class="sanble-card-footer">
             <p>Si tiene problemas para hacer clic en el botón, copie y pegue la URL a continuación en su navegador web</p>
-            <span>${URL_FRONTEND}/activate?token=${token}</span>
+            <span>${link}</span>
           </div>
         </div>
       </section>
@@ -127,7 +125,6 @@ const welcomeTemplate = (name: string, token: string) => `
     </section>
   </body>
 </html>
-
 `;
 
 export default welcomeTemplate;
