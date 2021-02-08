@@ -1,8 +1,7 @@
 import validator from "validator";
 
 const fields = {
-  username: "Usuario",
-  name: "Nombre",
+  displayName: "Nombre",
   email: "Correo electrónico",
   password: "Contraseña",
   confirmPassword: "Confirmar contraseña",
@@ -90,7 +89,6 @@ export const valid = (body: object, rules: object) => {
   let errors = [];
 
   if (typeof body == "object" && Object.keys(body).length !== 0) {
-    // Username
     for (let i = 0; i < Object.keys(rules).length; i++) {
       const v = new Validators();
       const field: string = Object.keys(rules)[i];
