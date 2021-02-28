@@ -35,7 +35,7 @@ export const recoverPasswordEmail = (
   const msg = {
     to,
     from: `Equipo Sanble <support${SENDGRID_DOMAIN}>`,
-    subject: "¿Problemas para entrar?",
+    subject: "Recuperación de Contraseña",
     html: recoverPassword(displayName, link),
   };
 
