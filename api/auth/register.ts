@@ -8,8 +8,8 @@ import {
 } from "http-status";
 import { v1 as uuidv1 } from "uuid";
 
-// Interfaces
-import { UserRecord } from "../../interfaces/UserRecord";
+// Types
+import { TUserRecord } from "../../types/TUserRecord";
 
 // Utils
 import { valid } from "../../utils/validator";
@@ -50,7 +50,7 @@ export default async (req: NowRequest, res: NowResponse) => {
 
       const uuid = uuidv1();
 
-      const user: UserRecord = await auth.createUser({
+      const user: TUserRecord = await auth.createUser({
         uid: uuid,
         email,
         emailVerified: false,
