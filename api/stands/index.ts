@@ -25,6 +25,7 @@ export default async (req: NowRequest, res: NowResponse) => {
 
       const validator = await valid(body, {
         name: ["required"],
+        description: ["required"],
         uuid_user: ["required"],
       });
 
@@ -42,8 +43,8 @@ export default async (req: NowRequest, res: NowResponse) => {
 
       const data: TStand = {
         name,
+        description,
         slogan: slogan || "",
-        description: description || "",
         items: [],
         promotions: [],
         stars: 0,
