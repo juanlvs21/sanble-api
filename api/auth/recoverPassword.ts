@@ -1,4 +1,4 @@
-import { NowRequest, NowResponse } from "@vercel/node";
+import { VercelRequest, VercelResponse } from "@vercel/node";
 import {
   OK,
   METHOD_NOT_ALLOWED,
@@ -11,7 +11,7 @@ import { auth } from "../../utils/firebase";
 import { valid } from "../../utils/validator";
 import { recoverPasswordEmail } from "../../utils/sgMain";
 
-export default async (req: NowRequest, res: NowResponse) => {
+export default async (req: VercelRequest, res: VercelResponse) => {
   try {
     if (req.method === "OPTIONS") {
       res.status(OK).end();
