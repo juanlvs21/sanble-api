@@ -6,10 +6,6 @@ import path from "path";
 // Config
 import { LOG_MODE, PORT } from "@/config/env";
 
-// Middlewares
-// import handleErrorMiddleware from "@/middlewares/error.middleware";
-// import apiKeyMiddleware from "@/middlewares/api-key.middleware";
-
 // Routes
 import routes from "@/routes";
 
@@ -34,9 +30,6 @@ app.use("/static", express.static(path.resolve(__dirname, "../public")));
 
 // Routes
 app.use("/", routes);
-
-// Middlewares output
-// app.use(handleErrorMiddleware);
 
 // Middlewares not found
 app.use(function (req, res) {

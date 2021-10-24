@@ -1,19 +1,6 @@
 import { model, Schema, Document } from "mongoose";
 import bcrypt from "bcrypt";
 
-export interface IUser extends Document {
-  id?: string;
-  username: string;
-  email: string;
-  password: string;
-  name: string;
-  disabled?: boolean;
-  photoURL?: string;
-  phoneNumber?: string;
-  emailVerified?: boolean;
-  comparePassword: (password: string) => Promise<Boolean>;
-}
-
 const userSchema = new Schema(
   {
     username: {
@@ -47,7 +34,7 @@ const userSchema = new Schema(
     },
     photoURL: {
       type: String,
-      default: "/static/default.png",
+      default: "/static/avatars/default.png",
     },
     phoneNumber: {
       type: String,
@@ -87,11 +74,5 @@ userSchema.set("toJSON", {
     return user;
   },
 });
-
-// userSchema.methods.toJSON = function() {
-//   var obj = this.toObject();
-//   delete obj.password;
-//   return obj;
-// }
 
 export default model<IUser>("User", userSchema);
