@@ -29,7 +29,7 @@ app.use("/static", express.static(path.resolve(__dirname, "../public")));
 // app.use(apiKeyMiddleware);
 
 // Routes
-app.use("/", routes);
+app.use("/api", routes);
 
 // Middlewares not found
 app.use(function (req, res) {

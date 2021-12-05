@@ -1,5 +1,3 @@
-type TMongoDocument = import("mongoose").Document;
-
 type TResponse = import("express").Response;
 
 type Handler = (
