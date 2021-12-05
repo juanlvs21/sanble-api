@@ -6,7 +6,7 @@ import {
   FIREBASE_PROJECT_ID,
   FIREBASE_PRIVATE_KEY,
   FIREBASE_CLIENT_EMAIL,
-} from "@/config/env";
+} from "../config/env";
 
 const serviceAccount: ServiceAccount = {
   projectId: FIREBASE_PROJECT_ID,

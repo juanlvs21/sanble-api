@@ -2,12 +2,15 @@ import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 import path from "path";
+import { config } from "dotenv";
+
+config();
 
 // Config
-import { LOG_MODE, PORT } from "@/config/env";
+import { LOG_MODE, PORT } from "./config/env";
 
 // Routes
-import routes from "@/routes";
+import routes from "./routes";
 
 const app = express();
 

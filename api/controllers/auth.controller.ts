@@ -3,10 +3,8 @@ import { validationResult } from "express-validator";
 import { StatusCodes } from "http-status-codes";
 
 // Utils
-import { auth } from "@/utils/firebase";
-
-// Utils
-import { httpResErrorValidation, httpResponse } from "@/utils/http";
+import { auth } from "../utils/firebase";
+import { httpResErrorValidation, httpResponse } from "../utils/http";
 
 export const signUp: Handler = async (req: Request, res: Response) => {
   try {

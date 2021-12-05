@@ -9,10 +9,8 @@
     "url": "https://juanl.dev"
   },
   "scripts": {
-    "start": "node dist/index.js",
-    "dev": "tsc-watch --onSuccess \"node dist/index.js\"",
-    "build": "tsc",
-    "postinstall": "npm run build"
+    "start": "vercel dev --listen 4000",
+    "deploy": "vercel deploy --prod"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
@@ -23,7 +21,6 @@
     "firebase-admin": "^10.0.0",
     "http-status-codes": "^2.1.4",
     "jsonwebtoken": "^8.5.1",
-    "module-alias": "^2.2.2",
     "morgan": "^1.10.0"
   },
   "devDependencies": {
@@ -39,8 +36,5 @@
   "bugs": {
     "url": "https://github.com/juanlvs21/sanble-api/issues",
     "email": "me@juanl.dev"
-  },
-  "_moduleAliases": {
-    "@": "dist/"
   }
 }

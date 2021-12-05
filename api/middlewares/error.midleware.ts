@@ -1,6 +1,6 @@
 import { Response, Request, NextFunction } from "express";
 
-import { httpResponse } from "@/utils/http";
+// import { httpResponse } from "../utils/http";
 
 const handleErrorMiddleware = (
   _req: Request,
