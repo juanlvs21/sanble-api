@@ -1,9 +1,11 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import { StatusCodes } from "http-status-codes";
+import { v4 as uuidv4 } from "uuid";
 
 // Utils
 import { auth } from "../utils/firebase";
+import { getAppDomain } from "../utils/getHost";
 import { httpResErrorValidation, httpResponse } from "../utils/http";
 
 export const signUp: Handler = async (req: Request, res: Response) => {
@@ -20,32 +22,37 @@ export const signUp: Handler = async (req: Request, res: Response) => {
 
     const { name, email, password } = req.body;
 
-    const emailExists = await auth.getUserByEmail(email);
-
-    if (emailExists)
-      return httpResponse(
-        res,
-        StatusCodes.UNPROCESSABLE_ENTITY,
-        "La dirección de correo electrónico ya está en uso"
-      );
+    const photoURL = `${getAppDomain(
+      req.headers.host || ""
+    )}/static/avatars/default.png`;
 
     const user = await auth.createUser({
+      uid: uuidv4(),
       email,
       password,
       displayName: name,
       emailVerified: false,
-      photoURL: null,
+      photoURL,
     });
 
     httpResponse(res, StatusCodes.CREATED, "Usuario creado exitosamente", {
       user,
     });
-  } catch (error) {
-    httpResponse(
-      res,
-      StatusCodes.INTERNAL_SERVER_ERROR,
-      "ERROR INTERNO DEL SERVIDOR"
-    );
+  } catch (error: any) {
+    if (error?.code === "auth/email-already-exists") {
+      return httpResponse(
+        res,
+        StatusCodes.UNPROCESSABLE_ENTITY,
+        "La dirección de correo electrónico ya está en uso",
+        ["La dirección de correo electrónico ya está en uso"]
+      );
+    } else {
+      httpResponse(
+        res,
+        StatusCodes.INTERNAL_SERVER_ERROR,
+        "ERROR INTERNO DEL SERVIDOR"
+      );
+    }
   }
 };
 
