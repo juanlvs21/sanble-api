@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 
 // Utils
 import { auth } from "../utils/firebase";
-import { getAppDomain } from "../utils/getHost";
+// import { getAppDomain } from "../utils/getHost";
 import { httpResErrorValidation, httpResponse } from "../utils/http";
 
 export const signUp: Handler = async (req: Request, res: Response) => {
@@ -22,9 +22,9 @@ export const signUp: Handler = async (req: Request, res: Response) => {
 
     const { name, email, password } = req.body;
 
-    const photoURL = `${getAppDomain(
-      req.headers.host || ""
-    )}/static/avatars/default.png`;
+    // const photoURL = `${getAppDomain(
+    //   req.headers.host || ""
+    // )}/static/avatars/default.png`;
 
     const user = await auth.createUser({
       uid: uuidv4(),
@@ -32,7 +32,6 @@ export const signUp: Handler = async (req: Request, res: Response) => {
       password,
       displayName: name,
       emailVerified: false,
-      photoURL,
     });
 
     httpResponse(res, StatusCodes.CREATED, "Usuario creado exitosamente", {
