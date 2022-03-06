@@ -1,0 +1,33 @@
+version: "3.7"
+
+services:
+  # API Gateway PostgreSQL service.
+  sanble-postgres:
+    image: postgres:13-alpine
+    container_name: postgres.sanble
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+    ports:
+      - ${DB_PORT}:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  # Matic pgAdmin 4.
+  sanble-pgadmin:
+    image: dpage/pgadmin4:6.3
+    container_name: pgadmin.sanble
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${DB_USER}@sanble.com
+      PGADMIN_DEFAULT_PASSWORD: ${DB_PASS}
+    ports:
+      - 8080:80
+
+volumes:
+  pgdata:
+    driver: local
+
+networks:
+  default:
+    name: sanble-api-network
