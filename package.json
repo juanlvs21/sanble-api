@@ -7,7 +7,9 @@
     "url": "https://juanl.dev"
   },
   "scripts": {
-    "dev": "ts-node src/index.ts"
+    "dev": "ts-node src/index.ts",
+    "build": "tsc",
+    "start": "node index.js"
   },
   "dependencies": {
     "@prisma/client": "^3.10.0",
@@ -24,6 +26,6 @@
     "seed": "ts-node prisma/seed.ts"
   },
   "engines": {
-    "node": "16.14.0"
+    "node": "^14.19.0"
   }
 }
