@@ -24,8 +24,6 @@ const fairsDataJuan: Omit<TFair, "id" | "photographs">[] = [
     phoneNumber: "04244563467",
     address: "Lorem ipsum, lorem",
     dateTime: new Date("01-10-2022"),
-    lat: "",
-    lng: "",
     stars: 2,
     type: EFairType.ENTREPRENEURSHIP,
   },
@@ -50,8 +48,6 @@ const fairsDataJuan: Omit<TFair, "id" | "photographs">[] = [
     phoneNumber: "02951234567",
     address: "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
     dateTime: new Date("04-16-2022"),
-    lat: "",
-    lng: "",
     stars: 0,
     type: EFairType.GASTRONOMIC,
   },
@@ -63,7 +59,6 @@ const standsDataJuan: Omit<TStand, "id" | "products" | "promotions">[] = [
       "Animi reiciendis tempore quia enim voluptatum similique qui assumenda inventore blanditiis!Animi reiciendis tempore quia enim voluptatum similique qui assumenda inventore blanditiis!",
     name: "Todo frito",
     stars: 0,
-    photoUrl: "",
   },
   {
     description:
@@ -86,7 +81,6 @@ const standsDataJuan: Omit<TStand, "id" | "products" | "promotions">[] = [
       "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Animi reiciendis tempore quia enim voluptatum similique qui assumenda inventore blanditiis!",
     name: "Cervezas heladas",
     stars: 0,
-    photoUrl: "",
   },
   {
     description:
@@ -94,7 +88,6 @@ const standsDataJuan: Omit<TStand, "id" | "products" | "promotions">[] = [
     name: "Mundo de Chocolate",
     stars: 0,
     slogan: "Pide lo que quieras y te lo haremos en chocolate",
-    photoUrl: "",
   },
   {
     description:
@@ -102,21 +95,19 @@ const standsDataJuan: Omit<TStand, "id" | "products" | "promotions">[] = [
     name: "Cafe cafecito",
     stars: 0,
     slogan: "Cafe cafecito el cafe mas rico",
-    photoUrl: "",
   },
   {
     description:
       "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Animi reiciendis tempore quia enim voluptatum similique qui assumenda inventore blanditiis!",
     name: "Helados Frios",
     stars: 0,
-    photoUrl: "",
   },
   {
     description:
       "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Animi reiciendis tempore quia enim voluptatum similique qui assumenda inventore blanditiis!",
     name: "Mojitos Black",
     stars: 5,
-    photoUrl: "Los mejores mojitos que probaras",
+    slogan: "Los mejores mojitos que probaras",
   },
 ];
 
