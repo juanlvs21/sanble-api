@@ -9,14 +9,14 @@ datasource db {
 
 model User {
   id               String    @id @default(uuid()) @db.Uuid
-  email            String    @unique @db.Char(40)
-  username         String    @unique @db.Char(40)
-  name             String    @db.Char(40)
-  password         String    @db.Char(255)
+  email            String    @unique @db.VarChar(40)
+  username         String    @unique @db.VarChar(40)
+  name             String    @db.VarChar(40)
+  password         String    @db.VarChar(255)
   emailVerified_At DateTime?
-  phoneNumber      String?   @db.Char(14)
-  photoUrl         String?   @db.Char(300)
-  resetPassword    String?   @db.Char(255)
+  phoneNumber      String?   @db.VarChar(14)
+  photoUrl         String?   @default("https://ik.imagekit.io/sanble/avatar_SMHFRa-Afo.png") @db.VarChar(300)
+  resetPassword    String?   @db.VarChar(255)
   resetPasswordAt  DateTime?
   createdAt        DateTime  @default(now())
   fairs            Fair[]
@@ -25,14 +25,14 @@ model User {
 
 model Fair {
   id           String          @id @default(uuid()) @db.Uuid
-  name         String          @db.Char(40)
+  name         String          @db.VarChar(40)
   description  String          @db.VarChar(500)
-  emailContact String?         @db.Char(40)
-  phoneNumber  String?         @db.Char(14)
-  address      String          @db.Char(255)
+  emailContact String?         @db.VarChar(40)
+  phoneNumber  String?         @db.VarChar(14)
+  address      String          @db.VarChar(255)
   dateTime     DateTime?
-  lat          String?         @db.Char(15)
-  lng          String?         @db.Char(15)
+  lat          String?         @db.VarChar(15)
+  lng          String?         @db.VarChar(15)
   stars        Int             @default(0) @db.Integer
   type         FairType        @default(ENTREPRENEURSHIP)
   createdAt    DateTime        @default(now())
@@ -45,7 +45,7 @@ model Fair {
 model Photograph {
   id          String   @id @default(uuid()) @db.Uuid
   description String   @db.VarChar(500)
-  photoUrl    String?  @db.Char(300)
+  photoUrl    String?  @default("https://ik.imagekit.io/sanble/no-image_LHuW5V1nj.png") @db.VarChar(300)
   isCover     Boolean  @default(false) @db.Boolean
   createdAt   DateTime @default(now())
   fair        Fair     @relation(fields: [fairId], references: [id])
@@ -54,11 +54,11 @@ model Photograph {
 
 model Stand {
   id          String          @id @default(uuid()) @db.Uuid
-  name        String          @db.Char(40)
+  name        String          @db.VarChar(40)
   description String          @db.VarChar(500)
   slogan      String?         @db.VarChar(255)
   stars       Int             @default(0) @db.Integer
-  photoUrl    String?         @db.Char(300)
+  photoUrl    String?         @default("https://ik.imagekit.io/sanble/no-image_LHuW5V1nj.png") @db.VarChar(300)
   createdAt   DateTime        @default(now())
   user        User            @relation(fields: [userId], references: [id])
   userId      String          @db.Uuid
@@ -78,13 +78,13 @@ model StandsOnFairs {
 
 model Product {
   id          String      @id @default(uuid()) @db.Uuid
-  name        String      @db.Char(40)
+  name        String      @db.VarChar(40)
   description String      @db.VarChar(500)
   price       Decimal     @default(0) @db.Decimal()
   stars       Int         @default(0) @db.Integer
   scorers     Int         @default(0) @db.Integer
   type        ProductType
-  photoUrl    String?     @db.Char(300)
+  photoUrl    String?     @default("https://ik.imagekit.io/sanble/no-image_LHuW5V1nj.png") @db.VarChar(300)
   isAvailable Boolean     @default(true) @db.Boolean
   createdAt   DateTime    @default(now())
   stand       Stand       @relation(fields: [standId], references: [id])
@@ -95,9 +95,9 @@ model Product {
 
 model Promotion {
   id          String    @id @default(uuid()) @db.Uuid
-  title       String    @db.Char(80)
+  title       String    @db.VarChar(80)
   description String    @db.VarChar(500)
-  photoUrl    String?   @db.Char(300)
+  photoUrl    String?   @default("https://ik.imagekit.io/sanble/no-image_LHuW5V1nj.png") @db.VarChar(300)
   isActive    Boolean   @default(true) @db.Boolean
   createdAt   DateTime  @default(now())
   stand       Stand     @relation(fields: [standId], references: [id])

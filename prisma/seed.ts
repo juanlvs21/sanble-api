@@ -1,4 +1,5 @@
 import { PrismaClient, Prisma } from "@prisma/client";
+import bcrypt from "bcrypt";
 
 import { TFair, EFairType } from "../src/types/TFair";
 import { TStand } from "../src/types/TStand";
@@ -10,11 +11,24 @@ const usersData: Prisma.UserCreateInput[] = [
     name: "Juan Villarroel",
     username: "juanlvs21",
     email: "juanlvs97@gmail.com",
-    password: "1234",
+    password: "12345678",
   },
 ];
 
 const fairsDataJuan: Omit<TFair, "id" | "photographs">[] = [
+  {
+    name: "Alcoholicos anonimos",
+    description:
+      "Ven a degustar bebidas variadas, prueba cervezas de otras partes del mundo, incluso bebidas artesanales",
+    emailContact: "alcoholicos@prueba.com",
+    phoneNumber: "04244563467",
+    address: "Lorem ipsum, lorem",
+    dateTime: new Date("01-10-2022"),
+    lat: "",
+    lng: "",
+    stars: 2,
+    type: EFairType.ENTREPRENEURSHIP,
+  },
   {
     name: "Adoramos la Pasta",
     description:
@@ -29,7 +43,7 @@ const fairsDataJuan: Omit<TFair, "id" | "photographs">[] = [
     type: EFairType.ENTREPRENEURSHIP,
   },
   {
-    name: "Adoramos la Pasta",
+    name: "Mi feria divertida",
     description:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat.",
     emailContact: "miferiadivertida@example.com",
@@ -109,13 +123,15 @@ const standsDataJuan: Omit<TStand, "id" | "products" | "promotions">[] = [
 async function main() {
   console.log(`Start seeding ...`);
   for (const u of usersData) {
+    const salt = await bcrypt.genSalt(10);
+    u.password = await bcrypt.hash(u.password, salt);
     const user = await prisma.user.create({
       data: u,
     });
 
     console.log(`Created user ${user.email} with id: ${user.id}`);
 
-    if (u.email === "juanlvs97@gmail.com") {
+    if (user.email === "juanlvs97@gmail.com") {
       for (const fJuan of fairsDataJuan) {
         const fairJuan = await prisma.fair.create({
           data: {

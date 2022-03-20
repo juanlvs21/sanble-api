@@ -7,14 +7,14 @@ CREATE TYPE "ProductType" AS ENUM ('CANDY', 'FOOD', 'CLOTHING', 'DRINK', 'ACCESS
 -- CreateTable
 CREATE TABLE "User" (
     "id" UUID NOT NULL,
-    "email" CHAR(40) NOT NULL,
-    "username" CHAR(40) NOT NULL,
-    "name" CHAR(40) NOT NULL,
-    "password" CHAR(255) NOT NULL,
+    "email" VARCHAR(40) NOT NULL,
+    "username" VARCHAR(40) NOT NULL,
+    "name" VARCHAR(40) NOT NULL,
+    "password" VARCHAR(255) NOT NULL,
     "emailVerified_At" TIMESTAMP(3),
-    "phoneNumber" CHAR(14),
-    "photoUrl" CHAR(300),
-    "resetPassword" CHAR(255),
+    "phoneNumber" VARCHAR(14),
+    "photoUrl" VARCHAR(300) DEFAULT E'https://ik.imagekit.io/sanble/avatar_SMHFRa-Afo.png',
+    "resetPassword" VARCHAR(255),
     "resetPasswordAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -24,14 +24,14 @@ CREATE TABLE "User" (
 -- CreateTable
 CREATE TABLE "Fair" (
     "id" UUID NOT NULL,
-    "name" CHAR(40) NOT NULL,
+    "name" VARCHAR(40) NOT NULL,
     "description" VARCHAR(500) NOT NULL,
-    "emailContact" CHAR(40),
-    "phoneNumber" CHAR(14),
-    "address" CHAR(255) NOT NULL,
+    "emailContact" VARCHAR(40),
+    "phoneNumber" VARCHAR(14),
+    "address" VARCHAR(255) NOT NULL,
     "dateTime" TIMESTAMP(3),
-    "lat" CHAR(15),
-    "lng" CHAR(15),
+    "lat" VARCHAR(15),
+    "lng" VARCHAR(15),
     "stars" INTEGER NOT NULL DEFAULT 0,
     "type" "FairType" NOT NULL DEFAULT E'ENTREPRENEURSHIP',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -44,7 +44,7 @@ CREATE TABLE "Fair" (
 CREATE TABLE "Photograph" (
     "id" UUID NOT NULL,
     "description" VARCHAR(500) NOT NULL,
-    "photoUrl" CHAR(300),
+    "photoUrl" VARCHAR(300) DEFAULT E'https://ik.imagekit.io/sanble/no-image_LHuW5V1nj.png',
     "isCover" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "fairId" UUID NOT NULL,
@@ -55,11 +55,11 @@ CREATE TABLE "Photograph" (
 -- CreateTable
 CREATE TABLE "Stand" (
     "id" UUID NOT NULL,
-    "name" CHAR(40) NOT NULL,
+    "name" VARCHAR(40) NOT NULL,
     "description" VARCHAR(500) NOT NULL,
     "slogan" VARCHAR(255),
     "stars" INTEGER NOT NULL DEFAULT 0,
-    "photoUrl" CHAR(300),
+    "photoUrl" VARCHAR(300) DEFAULT E'https://ik.imagekit.io/sanble/no-image_LHuW5V1nj.png',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "userId" UUID NOT NULL,
 
@@ -77,13 +77,13 @@ CREATE TABLE "StandsOnFairs" (
 -- CreateTable
 CREATE TABLE "Product" (
     "id" UUID NOT NULL,
-    "name" CHAR(40) NOT NULL,
+    "name" VARCHAR(40) NOT NULL,
     "description" VARCHAR(500) NOT NULL,
     "price" DECIMAL NOT NULL DEFAULT 0,
     "stars" INTEGER NOT NULL DEFAULT 0,
     "scorers" INTEGER NOT NULL DEFAULT 0,
     "type" "ProductType" NOT NULL,
-    "photoUrl" CHAR(300),
+    "photoUrl" VARCHAR(300) DEFAULT E'https://ik.imagekit.io/sanble/no-image_LHuW5V1nj.png',
     "isAvailable" BOOLEAN NOT NULL DEFAULT true,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "standId" UUID NOT NULL,
@@ -95,9 +95,9 @@ CREATE TABLE "Product" (
 -- CreateTable
 CREATE TABLE "Promotion" (
     "id" UUID NOT NULL,
-    "title" CHAR(80) NOT NULL,
+    "title" VARCHAR(80) NOT NULL,
     "description" VARCHAR(500) NOT NULL,
-    "photoUrl" CHAR(300),
+    "photoUrl" VARCHAR(300) DEFAULT E'https://ik.imagekit.io/sanble/no-image_LHuW5V1nj.png',
     "isActive" BOOLEAN NOT NULL DEFAULT true,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "standId" UUID NOT NULL,
