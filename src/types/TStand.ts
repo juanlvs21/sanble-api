@@ -5,7 +5,7 @@ export type TStand = {
   slogan?: string;
   stars: number;
   photoUrl?: string;
-  createdAt?: Date;
+  createdAt: Date;
   user?: any;
   userId?: never;
   products: any[];

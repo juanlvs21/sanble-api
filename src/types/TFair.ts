@@ -8,14 +8,14 @@ export type TFair = {
   name: string;
   description: string;
   emailContact?: string;
-  phoneNumber?: string;
+  phoneContact?: string;
   address: string;
   dateTime?: Date;
   lat?: string;
   lng?: string;
   stars: number;
   type: EFairType;
-  createdAt?: Date;
+  createdAt: Date;
   photographs: any[];
   user?: any;
   userId?: never;

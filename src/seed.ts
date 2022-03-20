@@ -2,6 +2,7 @@ import { PrismaClient, Prisma } from "@prisma/client";
 import bcrypt from "bcrypt";
 
 import { TFair, EFairType } from "./types/TFair";
+import { TPhotograph } from "./types/TPhotograph";
 import { TStand } from "./types/TStand";
 
 const prisma = new PrismaClient();
@@ -15,13 +16,13 @@ const usersData: Prisma.UserCreateInput[] = [
   },
 ];
 
-const fairsDataJuan: Omit<TFair, "id" | "photographs">[] = [
+const fairsDataJuan: Omit<TFair, "id" | "photographs" | "createdAt">[] = [
   {
     name: "Alcoholicos anonimos",
     description:
       "Ven a degustar bebidas variadas, prueba cervezas de otras partes del mundo, incluso bebidas artesanales",
     emailContact: "alcoholicos@prueba.com",
-    phoneNumber: "04244563467",
+    phoneContact: "04244563467",
     address: "Lorem ipsum, lorem",
     dateTime: new Date("01-10-2022"),
     stars: 2,
@@ -32,7 +33,7 @@ const fairsDataJuan: Omit<TFair, "id" | "photographs">[] = [
     description:
       "Para nosotros la pasta es lo mejor que existe, y por eso hemos decidido hacer una feria en su honor para apreciarla y admirarla. Tenemos disponibles productos fabricados a base de pasta de todo tipo",
     emailContact: "pasta@prueba.com",
-    phoneNumber: "02951234567",
+    phoneContact: "02951234567",
     address: "El Poblado, Porlamar 6301, Nueva Esparta",
     dateTime: new Date("04-13-2022"),
     lat: "10.9655553",
@@ -45,7 +46,7 @@ const fairsDataJuan: Omit<TFair, "id" | "photographs">[] = [
     description:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat.",
     emailContact: "miferiadivertida@example.com",
-    phoneNumber: "02951234567",
+    phoneContact: "02951234567",
     address: "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
     dateTime: new Date("04-16-2022"),
     stars: 0,
@@ -53,7 +54,20 @@ const fairsDataJuan: Omit<TFair, "id" | "photographs">[] = [
   },
 ];
 
-const standsDataJuan: Omit<TStand, "id" | "products" | "promotions">[] = [
+const photographsFairPos2Juan: Omit<TPhotograph, "id" | "createdAt">[] = [
+  {
+    photoUrl:
+      "https://ik.imagekit.io/sanble/41e6fc11-f202-4bc4-915b-37fc33ee6455_D5kGBvJhVp.jpg",
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua.",
+    isCover: true,
+  },
+];
+
+const standsDataJuan: Omit<
+  TStand,
+  "id" | "products" | "promotions" | "createdAt"
+>[] = [
   {
     description:
       "Animi reiciendis tempore quia enim voluptatum similique qui assumenda inventore blanditiis!Animi reiciendis tempore quia enim voluptatum similique qui assumenda inventore blanditiis!",
@@ -66,15 +80,13 @@ const standsDataJuan: Omit<TStand, "id" | "products" | "promotions">[] = [
     name: "Dulcecitos",
     stars: 0,
     photoUrl:
-      "https://firebasestorage.googleapis.com/v0/b/sanble-app.appspot.com/o/stands%2Fcovers%2F3310e9c8-3e26-47c9-b956-e765c4019597.jpeg?alt=media",
+      "https://ik.imagekit.io/sanble/3310e9c8-3e26-47c9-b956-e765c4019597_c_NmxeT7XR.jpeg",
   },
   {
     description:
       "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Aperiam, architecto error. Voluptatem voluptates dolorem inventore tempore animi numquam ipsa. Animi reiciendis tempore quia enim voluptatum similique qui assumenda inventore blanditiis!",
     name: "Azuquita y Sal",
     stars: 3,
-    photoUrl:
-      "https://firebasestorage.googleapis.com/v0/b/sanble-app.appspot.com/o/stands%2Fpromotions%2Fa95e0829-e4d6-4211-9d94-dde397299fca.jpeg?alt=media",
   },
   {
     description:
@@ -88,6 +100,8 @@ const standsDataJuan: Omit<TStand, "id" | "products" | "promotions">[] = [
     name: "Mundo de Chocolate",
     stars: 0,
     slogan: "Pide lo que quieras y te lo haremos en chocolate",
+    photoUrl:
+      "https://ik.imagekit.io/sanble/torta_de_chocolate_casera_45252_orig_VbWejt91lm.jpg",
   },
   {
     description:
@@ -113,26 +127,43 @@ const standsDataJuan: Omit<TStand, "id" | "products" | "promotions">[] = [
 
 async function main() {
   console.log(`Start seeding ...`);
-  for (const u of usersData) {
+  for (const userData of usersData) {
     const salt = await bcrypt.genSalt(10);
-    u.password = await bcrypt.hash(u.password, salt);
+    userData.password = await bcrypt.hash(userData.password, salt);
     const user = await prisma.user.create({
-      data: u,
+      data: userData,
     });
 
     console.log(`Created user ${user.email} with id: ${user.id}`);
 
     if (user.email === "juanlvs97@gmail.com") {
-      for (const fJuan of fairsDataJuan) {
+      for (let i = 0; i < fairsDataJuan.length; i++) {
+        const fair = fairsDataJuan[i];
         const fairJuan = await prisma.fair.create({
           data: {
-            ...fJuan,
+            ...fair,
             user: { connect: { id: user.id } },
           },
         });
 
+        if (i === 2) {
+          for (const photoFairPos2 of photographsFairPos2Juan) {
+            const photoFair = await prisma.photograph.create({
+              data: {
+                ...photoFairPos2,
+                fair: { connect: { id: fairJuan.id } },
+              },
+            });
+
+            console.log(
+              `Created photograph ${photoFair.photoUrl} in the fair "${fair.name}" with id: ${photoFair.id}`
+            );
+          }
+        }
+
         console.log(`Created fair ${fairJuan.name} with id: ${fairJuan.id}`);
       }
+
       for (const sJuan of standsDataJuan) {
         const standJuan = await prisma.stand.create({
           data: {
