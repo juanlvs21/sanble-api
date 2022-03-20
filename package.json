@@ -12,7 +12,7 @@
     "start": "node build/index.js",
     "migrate": "prisma migrate dev",
     "seed:dev": "ts-node src/seed.ts",
-    "seed:prod": "node build/seed.ts"
+    "seed:prod": "node build/seed.js"
   },
   "dependencies": {
     "@prisma/client": "^3.11.0",
