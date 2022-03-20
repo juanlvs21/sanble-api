@@ -1,8 +1,8 @@
 import { PrismaClient, Prisma } from "@prisma/client";
 import bcrypt from "bcrypt";
 
-import { TFair, EFairType } from "../src/types/TFair";
-import { TStand } from "../src/types/TStand";
+import { TFair, EFairType } from "./types/TFair";
+import { TStand } from "./types/TStand";
 
 const prisma = new PrismaClient();
 
