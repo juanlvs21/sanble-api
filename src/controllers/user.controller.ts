@@ -4,14 +4,15 @@ import dayjs from "dayjs";
 import "dayjs/locale/es";
 dayjs.locale("es");
 
-import { IS_PROD } from "../config";
+import { IS_PROD } from "../config/env";
 import { UserService } from "../services/user.service";
 import { JWT } from "../utils/jwt";
 
 export class UserController {
   static signUp: Handler = async (req, res) => {
     const user = await UserService.signUp(req.body);
-    const token = JWT.generateToken({ user: { id: user.id } });
+    // const token = JWT.generateToken({ user: { id: user.id } });
+    const token = "";
 
     res.cookie("session", token, {
       secure: IS_PROD,
@@ -28,7 +29,8 @@ export class UserController {
 
   static logIn: Handler = async (req, res) => {
     const user = await UserService.logIn(req.body);
-    const token = JWT.generateToken({ user: { id: user.id } });
+    // const token = JWT.generateToken({ user: { id: user.id } });
+    const token = "";
 
     res.cookie("session", token, {
       secure: IS_PROD,
