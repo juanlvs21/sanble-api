@@ -1,21 +1,21 @@
-import { UserController } from "../controllers/user.controller";
+import { AuthController } from "../controllers/auth.controller";
 import { ErrorRouter } from "../error";
 import {
   signUpValidator,
-  logInValidator,
-} from "../validators/users.validators";
+  signInValidator,
+} from "../validators/auth.validators";
 // import { auth } from '../middlewares/auth.middleware';
 
 const router = new ErrorRouter();
 
 // router
 //   .route('/')
-//   .get(auth, UserController.getUsers)
+//   .get(auth, UserController.geIUsers)
 //   .post(signUpValidator, UserController.createUser)
 //   .delete(auth, UserController.deleteUser)
 //   .put(auth, UserController.updateUserData);
 
-router.post("/signup", signUpValidator, UserController.signUp);
-router.post("/login", logInValidator, UserController.logIn);
+router.post("/signup", signUpValidator, AuthController.signUp);
+router.post("/signin", signInValidator, AuthController.signIn);
 
 export default router.router;

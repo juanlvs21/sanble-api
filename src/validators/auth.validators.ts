@@ -27,10 +27,10 @@ const formSignup = [
     ),
 ];
 
-const formLogin = [
+const formSignin = [
   check("username", "Ingrese su nombre de usuario").not().isEmpty(),
   check("password", "Ingrese su contraseña").not().isEmpty(),
 ];
 
 export const signUpValidator = validate(formSignup);
-export const logInValidator = validate(formLogin);
+export const signInValidator = validate(formSignin);

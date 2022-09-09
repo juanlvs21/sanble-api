@@ -8,12 +8,14 @@ export const makeConnection = async () => {
       //   pass: config.DB.PASSWORD
     };
 
-    mongoose.connect(MONGODB_URI, dbOptions);
+    mongoose.connect(MONGODB_URI, dbOptions).then(() => {
+      process.stdout.write(`Database is connected✅`);
+    });
 
     const connection = mongoose.connection;
 
     connection.once("open", () => {
-      process.stdout.write(`Database is connected✅`);
+      process.stdout.write(`Database is open`);
     });
 
     connection.on("error", (err) => {
