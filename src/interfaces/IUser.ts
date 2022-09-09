@@ -3,7 +3,6 @@ import { Document } from "mongoose";
 export interface IUser {
   uuid: string
   email: string
-  username: string
   name: string
   password: string
   emailVerified_At?: Date
@@ -21,7 +20,6 @@ export interface IUserDoc extends Document, IUser {
 
 export interface IUserSignup {
   name: string;
-  username: string;
   email: string;
   password: string;
 };

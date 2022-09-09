@@ -17,14 +17,6 @@ const userSchema = new Schema({
     trim: true,
     max:40
   },
-  username: {
-    type: String,
-    unique: true,
-    required: true,
-    lowercase: true,
-    trim: true,
-    max:40
-  },
   name: {
     type: String,
     required: true,
