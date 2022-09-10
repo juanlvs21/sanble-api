@@ -1,25 +1,15 @@
 import { Handler } from "express";
 import { StatusCodes } from "http-status-codes";
-import dayjs from "dayjs";
-import "dayjs/locale/es";
-dayjs.locale("es");
 
 import { IS_PROD } from "../config/env";
 import { AuthService } from "../services/auth.service";
 import { JWT } from "../utils/jwt";
-import { sendEmail } from "../mail/sendgrid";
-import { welcomeTemplate } from "../mail/templates/welcome";
+import { dayjs } from "../utils/time";
 
 export class AuthController {
   static signUp: Handler = async (req, res) => {
     const user = await AuthService.signUp(req.body);
     const token = JWT.generateToken({ user: { uuid: user.uuid } });
-
-    sendEmail(
-      user.email,
-      "¡Bienvenido a Sanble!",
-      welcomeTemplate(user, "https://sanble.juanl.dev/auth/verify")
-    );
 
     res.cookie("session", token, {
       secure: IS_PROD,

@@ -1,6 +1,4 @@
-import { IUserDataReturn } from "../../interfaces/IUser";
-
-export function welcomeTemplate(user: IUserDataReturn, urlValidate: string) {
+export function welcomeTemplate(userName: string, urlValidate: string) {
   return `
 <!DOCTYPE html>
 <html>
@@ -128,7 +126,7 @@ export function welcomeTemplate(user: IUserDataReturn, urlValidate: string) {
         visibility: hidden;
         width: 0;
       "
-      >Bienvenido a Sanble, ${user.name}</span
+      >Bienvenido a Sanble, ${userName}</span
     >
     <table
       role="presentation"
@@ -248,7 +246,7 @@ export function welcomeTemplate(user: IUserDataReturn, urlValidate: string) {
                             margin-bottom: 15px;
                           "
                         >
-                          Hola ${user.name}, Gracias por registrarte en <b>Sanble</b>.
+                          Hola ${userName}, Gracias por registrarte en <b>Sanble</b>.
                           Esperamos que disfrutes tu experiencia y encuentres
                           todos tus intereses. Una cosa más, necesitarás tu
                           cuenta.

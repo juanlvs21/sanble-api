@@ -5,7 +5,11 @@ export interface IUser {
   email: string;
   name: string;
   password: string;
-  emailVerified_At: Date | null;
+  emailVerified: {
+    verifiedAt: Date | null;
+    expiresIn: Date | null;
+    token: string | null;
+  };
   phoneNumber: string | null;
   photoUrl: string;
   resetPassword: string | null;
@@ -35,7 +39,7 @@ export interface IUserDataReturn {
   name: string;
   photoUrl: string;
   phoneNumber: string | null;
-  emailVerified_At: Date | null;
+  emailVerifiedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }

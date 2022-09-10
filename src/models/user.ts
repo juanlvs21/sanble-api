@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
 
 import { IUserDoc } from "../interfaces/IUser";
+import { userVerifyGenerateToken } from "../utils/userVerifyAccount";
 
 const userSchema = new Schema(
   {
@@ -28,9 +29,19 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
-    emailVerified_At: {
-      type: Date,
-      default: null,
+    emailVerified: {
+      verifiedAt: {
+        type: Date,
+        default: null,
+      },
+      expiresIn: {
+        type: Date,
+        default: null,
+      },
+      token: {
+        type: String,
+        default: null,
+      },
     },
     phoneNumber: {
       type: String,
@@ -65,6 +76,7 @@ userSchema.pre<IUserDoc>("save", async function (next) {
   const hash = await bcrypt.hash(user.password, salt);
   user.password = hash;
   user.uuid = uuidv4();
+  user.emailVerified = userVerifyGenerateToken();
 
   next();
 });

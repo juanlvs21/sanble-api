@@ -7,7 +7,7 @@ export const userDataReturn = (user: IUser): IUserDataReturn => {
     name: user.name,
     photoUrl: user.photoUrl,
     phoneNumber: user.phoneNumber,
-    emailVerified_At: user.emailVerified_At,
+    emailVerifiedAt: user.emailVerified.verifiedAt,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
   };
