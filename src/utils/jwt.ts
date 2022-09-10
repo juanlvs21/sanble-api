@@ -3,7 +3,7 @@ import { JWT_SECRET } from "../config/env";
 
 interface IPayload {
   user: {
-    id: string;
+    uuid: string;
   };
 }
 

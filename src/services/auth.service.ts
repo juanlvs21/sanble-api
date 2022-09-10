@@ -14,13 +14,6 @@ export class AuthService {
         "Correo electrónico ya registrado"
       );
 
-    const usernameExist = await User.findOne({ username: userInput.username })
-    if (usernameExist)
-      throw new ErrorHandler(
-        StatusCodes.BAD_REQUEST,
-        "Nombre de usuario ya registrado"
-      );
-
     const salt = await bcrypt.genSalt(10);
     userInput.password = await bcrypt.hash(userInput.password, salt);
 
@@ -40,7 +33,7 @@ export class AuthService {
     return user;
   }
 
-  static async signIn(userData: IUserSignin) {
+  static async signIn(userData: IUserSignin):Promise<Omit<IUser, "password">> {
     // const userExist = await prisma.user.findUnique({
     //   where: { username: userData.username },
     // });
@@ -71,6 +64,11 @@ export class AuthService {
     // } = userExist;
 
     // return user;
-    return {};
+    return {
+      uuid:"",
+      email:"",
+      name:"",
+      photoUrl:"",
+    };
   }
 }

@@ -11,7 +11,7 @@ import { JWT } from "../utils/jwt";
 export class AuthController {
   static signUp: Handler = async (req, res) => {
     const user = await AuthService.signUp(req.body);
-    const token = JWT.generateToken({ user: { id: user.id } });
+    const token = JWT.generateToken({ user: { uuid: user.uuid } });
 
     res.cookie("session", token, {
       secure: IS_PROD,
@@ -28,8 +28,7 @@ export class AuthController {
 
   static signIn: Handler = async (req, res) => {
     const user = await AuthService.signIn(req.body);
-    // const token = JWT.generateToken({ user: { id: user.id } });
-    const token = "";
+    const token = JWT.generateToken({ user: { uuid: user.uuid } });
 
     res.cookie("session", token, {
       secure: IS_PROD,
