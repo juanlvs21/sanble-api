@@ -15,7 +15,7 @@ export interface IUser {
 }
 
 export interface IUserDoc extends Document, IUser {
-  comparePassword?: (password: string) => Promise<Boolean>;
+  comparePassword: (password: string) => Promise<Boolean>;
 }
 
 export interface IUserSignup {
@@ -25,7 +25,7 @@ export interface IUserSignup {
 }
 
 export interface IUserSignin {
-  username: string;
+  email: string;
   password: string;
 }
 
