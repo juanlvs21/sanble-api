@@ -9,11 +9,6 @@ const formSignup = [
     .isEmpty()
     .isLength({ max: 40 })
     .withMessage("El nombre debe tener máximo 40 caracteres"),
-  check("username", "Ingrese su nombre de usuario")
-    .not()
-    .isEmpty()
-    .isLength({ max: 40 })
-    .withMessage("El nombre de usuario debe tener máximo 40 caracteres"),
   check("email", "Ingrese su correo electrónico")
     .isEmail()
     .isLength({ max: 40 })
@@ -21,14 +16,16 @@ const formSignup = [
   check("password", `La contraseña debe tener minimo ${passMin} caracteres`)
     .not()
     .isEmpty()
-    .isLength({ min: passMin })
+    .isLength({ min: passMin, max: 40 })
     .withMessage(
       `La contraseña debe tener mínimo ${passMin} y máximo 40 caracteres`
     ),
 ];
 
 const formSignin = [
-  check("username", "Ingrese su nombre de usuario").not().isEmpty(),
+  check("email", "Ingrese su nombre de dirección de correo electrónico")
+    .not()
+    .isEmpty(),
   check("password", "Ingrese su contraseña").not().isEmpty(),
 ];
 
