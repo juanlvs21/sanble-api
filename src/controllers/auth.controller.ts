@@ -19,7 +19,7 @@ export class AuthController {
       expires: dayjs().add(24, "hours").toDate(),
     });
 
-    res.status(StatusCodes.OK).json({
+    res.status(StatusCodes.CREATED).json({
       statusCode: StatusCodes.CREATED,
       data: user,
       message: "Usuario registrado exitosamente",

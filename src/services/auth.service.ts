@@ -1,13 +1,19 @@
 import { StatusCodes } from "http-status-codes";
 import bcrypt from "bcrypt";
 
-import { User } from "../models/user"
+import { User } from "../models/user";
 import { ErrorHandler } from "../error";
-import { IUserSignin, IUserSignup, IUser } from "../interfaces/IUser";
+import {
+  IUserSignin,
+  IUserSignup,
+  IUser,
+  IUserDataReturn,
+} from "../interfaces/IUser";
+import { userDataReturn } from "../utils/userDataReturn";
 
 export class AuthService {
-  static async signUp(userInput: IUserSignup):Promise<Omit<IUser, "password">> {
-    const emailExist = await User.findOne({email: userInput.email})
+  static async signUp(userInput: IUserSignup): Promise<IUserDataReturn> {
+    const emailExist = await User.findOne({ email: userInput.email });
     if (emailExist)
       throw new ErrorHandler(
         StatusCodes.BAD_REQUEST,
@@ -17,23 +23,13 @@ export class AuthService {
     const salt = await bcrypt.genSalt(10);
     userInput.password = await bcrypt.hash(userInput.password, salt);
 
-    const userDoc = await User.create(userInput)
+    const userDoc = await User.create(userInput);
     await userDoc.save();
 
-    const userData: IUser = userDoc
-
-    const {
-      password,
-      emailVerified_At,
-      resetPassword,
-      resetPasswordAt,
-      ...user
-    } = userDoc;
-
-    return user;
+    return userDataReturn(userDoc);
   }
 
-  static async signIn(userData: IUserSignin):Promise<Omit<IUser, "password">> {
+  static async signIn(userData: IUserSignin): Promise<Omit<IUser, "password">> {
     // const userExist = await prisma.user.findUnique({
     //   where: { username: userData.username },
     // });
@@ -65,10 +61,16 @@ export class AuthService {
 
     // return user;
     return {
-      uuid:"",
-      email:"",
-      name:"",
-      photoUrl:"",
+      uuid: "",
+      email: "",
+      name: "",
+      photoUrl: "",
+      emailVerified_At: null,
+      phoneNumber: null,
+      resetPassword: null,
+      resetPasswordAt: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
   }
 }
