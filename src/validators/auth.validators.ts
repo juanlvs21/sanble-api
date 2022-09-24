@@ -2,23 +2,26 @@ import { check } from "express-validator";
 import { validate } from "../middlewares/validator.middleware";
 
 const passMin = 8;
+const lengthMax = 40;
 
 const formSignup = [
   check("name", "Ingrese su nombre.")
     .not()
     .isEmpty()
-    .isLength({ max: 40 })
-    .withMessage("El nombre debe tener máximo 40 caracteres"),
+    .isLength({ max: lengthMax })
+    .withMessage(`El nombre debe tener máximo ${lengthMax} caracteres`),
   check("email", "Ingrese su correo electrónico")
     .isEmail()
-    .isLength({ max: 40 })
-    .withMessage("El correo electrónico debe tener máximo 40 caracteres"),
+    .isLength({ max: lengthMax })
+    .withMessage(
+      "El correo electrónico debe tener máximo ${lengthMax} caracteres"
+    ),
   check("password", `La contraseña debe tener minimo ${passMin} caracteres`)
     .not()
     .isEmpty()
-    .isLength({ min: passMin, max: 40 })
+    .isLength({ min: passMin, max: lengthMax })
     .withMessage(
-      `La contraseña debe tener mínimo ${passMin} y máximo 40 caracteres`
+      `La contraseña debe tener mínimo ${passMin} y máximo ${lengthMax} caracteres`
     ),
 ];
 
