@@ -2,12 +2,16 @@ import { initializeApp, ServiceAccount, cert } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
 
-import firebaseCredentials from "../../firebase-adminsdk.json";
+import {
+  FIREBASE_CLIENT_EMAIL,
+  FIREBASE_PRIVATE_KEY,
+  FIREBASE_PROJECT_ID,
+} from "../config/env";
 
 const serviceAccount: ServiceAccount = {
-  projectId: firebaseCredentials.project_id,
-  clientEmail: firebaseCredentials.client_email,
-  privateKey: firebaseCredentials.private_key,
+  projectId: FIREBASE_PROJECT_ID,
+  clientEmail: FIREBASE_CLIENT_EMAIL,
+  privateKey: FIREBASE_PRIVATE_KEY,
 };
 
 export const app = initializeApp({
