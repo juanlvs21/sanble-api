@@ -14,7 +14,7 @@ const formSignup = [
     .isEmail()
     .isLength({ max: lengthMax })
     .withMessage(
-      "El correo electrónico debe tener máximo ${lengthMax} caracteres"
+      `El correo electrónico debe tener máximo ${lengthMax} caracteres`
     ),
   check("password", `La contraseña debe tener minimo ${passMin} caracteres`)
     .not()
