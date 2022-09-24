@@ -9,13 +9,13 @@ import { dayjs } from "../utils/time";
 export class AuthController {
   static signUp: Handler = async (req, res) => {
     const user = await AuthService.signUp(req.body);
-    const token = JWT.generateToken({ user: { uuid: user.uuid } });
+    // const token = JWT.generateToken({ user: { uuid: user.uuid } });
 
-    res.cookie("session", token, {
-      secure: IS_PROD,
-      httpOnly: true,
-      expires: dayjs().add(24, "hours").toDate(),
-    });
+    // res.cookie("session", token, {
+    //   secure: IS_PROD,
+    //   httpOnly: true,
+    //   expires: dayjs().add(24, "hours").toDate(),
+    // });
 
     res.status(StatusCodes.CREATED).json({
       statusCode: StatusCodes.CREATED,
@@ -26,13 +26,13 @@ export class AuthController {
 
   static signIn: Handler = async (req, res) => {
     const user = await AuthService.signIn(req.body);
-    const token = JWT.generateToken({ user: { uuid: user.uuid } });
+    // const token = JWT.generateToken({ user: { uuid: user.uuid } });
 
-    res.cookie("session", token, {
-      secure: IS_PROD,
-      httpOnly: true,
-      expires: dayjs().add(24, "hours").toDate(),
-    });
+    // res.cookie("session", token, {
+    //   secure: IS_PROD,
+    //   httpOnly: true,
+    //   expires: dayjs().add(24, "hours").toDate(),
+    // });
 
     res.status(StatusCodes.OK).json({
       statusCode: StatusCodes.OK,

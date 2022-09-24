@@ -7,6 +7,7 @@ export function handleError(
   _next: NextFunction
 ) {
   const { message, statusCode = 500 } = err;
+  process.stderr.write(err);
   res
     .status(statusCode)
     .json({ status: "Ha ocurrido un error", message, statusCode });
