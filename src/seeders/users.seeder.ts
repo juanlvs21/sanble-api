@@ -1,5 +1,3 @@
-import { User } from "../models/user";
-
 export function usersSeeder() {
   const users = [
     {
