@@ -1,6 +1,7 @@
 {
   "name": "@juanlvs21/sanble-api",
   "version": "0.1.0",
+  "main": "build/index.js",
   "author": {
     "name": "Juan Villarroel",
     "email": "me@juanl.dev",
