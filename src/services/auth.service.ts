@@ -1,10 +1,13 @@
 import { StatusCodes } from "http-status-codes";
 
 import { ErrorHandler } from "../error";
-import { auth, db } from "../utils/firebase";
+import {
+  auth,
+  // db
+} from "../utils/firebase";
 import {
   userDataReturn,
-  userVerifyGenerateToken,
+  // userVerifyGenerateToken,
   checkUserInFirebase,
 } from "../utils/userUtils";
 import { defaultImage } from "../utils/defaultImage";
@@ -31,16 +34,17 @@ export class AuthService {
       photoURL: defaultImage,
     });
 
-    const userVerifyToken = userVerifyGenerateToken(userDoc.uid);
+    // const userVerifyToken = userVerifyGenerateToken(userDoc.uid);
 
-    db.collection("userVerifyTokens").add(userVerifyToken);
+    // db.collection("userVerifyTokens").add(userVerifyToken);
 
     sendEmail(
       email,
       "¡Bienvenido a Sanble!",
       welcomeTemplate(
         name,
-        `https://sanble.juanl.dev/auth/verify?token=${userVerifyToken.token}`
+        `https://sanble.juanl.dev`
+        // `https://sanble.juanl.dev/auth/verify?token=${userVerifyToken.token}`
       )
     );
     return userDataReturn(userDoc);
