@@ -31,7 +31,7 @@ export class AuthService {
       password,
       displayName: name,
       emailVerified: false,
-      photoURL: defaultImage,
+      // photoURL: defaultImage,
     });
 
     // const userVerifyToken = userVerifyGenerateToken(userDoc.uid);
