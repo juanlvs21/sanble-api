@@ -5,15 +5,12 @@ import {
   auth,
   // db
 } from "../utils/firebase";
-import {
-  userDataReturn,
-  // userVerifyGenerateToken,
-  checkUserInFirebase,
-} from "../utils/userUtils";
-import { defaultImage } from "../utils/defaultImage";
+import { userDataReturn, checkUserInFirebase } from "../utils/userUtils";
 import { sendEmail } from "../mail/sendgrid";
 import { welcomeTemplate } from "../mail/templates/welcome";
-import { IUserSignin, IUserSignup, IUser } from "../interfaces/IUser";
+import { IUserSignup, IUser, IUserSignupExternal } from "../interfaces/IUser";
+
+const welcomeEmailFrom = "Sanble <bienvenido@sanble.juanl.dev>";
 
 export class AuthService {
   static async signUp(userInput: IUserSignup): Promise<IUser> {
@@ -45,21 +42,40 @@ export class AuthService {
         name,
         `https://sanble.juanl.dev`
         // `https://sanble.juanl.dev/auth/verify?token=${userVerifyToken.token}`
-      )
+      ),
+      welcomeEmailFrom
     );
+
     return userDataReturn(userDoc);
   }
 
-  static async signIn(userInput: IUserSignin): Promise<IUser> {
-    const { email, password } = userInput;
+  static async signUpExternal(userInput: IUserSignupExternal): Promise<IUser> {
+    const { email } = userInput;
     const user = await auth.getUserByEmail(email);
 
     if (!user)
-      throw new ErrorHandler(
-        StatusCodes.UNAUTHORIZED,
-        "Nombre de usuario o contraseña incorrectos"
-      );
+      throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Usuario no encontrado");
+
+    // sendEmail(
+    //   email,
+    //   "¡Bienvenido a Sanble!",
+    //   welcomeTemplate(user.displayName || ""),
+    //   welcomeEmailFrom
+    // );
 
     return userDataReturn(user);
   }
+
+  // static async signIn(userInput: IUserSignin): Promise<IUser> {
+  //   const { email, password } = userInput;
+  //   const user = await auth.getUserByEmail(email);
+
+  //   if (!user)
+  //     throw new ErrorHandler(
+  //       StatusCodes.UNAUTHORIZED,
+  //       "Nombre de usuario o contraseña incorrectos"
+  //     );
+
+  //   return userDataReturn(user);
+  // }
 }

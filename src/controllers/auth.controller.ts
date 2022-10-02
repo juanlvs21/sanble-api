@@ -24,20 +24,30 @@ export class AuthController {
     });
   };
 
-  static signIn: Handler = async (req, res) => {
-    const user = await AuthService.signIn(req.body);
-    // const token = JWT.generateToken({ user: { uuid: user.uuid } });
-
-    // res.cookie("session", token, {
-    //   secure: IS_PROD,
-    //   httpOnly: true,
-    //   expires: dayjs().add(24, "hours").toDate(),
-    // });
+  static signUpExternal: Handler = async (req, res) => {
+    const user = await AuthService.signUpExternal(req.body);
 
     res.status(StatusCodes.OK).json({
       statusCode: StatusCodes.OK,
       data: user,
-      message: "Sesión iniciada exitosamente",
+      message: "Usuario notificado exitosamente",
     });
   };
+
+  // static signIn: Handler = async (req, res) => {
+  //   const user = await AuthService.signIn(req.body);
+  //   // const token = JWT.generateToken({ user: { uuid: user.uuid } });
+
+  //   // res.cookie("session", token, {
+  //   //   secure: IS_PROD,
+  //   //   httpOnly: true,
+  //   //   expires: dayjs().add(24, "hours").toDate(),
+  //   // });
+
+  //   res.status(StatusCodes.OK).json({
+  //     statusCode: StatusCodes.OK,
+  //     data: user,
+  //     message: "Sesión iniciada exitosamente",
+  //   });
+  // };
 }

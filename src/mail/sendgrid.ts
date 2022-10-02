@@ -5,7 +5,7 @@ export function sendEmail(
   to: string,
   subject: string,
   template: any,
-  from = "Sanble <sanble@juanl.dev>"
+  from = "Sanble <no-reply@sanble.juanl.dev>"
 ): Promise<any> {
   sgMail.setApiKey(SENDGRID_API_KEY);
 

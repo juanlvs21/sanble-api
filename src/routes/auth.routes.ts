@@ -2,9 +2,10 @@ import { AuthController } from "../controllers/auth.controller";
 import { ErrorRouter } from "../error";
 import {
   signUpValidator,
-  signInValidator,
+  signUpExternalValidator,
+  // signInValidator,
 } from "../validators/auth.validators";
-// import { auth } from '../middlewares/auth.middleware';
+import { sessionMiddleware } from "../middlewares/session.middleware";
 
 const router = new ErrorRouter();
 
@@ -16,6 +17,12 @@ const router = new ErrorRouter();
 //   .put(auth, UserController.updateUserData);
 
 router.post("/signup", signUpValidator, AuthController.signUp);
-router.post("/signin", signInValidator, AuthController.signIn);
+router.post(
+  "/signup/external",
+  sessionMiddleware,
+  signUpExternalValidator,
+  AuthController.signUpExternal
+);
+// router.post("/signin", signInValidator, AuthController.signIn);
 
 export default router.router;

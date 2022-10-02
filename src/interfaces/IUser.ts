@@ -23,6 +23,10 @@ export interface IUserSignup {
   password: string;
 }
 
+export interface IUserSignupExternal {
+  email: string;
+}
+
 export interface IUserSignin {
   email: string;
   password: string;

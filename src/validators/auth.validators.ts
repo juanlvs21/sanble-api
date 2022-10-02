@@ -5,12 +5,12 @@ const passMin = 8;
 const lengthMax = 40;
 
 const formSignup = [
-  check("name", "Ingrese su nombre.")
+  check("name", "El nombre es requerido")
     .not()
     .isEmpty()
     .isLength({ max: lengthMax })
     .withMessage(`El nombre debe tener máximo ${lengthMax} caracteres`),
-  check("email", "Ingrese su correo electrónico")
+  check("email", "El correo electrónico es requerido")
     .isEmail()
     .isLength({ max: lengthMax })
     .withMessage(
@@ -29,11 +29,18 @@ const formSignup = [
 ];
 
 const formSignin = [
-  check("email", "Ingrese su nombre de dirección de correo electrónico")
+  check("email", "La dirección de correo electrónico es requerida")
     .not()
     .isEmpty(),
-  check("password", "Ingrese su contraseña").not().isEmpty(),
+  check("password", "La contraseña es requerida").not().isEmpty(),
+];
+
+const formSignupExternal = [
+  check("email", "La dirección de correo electrónico es requerida")
+    .not()
+    .isEmpty(),
 ];
 
 export const signUpValidator = validate(formSignup);
 export const signInValidator = validate(formSignin);
+export const signUpExternalValidator = validate(formSignupExternal);
