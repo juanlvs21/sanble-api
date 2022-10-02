@@ -11,6 +11,7 @@ import { welcomeTemplate } from "../mail/templates/welcome";
 import { IUserSignup, IUser, IUserSignupExternal } from "../interfaces/IUser";
 
 const welcomeEmailFrom = "Sanble <bienvenido@sanble.juanl.dev>";
+const welcomeEmailSubject = "¡Bienvenido a Sanble!";
 
 export class AuthService {
   static async signUp(userInput: IUserSignup): Promise<IUser> {
@@ -37,7 +38,7 @@ export class AuthService {
 
     sendEmail(
       email,
-      "¡Bienvenido a Sanble!",
+      welcomeEmailSubject,
       welcomeTemplate(
         name,
         `https://sanble.juanl.dev`
@@ -56,12 +57,12 @@ export class AuthService {
     if (!user)
       throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Usuario no encontrado");
 
-    // sendEmail(
-    //   email,
-    //   "¡Bienvenido a Sanble!",
-    //   welcomeTemplate(user.displayName || ""),
-    //   welcomeEmailFrom
-    // );
+    sendEmail(
+      email,
+      welcomeEmailSubject,
+      welcomeTemplate(user.displayName || ""),
+      welcomeEmailFrom
+    );
 
     return userDataReturn(user);
   }
