@@ -15,7 +15,7 @@ import {
   checkUserInFirebase,
   userAuthReturn,
   userVerifyGenerateToken,
-} from "../utils/userUtils";
+} from "../utils/utilsUser";
 
 const welcomeEmailFrom = "Sanble <bienvenido@sanble.juanl.dev>";
 const welcomeEmailSubject = "¡Bienvenido a Sanble!";
