@@ -15,5 +15,6 @@ router.post(
   signUpExternalValidator,
   AuthController.signUpExternal
 );
+router.get("/user", sessionMiddleware, AuthController.getUserData);
 
 export default router.router;

@@ -2,19 +2,26 @@ import { StatusCodes } from "http-status-codes";
 
 import { ErrorHandler } from "../error";
 import {
-  auth,
-  // db
-} from "../utils/firebase";
-import { userDataReturn, checkUserInFirebase } from "../utils/userUtils";
+  IUser,
+  IUserAuth,
+  IUserData,
+  IUserSignup,
+  IUserSignupExternal,
+} from "../interfaces/IUser";
 import { sendEmail } from "../mail/sendgrid";
 import { welcomeTemplate } from "../mail/templates/welcome";
-import { IUserSignup, IUser, IUserSignupExternal } from "../interfaces/IUser";
+import { auth, db, Timestamp } from "../utils/firebase";
+import {
+  checkUserInFirebase,
+  userAuthReturn,
+  userVerifyGenerateToken,
+} from "../utils/userUtils";
 
 const welcomeEmailFrom = "Sanble <bienvenido@sanble.juanl.dev>";
 const welcomeEmailSubject = "¡Bienvenido a Sanble!";
 
 export class AuthService {
-  static async signUp(userInput: IUserSignup): Promise<IUser> {
+  static async signUp(userInput: IUserSignup): Promise<IUserAuth> {
     const { name, email, password } = userInput;
     const { user: emailExist } = await checkUserInFirebase(email);
 
@@ -24,17 +31,20 @@ export class AuthService {
         "Correo electrónico ya registrado"
       );
 
-    const userDoc = await auth.createUser({
+    const userAuth = await auth.createUser({
       email,
       password,
       displayName: name,
       emailVerified: false,
-      // photoURL: defaultImage,
     });
 
-    // const userVerifyToken = userVerifyGenerateToken(userDoc.uid);
-
-    // db.collection("userVerifyTokens").add(userVerifyToken);
+    const userDocData: IUserData = {
+      uid: userAuth.uid,
+      creationTime: Timestamp.fromDate(new Date()),
+      verifyTokens: userVerifyGenerateToken(),
+      isAdmin: false,
+    };
+    await db.collection("users").doc(userAuth.uid).set(userDocData);
 
     sendEmail(
       email,
@@ -47,36 +57,51 @@ export class AuthService {
       welcomeEmailFrom
     );
 
-    return userDataReturn(userDoc);
+    return userAuthReturn(userAuth, userDocData);
   }
 
-  static async signUpExternal(userInput: IUserSignupExternal): Promise<IUser> {
+  static async signUpExternal(
+    userInput: IUserSignupExternal
+  ): Promise<IUserAuth> {
     const { email } = userInput;
-    const user = await auth.getUserByEmail(email);
+    const userAuth = await auth.getUserByEmail(email);
 
-    if (!user)
+    if (!userAuth)
       throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Usuario no encontrado");
+
+    const userDocData: IUserData = {
+      uid: userAuth.uid,
+      creationTime: Timestamp.fromDate(new Date()),
+      verifyTokens: userVerifyGenerateToken(),
+      isAdmin: false,
+    };
+    await db.collection("users").doc(userAuth.uid).set(userDocData);
 
     sendEmail(
       email,
       welcomeEmailSubject,
-      welcomeTemplate(user.displayName || ""),
+      welcomeTemplate(userAuth.displayName || ""),
       welcomeEmailFrom
     );
 
-    return userDataReturn(user);
+    return userAuthReturn(userAuth, userDocData);
   }
 
-  // static async signIn(userInput: IUserSignin): Promise<IUser> {
-  //   const { email, password } = userInput;
-  //   const user = await auth.getUserByEmail(email);
+  static async getUserData(uid: string): Promise<IUser> {
+    const userAuth = await auth.getUser(uid);
+    const userDataDoc = await db.collection("users").doc(uid).get();
+    const userData = userDataDoc.data();
 
-  //   if (!user)
-  //     throw new ErrorHandler(
-  //       StatusCodes.UNAUTHORIZED,
-  //       "Nombre de usuario o contraseña incorrectos"
-  //     );
+    if (!userAuth)
+      throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Usuario no existe");
 
-  //   return userDataReturn(user);
-  // }
+    const userDocData: IUserData = {
+      uid: userAuth.uid,
+      isAdmin: userData?.userData || false,
+      creationTime: userData?.creationTime,
+      verifyTokens: userData?.verifyTokens,
+    };
+
+    return userAuthReturn(userAuth, userDocData);
+  }
 }

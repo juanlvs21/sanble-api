@@ -1,6 +1,7 @@
-import { UserMetadata } from "firebase-admin/auth";
+import { UserInfo, UserMetadata } from "firebase-admin/auth";
+import { Timestamp } from "firebase-admin/firestore";
 
-export interface IUser {
+export interface IUserAuth {
   uid: string;
   email: string;
   emailVerified: boolean;
@@ -9,10 +10,19 @@ export interface IUser {
   phoneNumber: string;
   disabled: boolean;
   metadata: UserMetadata;
+  providerData: UserInfo[];
 }
 
-export interface IUserVerifyToken {
+export interface IUserData {
   uid: string;
+  isAdmin: boolean;
+  creationTime: Timestamp;
+  verifyTokens: IUserVerifyToken;
+}
+
+export interface IUser extends IUserAuth, IUserData {}
+
+export interface IUserVerifyToken {
   expiresIn: Date;
   token: string;
 }

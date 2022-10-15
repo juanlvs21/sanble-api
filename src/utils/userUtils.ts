@@ -1,9 +1,10 @@
-import randomstring from "randomstring";
 import { UserRecord } from "firebase-admin/auth";
+import randomstring from "randomstring";
 
-import { dayjs } from "./time";
+import { IUser, IUserData, IUserVerifyToken } from "../interfaces/IUser";
+import { defaultImage } from "./defaultImage";
 import { auth } from "./firebase";
-import { IUser, IUserVerifyToken } from "../interfaces/IUser";
+import { dayjs } from "./time";
 
 interface ICheckUserReturn {
   isError: boolean;
@@ -27,22 +28,28 @@ export async function checkUserInFirebase(
   });
 }
 
-export const userDataReturn = (user: UserRecord): IUser => {
+export const userAuthReturn = (
+  userAuth: UserRecord,
+  userDoc: IUserData
+): IUser => {
   return {
-    uid: user.uid,
-    email: user.email || "",
-    emailVerified: user.emailVerified,
-    displayName: user.displayName || "",
-    photoURL: user.photoURL || "",
-    phoneNumber: user.phoneNumber || "",
-    disabled: user.disabled,
-    metadata: user.metadata,
+    uid: userAuth.uid,
+    displayName: userAuth.displayName || "",
+    email: userAuth.email || "",
+    emailVerified: userAuth.emailVerified,
+    phoneNumber: userAuth.phoneNumber || "",
+    photoURL: userAuth.photoURL || defaultImage,
+    providerData: userAuth.providerData,
+    disabled: userAuth.disabled,
+    metadata: userAuth.metadata,
+    isAdmin: userDoc.isAdmin || false,
+    creationTime: userDoc.creationTime,
+    verifyTokens: userDoc.verifyTokens,
   };
 };
 
-export function userVerifyGenerateToken(uid: string): IUserVerifyToken {
+export function userVerifyGenerateToken(): IUserVerifyToken {
   return {
-    uid,
     expiresIn: dayjs().add(24, "hours").toDate(),
     token: randomstring.generate(40) + dayjs().unix(),
   };

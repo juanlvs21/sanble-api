@@ -34,20 +34,13 @@ export class AuthController {
     });
   };
 
-  // static signIn: Handler = async (req, res) => {
-  //   const user = await AuthService.signIn(req.body);
-  //   // const token = JWT.generateToken({ user: { uuid: user.uuid } });
+  static getUserData: Handler = async (req, res) => {
+    const userData = await AuthService.getUserData(req.uid);
 
-  //   // res.cookie("session", token, {
-  //   //   secure: IS_PROD,
-  //   //   httpOnly: true,
-  //   //   expires: dayjs().add(24, "hours").toDate(),
-  //   // });
-
-  //   res.status(StatusCodes.OK).json({
-  //     statusCode: StatusCodes.OK,
-  //     data: user,
-  //     message: "Sesión iniciada exitosamente",
-  //   });
-  // };
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      data: userData,
+      message: "Datos del usuario con sesión iniciada",
+    });
+  };
 }
