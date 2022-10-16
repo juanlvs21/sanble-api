@@ -6,7 +6,12 @@ import { fairDataFormat } from "../utils/utilsFair";
 
 export class FairService {
   static async getUpcoming() {
-    const fairsDoc = await db.collection("fairs").get(); // TODO: Adding the "where" condition when discussing with Nestor
+    const fairsDoc = await db
+      .collection("fairs")
+      .orderBy("stars", "desc")
+      .limit(10)
+      .get();
+    // TODO: Adding the "where" condition when discussing with Nestor
 
     const fairs: IFair[] = [];
 
