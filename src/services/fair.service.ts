@@ -5,7 +5,7 @@ import { db, Timestamp } from "../utils/firebase";
 import { fairDataFormat } from "../utils/utilsFair";
 
 export class FairService {
-  static async getUpcoming() {
+  static async getBest() {
     const fairsDoc = await db
       .collection("fairs")
       .orderBy("stars", "desc")

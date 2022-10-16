@@ -4,6 +4,6 @@ import { sessionMiddleware } from "../middlewares/session.middleware";
 
 const router = new ErrorRouter();
 
-router.get("/upcoming", sessionMiddleware, FairController.getUpcoming);
+router.get("/best", sessionMiddleware, FairController.getBest);
 
 export default router.router;
