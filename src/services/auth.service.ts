@@ -63,7 +63,7 @@ export class AuthService {
 
     const userDataDoc = await db.collection("users").doc(userAuth.uid).get();
 
-    if (userDataDoc) {
+    if (userDataDoc.exists) {
       const userData = userDataDoc.data();
 
       const userDocData: IUserData = {
