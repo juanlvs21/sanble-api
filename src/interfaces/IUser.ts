@@ -33,7 +33,7 @@ export interface IUserSignup {
   password: string;
 }
 
-export interface IUserSignupExternal {
+export interface IUsersignInExternal {
   email: string;
 }
 

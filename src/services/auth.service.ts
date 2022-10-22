@@ -1,3 +1,4 @@
+import e from "express";
 import { StatusCodes } from "http-status-codes";
 
 import { ErrorHandler } from "../error";
@@ -6,7 +7,7 @@ import {
   IUserAuth,
   IUserData,
   IUserSignup,
-  IUserSignupExternal,
+  IUsersignInExternal,
 } from "../interfaces/IUser";
 import { sendEmail } from "../mail/sendgrid";
 import { welcomeTemplate } from "../mail/templates/welcome";
@@ -60,8 +61,8 @@ export class AuthService {
     return userAuthReturn(userAuth, userDocData);
   }
 
-  static async signUpExternal(
-    userInput: IUserSignupExternal
+  static async signInExternal(
+    userInput: IUsersignInExternal
   ): Promise<IUserAuth> {
     const { email } = userInput;
     const userAuth = await auth.getUserByEmail(email);
@@ -75,16 +76,23 @@ export class AuthService {
       verifyTokens: userVerifyGenerateToken(),
       isAdmin: false,
     };
-    await db.collection("users").doc(userAuth.uid).set(userDocData);
 
-    sendEmail(
-      email,
-      welcomeEmailSubject,
-      welcomeTemplate(userAuth.displayName || ""),
-      welcomeEmailFrom
-    );
+    const usecDocExist = await db.collection("users").doc(userAuth.uid).get();
 
-    return userAuthReturn(userAuth, userDocData);
+    if (usecDocExist) {
+      return userAuthReturn(userAuth, userDocData);
+    } else {
+      await db.collection("users").doc(userAuth.uid).set(userDocData);
+
+      sendEmail(
+        email,
+        welcomeEmailSubject,
+        welcomeTemplate(userAuth.displayName || ""),
+        welcomeEmailFrom
+      );
+
+      return userAuthReturn(userAuth, userDocData);
+    }
   }
 
   static async getUserData(uid: string): Promise<IUser> {
