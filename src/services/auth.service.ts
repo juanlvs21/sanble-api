@@ -57,15 +57,15 @@ export class AuthService {
 
   static async getUserData(uid: string): Promise<IUser> {
     const userAuth = await auth.getUser(uid);
-    const userDataDoc = await db.collection("users").doc(uid).get();
-    const userData = userDataDoc.data();
 
     if (!userAuth)
       throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Usuario no existe");
 
-    const userDocExist = await db.collection("users").doc(userAuth.uid).get();
+    const userDataDoc = await db.collection("users").doc(userAuth.uid).get();
 
-    if (userDocExist) {
+    if (userDataDoc) {
+      const userData = userDataDoc.data();
+
       const userDocData: IUserData = {
         uid: userAuth.uid,
         isAdmin: userData?.userData || false,
