@@ -24,16 +24,6 @@ export class AuthController {
     });
   };
 
-  static signInExternal: Handler = async (req, res) => {
-    const user = await AuthService.signInExternal(req.body);
-
-    res.status(StatusCodes.OK).json({
-      statusCode: StatusCodes.OK,
-      data: user,
-      message: "Usuario notificado exitosamente",
-    });
-  };
-
   static getUserData: Handler = async (req, res) => {
     const userData = await AuthService.getUserData(req.uid);
 

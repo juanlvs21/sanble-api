@@ -2,13 +2,7 @@ import e from "express";
 import { StatusCodes } from "http-status-codes";
 
 import { ErrorHandler } from "../error";
-import {
-  IUser,
-  IUserAuth,
-  IUserData,
-  IUserSignup,
-  IUsersignInExternal,
-} from "../interfaces/IUser";
+import { IUser, IUserAuth, IUserData, IUserSignup } from "../interfaces/IUser";
 import { sendEmail } from "../mail/sendgrid";
 import { welcomeTemplate } from "../mail/templates/welcome";
 import { auth, db, Timestamp } from "../utils/firebase";
@@ -61,40 +55,6 @@ export class AuthService {
     return userAuthReturn(userAuth, userDocData);
   }
 
-  static async signInExternal(
-    userInput: IUsersignInExternal
-  ): Promise<IUserAuth> {
-    const { email } = userInput;
-    const userAuth = await auth.getUserByEmail(email);
-
-    if (!userAuth)
-      throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Usuario no encontrado");
-
-    const userDocData: IUserData = {
-      uid: userAuth.uid,
-      creationTime: Timestamp.fromDate(new Date()),
-      verifyTokens: userVerifyGenerateToken(),
-      isAdmin: false,
-    };
-
-    const usecDocExist = await db.collection("users").doc(userAuth.uid).get();
-
-    if (usecDocExist) {
-      return userAuthReturn(userAuth, userDocData);
-    } else {
-      await db.collection("users").doc(userAuth.uid).set(userDocData);
-
-      sendEmail(
-        email,
-        welcomeEmailSubject,
-        welcomeTemplate(userAuth.displayName || ""),
-        welcomeEmailFrom
-      );
-
-      return userAuthReturn(userAuth, userDocData);
-    }
-  }
-
   static async getUserData(uid: string): Promise<IUser> {
     const userAuth = await auth.getUser(uid);
     const userDataDoc = await db.collection("users").doc(uid).get();
@@ -103,13 +63,35 @@ export class AuthService {
     if (!userAuth)
       throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Usuario no existe");
 
-    const userDocData: IUserData = {
-      uid: userAuth.uid,
-      isAdmin: userData?.userData || false,
-      creationTime: userData?.creationTime,
-      verifyTokens: userData?.verifyTokens,
-    };
+    const userDocExist = await db.collection("users").doc(userAuth.uid).get();
 
-    return userAuthReturn(userAuth, userDocData);
+    if (userDocExist) {
+      const userDocData: IUserData = {
+        uid: userAuth.uid,
+        isAdmin: userData?.userData || false,
+        creationTime: userData?.creationTime,
+        verifyTokens: userData?.verifyTokens,
+      };
+
+      return userAuthReturn(userAuth, userDocData);
+    } else {
+      const userDocData: IUserData = {
+        uid: userAuth.uid,
+        creationTime: Timestamp.fromDate(new Date()),
+        verifyTokens: userVerifyGenerateToken(),
+        isAdmin: false,
+      };
+
+      await db.collection("users").doc(userAuth.uid).set(userDocData);
+
+      sendEmail(
+        userAuth.email || "",
+        welcomeEmailSubject,
+        welcomeTemplate(userAuth.displayName || ""),
+        welcomeEmailFrom
+      );
+
+      return userAuthReturn(userAuth, userDocData);
+    }
   }
 }

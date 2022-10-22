@@ -35,12 +35,5 @@ const formSignin = [
   check("password", "La contraseña es requerida").not().isEmpty(),
 ];
 
-const formsignInExternal = [
-  check("email", "La dirección de correo electrónico es requerida")
-    .not()
-    .isEmpty(),
-];
-
 export const signUpValidator = validate(formSignup);
 export const signInValidator = validate(formSignin);
-export const signInExternalValidator = validate(formsignInExternal);
