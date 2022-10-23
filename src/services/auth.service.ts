@@ -1,4 +1,3 @@
-import e from "express";
 import { StatusCodes } from "http-status-codes";
 
 import { ErrorHandler } from "../error";
