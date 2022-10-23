@@ -21,7 +21,6 @@ export interface IFair {
   type: EFairType;
   contactEmail: string;
   contactPhone: string;
-  favoritesCounter: number;
   photographs: IPhotograph[];
   coverUrl?: string;
 }
