@@ -44,3 +44,7 @@ export interface IUserSignin {
 export interface IUserFavoriteBody {
   favoriteID?: string;
 }
+
+export interface IUserFavorite {
+  favorite: String[];
+}

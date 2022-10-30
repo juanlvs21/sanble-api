@@ -5,6 +5,7 @@ import {
   IUser,
   IUserAuth,
   IUserData,
+  IUserFavorite,
   IUserFavoriteBody,
   IUserSignup,
 } from "../interfaces/IUser";
@@ -112,7 +113,7 @@ export class UserService {
   static async setFavoriteFair(
     uid: string,
     body: IUserFavoriteBody
-  ): Promise<IUser> {
+  ): Promise<IUserFavorite> {
     const { favoriteID } = body;
     const userAuth = await auth.getUser(uid);
 
@@ -145,23 +146,13 @@ export class UserService {
       favoriteFairs: favorite,
     });
 
-    const userDocData: IUserData = {
-      uid: userAuth.uid,
-      isAdmin: userData?.userData || false,
-      creationTime: userData?.creationTime,
-      verifyTokens: userData?.verifyTokens,
-      favoriteStands: userData?.favoriteStands,
-      favoriteProducts: userData?.favoriteProducts,
-      favoriteFairs: favorite,
-    };
-
-    return userAuthReturn(userAuth, userDocData);
+    return { favorite };
   }
 
   static async setFavoriteStand(
     uid: string,
     body: IUserFavoriteBody
-  ): Promise<IUser> {
+  ): Promise<IUserFavorite> {
     const { favoriteID } = body;
     const userAuth = await auth.getUser(uid);
 
@@ -194,23 +185,13 @@ export class UserService {
       favoriteStands: favorite,
     });
 
-    const userDocData: IUserData = {
-      uid: userAuth.uid,
-      isAdmin: userData?.userData || false,
-      creationTime: userData?.creationTime,
-      verifyTokens: userData?.verifyTokens,
-      favoriteFairs: userData?.favoriteFairs,
-      favoriteProducts: userData?.favoriteProducts,
-      favoriteStands: favorite,
-    };
-
-    return userAuthReturn(userAuth, userDocData);
+    return { favorite };
   }
 
   static async setFavoriteProduct(
     uid: string,
     body: IUserFavoriteBody
-  ): Promise<IUser> {
+  ): Promise<IUserFavorite> {
     const { favoriteID } = body;
     const userAuth = await auth.getUser(uid);
 
@@ -243,16 +224,6 @@ export class UserService {
       favoriteProducts: favorite,
     });
 
-    const userDocData: IUserData = {
-      uid: userAuth.uid,
-      isAdmin: userData?.userData || false,
-      creationTime: userData?.creationTime,
-      verifyTokens: userData?.verifyTokens,
-      favoriteFairs: userData?.favoriteFairs,
-      favoriteStands: userData?.favoriteStands,
-      favoriteProducts: favorite,
-    };
-
-    return userAuthReturn(userAuth, userDocData);
+    return { favorite };
   }
 }
