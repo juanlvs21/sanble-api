@@ -45,7 +45,7 @@ export class UserController {
   };
 
   static setFavoriteProduct: Handler = async (req, res) => {
-    const userData = await UserService.setFavoriteProduct(req.uid, req.query);
+    const userData = await UserService.setFavoriteProduct(req.uid, req.body);
 
     res.status(StatusCodes.OK).json({
       statusCode: StatusCodes.OK,
