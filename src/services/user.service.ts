@@ -134,19 +134,19 @@ export class UserService {
 
     const userData = userDataDoc.data();
 
-    let favorite: string[] = userData?.favoriteFairs;
+    let favorites: string[] = userData?.favoriteFairs;
 
-    if (favorite.includes(fairID)) {
-      favorite = favorite.filter((fav) => fav !== favoriteID);
+    if (favorites.includes(fairID)) {
+      favorites = favorites.filter((fav) => fav !== favoriteID);
     } else {
-      favorite.push(fairID);
+      favorites.push(fairID);
     }
 
     await db.collection("users").doc(userAuth.uid).update({
-      favoriteFairs: favorite,
+      favoriteFairs: favorites,
     });
 
-    return { favorite };
+    return { favorites };
   }
 
   static async setFavoriteStand(
@@ -173,19 +173,19 @@ export class UserService {
 
     const userData = userDataDoc.data();
 
-    let favorite: string[] = userData?.favoriteStands;
+    let favorites: string[] = userData?.favoriteStands;
 
-    if (favorite.includes(productID)) {
-      favorite = favorite.filter((fav) => fav !== favoriteID);
+    if (favorites.includes(productID)) {
+      favorites = favorites.filter((fav) => fav !== favoriteID);
     } else {
-      favorite.push(productID);
+      favorites.push(productID);
     }
 
     await db.collection("users").doc(userAuth.uid).update({
-      favoriteStands: favorite,
+      favoriteStands: favorites,
     });
 
-    return { favorite };
+    return { favorites };
   }
 
   static async setFavoriteProduct(
@@ -212,18 +212,18 @@ export class UserService {
 
     const userData = userDataDoc.data();
 
-    let favorite: string[] = userData?.favoriteProducts;
+    let favorites: string[] = userData?.favoriteProducts;
 
-    if (favorite.includes(productID)) {
-      favorite = favorite.filter((fav) => fav !== favoriteID);
+    if (favorites.includes(productID)) {
+      favorites = favorites.filter((fav) => fav !== favoriteID);
     } else {
-      favorite.push(productID);
+      favorites.push(productID);
     }
 
     await db.collection("users").doc(userAuth.uid).update({
-      favoriteProducts: favorite,
+      favoriteProducts: favorites,
     });
 
-    return { favorite };
+    return { favorites };
   }
 }

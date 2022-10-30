@@ -46,5 +46,5 @@ export interface IUserFavoriteBody {
 }
 
 export interface IUserFavorite {
-  favorite: String[];
+  favorites: String[];
 }
