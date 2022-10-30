@@ -125,9 +125,9 @@ export class UserService {
 
     const fairID = favoriteID || "";
 
-    const fairDataDoc = await db.collection("fairs").doc(fairID).get();
+    const standDataDoc = await db.collection("fairs").doc(fairID).get();
 
-    if (!fairDataDoc.exists)
+    if (!standDataDoc.exists)
       throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrado");
 
     const userData = userDataDoc.data();
@@ -140,7 +140,7 @@ export class UserService {
       favorite.push(fairID);
     }
 
-    await db.collection("fairs").doc(fairID).update({
+    await db.collection("users").doc(userAuth.uid).update({
       favoriteFairs: favorite,
     });
 
@@ -152,6 +152,102 @@ export class UserService {
       favoriteStands: userData?.favoriteStands,
       favoriteProducts: userData?.favoriteProducts,
       favoriteFairs: favorite,
+    };
+
+    return userAuthReturn(userAuth, userDocData);
+  }
+
+  static async setFavoriteStand(
+    uid: string,
+    { favoriteID }: IUserFavoriteQuery
+  ): Promise<IUser> {
+    const userAuth = await auth.getUser(uid);
+
+    if (!userAuth)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Usuario no encontrado");
+
+    const userDataDoc = await db.collection("users").doc(userAuth.uid).get();
+
+    if (!userDataDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Usuario no encontrado");
+
+    const productID = favoriteID || "";
+
+    const standDataDoc = await db.collection("stands").doc(productID).get();
+
+    if (!standDataDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrado");
+
+    const userData = userDataDoc.data();
+
+    let favorite: string[] = userData?.favoriteStands;
+
+    if (favorite.includes(productID)) {
+      favorite = favorite.filter((fav) => fav !== favoriteID);
+    } else {
+      favorite.push(productID);
+    }
+
+    await db.collection("users").doc(userAuth.uid).update({
+      favoriteStands: favorite,
+    });
+
+    const userDocData: IUserData = {
+      uid: userAuth.uid,
+      isAdmin: userData?.userData || false,
+      creationTime: userData?.creationTime,
+      verifyTokens: userData?.verifyTokens,
+      favoriteFairs: userData?.favoriteFairs,
+      favoriteProducts: userData?.favoriteProducts,
+      favoriteStands: favorite,
+    };
+
+    return userAuthReturn(userAuth, userDocData);
+  }
+
+  static async setFavoriteProduct(
+    uid: string,
+    { favoriteID }: IUserFavoriteQuery
+  ): Promise<IUser> {
+    const userAuth = await auth.getUser(uid);
+
+    if (!userAuth)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Usuario no encontrado");
+
+    const userDataDoc = await db.collection("users").doc(userAuth.uid).get();
+
+    if (!userDataDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Usuario no encontrado");
+
+    const productID = favoriteID || "";
+
+    const standDataDoc = await db.collection("products").doc(productID).get();
+
+    if (!standDataDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Producto no encontrado");
+
+    const userData = userDataDoc.data();
+
+    let favorite: string[] = userData?.favoriteProducts;
+
+    if (favorite.includes(productID)) {
+      favorite = favorite.filter((fav) => fav !== favoriteID);
+    } else {
+      favorite.push(productID);
+    }
+
+    await db.collection("users").doc(userAuth.uid).update({
+      favoriteProducts: favorite,
+    });
+
+    const userDocData: IUserData = {
+      uid: userAuth.uid,
+      isAdmin: userData?.userData || false,
+      creationTime: userData?.creationTime,
+      verifyTokens: userData?.verifyTokens,
+      favoriteFairs: userData?.favoriteFairs,
+      favoriteStands: userData?.favoriteStands,
+      favoriteProducts: favorite,
     };
 
     return userAuthReturn(userAuth, userDocData);
