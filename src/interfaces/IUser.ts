@@ -40,3 +40,7 @@ export interface IUserSignin {
   email: string;
   password: string;
 }
+
+export interface IUserFavoriteQuery {
+  favoriteID?: string;
+}

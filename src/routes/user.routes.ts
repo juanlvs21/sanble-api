@@ -7,5 +7,10 @@ const router = new ErrorRouter();
 
 router.post("/signup", signUpValidator, UserController.signUp);
 router.get("/profile", sessionMiddleware, UserController.getProfile);
+router.patch(
+  "/favorite/fairs",
+  //   sessionMiddleware,
+  UserController.setFavoriteFair
+);
 
 export default router.router;

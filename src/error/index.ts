@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction, Router, Handler } from "express";
-import { StatusCodes } from "http-status-codes";
+import { ReasonPhrases, StatusCodes } from "http-status-codes";
+import { logger } from "../utils/logger";
 
 interface IRoutes {
   get(...handlers: Handler[]): IRoutes;
@@ -95,6 +96,7 @@ export class ErrorRouter {
     return (req: Request, res: Response, next: NextFunction) => {
       try {
         handler(req, res)?.catch(($error: Error) => {
+          logger.error($error, ReasonPhrases.INTERNAL_SERVER_ERROR);
           errorParse($error, next);
         });
       } catch (err: any) {

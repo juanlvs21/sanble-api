@@ -1,7 +1,13 @@
 import { StatusCodes } from "http-status-codes";
 
 import { ErrorHandler } from "../error";
-import { IUser, IUserAuth, IUserData, IUserSignup } from "../interfaces/IUser";
+import {
+  IUser,
+  IUserAuth,
+  IUserData,
+  IUserFavoriteQuery,
+  IUserSignup,
+} from "../interfaces/IUser";
 import { sendEmail } from "../mail/sendgrid";
 import { welcomeTemplate } from "../mail/templates/welcome";
 import { auth, db, Timestamp } from "../utils/firebase";
@@ -101,5 +107,53 @@ export class UserService {
 
       return userAuthReturn(userAuth, userDocData);
     }
+  }
+
+  static async setFavoriteFair(
+    uid: string,
+    { favoriteID }: IUserFavoriteQuery
+  ): Promise<IUser> {
+    const userAuth = await auth.getUser(uid);
+
+    if (!userAuth)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Usuario no encontrado");
+
+    const userDataDoc = await db.collection("users").doc(userAuth.uid).get();
+
+    if (!userDataDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Usuario no encontrado");
+
+    const fairID = favoriteID || "";
+
+    const fairDataDoc = await db.collection("fairs").doc(fairID).get();
+
+    if (!fairDataDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrado");
+
+    const userData = userDataDoc.data();
+
+    let favorite: string[] = userData?.favoriteFairs;
+
+    if (favorite.includes(fairID)) {
+      favorite = favorite.filter((fav) => fav !== favoriteID);
+    } else {
+      favorite.push(fairID);
+    }
+
+    await db.collection("fairs").doc(fairID).update({
+      favoriteFairs: favorite,
+    });
+
+    const userDocData: IUserData = {
+      uid: userAuth.uid,
+      isAdmin: userData?.userData || false,
+      creationTime: userData?.creationTime,
+      verifyTokens: userData?.verifyTokens,
+      favoriteStands: userData?.favoriteStands,
+      favoriteProducts: userData?.favoriteProducts,
+      favoriteFairs: favorite,
+    };
+
+    return userAuthReturn(userAuth, userDocData);
   }
 }

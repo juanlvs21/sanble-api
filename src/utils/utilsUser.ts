@@ -45,6 +45,9 @@ export const userAuthReturn = (
     isAdmin: userDoc.isAdmin || false,
     creationTime: userDoc.creationTime,
     verifyTokens: userDoc.verifyTokens,
+    favoriteStands: userDoc.favoriteStands,
+    favoriteProducts: userDoc.favoriteProducts,
+    favoriteFairs: userDoc.favoriteFairs,
   };
 };
 
