@@ -41,6 +41,6 @@ export interface IUserSignin {
   password: string;
 }
 
-export interface IUserFavoriteQuery {
+export interface IUserFavoriteBody {
   favoriteID?: string;
 }
