@@ -25,7 +25,7 @@ export class UserController {
   };
 
   static setFavoriteFair: Handler = async (req, res) => {
-    const userData = await UserService.setFavoriteFair(req.uid, req.query);
+    const userData = await UserService.setFavoriteFair(req.uid, req.body);
 
     res.status(StatusCodes.OK).json({
       statusCode: StatusCodes.OK,
@@ -35,7 +35,7 @@ export class UserController {
   };
 
   static setFavoriteStand: Handler = async (req, res) => {
-    const userData = await UserService.setFavoriteStand(req.uid, req.query);
+    const userData = await UserService.setFavoriteStand(req.uid, req.body);
 
     res.status(StatusCodes.OK).json({
       statusCode: StatusCodes.OK,
