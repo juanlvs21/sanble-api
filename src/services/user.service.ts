@@ -5,8 +5,8 @@ import {
   IUser,
   IUserAuth,
   IUserData,
-  IUserFavorite,
-  IUserFavoriteBody,
+  IUserFavorites,
+  IUserFavoritesBody,
   IUserSignup,
 } from "../interfaces/IUser";
 import { sendEmail } from "../mail/sendgrid";
@@ -112,8 +112,8 @@ export class UserService {
 
   static async setFavoriteFair(
     uid: string,
-    body: IUserFavoriteBody
-  ): Promise<IUserFavorite> {
+    body: IUserFavoritesBody
+  ): Promise<IUserFavorites> {
     const { favoriteID } = body;
     const userAuth = await auth.getUser(uid);
 
@@ -151,8 +151,8 @@ export class UserService {
 
   static async setFavoriteStand(
     uid: string,
-    body: IUserFavoriteBody
-  ): Promise<IUserFavorite> {
+    body: IUserFavoritesBody
+  ): Promise<IUserFavorites> {
     const { favoriteID } = body;
     const userAuth = await auth.getUser(uid);
 
@@ -190,8 +190,8 @@ export class UserService {
 
   static async setFavoriteProduct(
     uid: string,
-    body: IUserFavoriteBody
-  ): Promise<IUserFavorite> {
+    body: IUserFavoritesBody
+  ): Promise<IUserFavorites> {
     const { favoriteID } = body;
     const userAuth = await auth.getUser(uid);
 

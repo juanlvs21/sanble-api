@@ -41,10 +41,10 @@ export interface IUserSignin {
   password: string;
 }
 
-export interface IUserFavoriteBody {
+export interface IUserFavoritesBody {
   favoriteID?: string;
 }
 
-export interface IUserFavorite {
+export interface IUserFavorites {
   favorites: String[];
 }
