@@ -18,6 +18,9 @@ export interface IUserData {
   isAdmin: boolean;
   creationTime: Timestamp;
   verifyTokens: IUserVerifyToken;
+  favoriteFairs: string[];
+  favoriteStands: string[];
+  favoriteProducts: string[];
 }
 
 export interface IUser extends IUserAuth, IUserData {}

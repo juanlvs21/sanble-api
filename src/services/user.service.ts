@@ -14,7 +14,7 @@ import {
 const welcomeEmailFrom = "Sanble <bienvenido@sanble.juanl.dev>";
 const welcomeEmailSubject = "¡Bienvenido a Sanble!";
 
-export class AuthService {
+export class UserService {
   static async signUp(userInput: IUserSignup): Promise<IUserAuth> {
     const { name, email, password } = userInput;
     const { user: emailExist } = await checkUserInFirebase(email);
@@ -37,6 +37,9 @@ export class AuthService {
       creationTime: Timestamp.fromDate(new Date()),
       verifyTokens: userVerifyGenerateToken(),
       isAdmin: false,
+      favoriteFairs: [],
+      favoriteStands: [],
+      favoriteProducts: [],
     };
     await db.collection("users").doc(userAuth.uid).set(userDocData);
 
@@ -54,7 +57,7 @@ export class AuthService {
     return userAuthReturn(userAuth, userDocData);
   }
 
-  static async getUserData(uid: string): Promise<IUser> {
+  static async getProfile(uid: string): Promise<IUser> {
     const userAuth = await auth.getUser(uid);
 
     if (!userAuth)
@@ -70,6 +73,9 @@ export class AuthService {
         isAdmin: userData?.userData || false,
         creationTime: userData?.creationTime,
         verifyTokens: userData?.verifyTokens,
+        favoriteFairs: userData?.favoriteFairs,
+        favoriteStands: userData?.favoriteStands,
+        favoriteProducts: userData?.favoriteProducts,
       };
 
       return userAuthReturn(userAuth, userDocData);
@@ -79,6 +85,9 @@ export class AuthService {
         creationTime: Timestamp.fromDate(new Date()),
         verifyTokens: userVerifyGenerateToken(),
         isAdmin: false,
+        favoriteFairs: [],
+        favoriteStands: [],
+        favoriteProducts: [],
       };
 
       await db.collection("users").doc(userAuth.uid).set(userDocData);

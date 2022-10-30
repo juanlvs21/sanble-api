@@ -2,13 +2,13 @@ import { Handler } from "express";
 import { StatusCodes } from "http-status-codes";
 
 import { IS_PROD } from "../config/env";
-import { AuthService } from "../services/auth.service";
+import { UserService } from "../services/user.service";
 import { JWT } from "../utils/jwt";
 import { dayjs } from "../utils/time";
 
-export class AuthController {
+export class UserController {
   static signUp: Handler = async (req, res) => {
-    const user = await AuthService.signUp(req.body);
+    const user = await UserService.signUp(req.body);
     // const token = JWT.generateToken({ user: { uuid: user.uuid } });
 
     // res.cookie("session", token, {
@@ -24,8 +24,8 @@ export class AuthController {
     });
   };
 
-  static getUserData: Handler = async (req, res) => {
-    const userData = await AuthService.getUserData(req.uid);
+  static getProfile: Handler = async (req, res) => {
+    const userData = await UserService.getProfile(req.uid);
 
     res.status(StatusCodes.OK).json({
       statusCode: StatusCodes.OK,
