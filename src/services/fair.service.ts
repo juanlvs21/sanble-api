@@ -41,6 +41,7 @@ export class FairService {
       fairs: fairsPages.length ? fairsPages[pageNumber - 1] : [],
       pagination: {
         total: snapshot.docs.length || 0,
+        totalPages: fairsPages.length,
         page: pageNumber,
         perPage: perPageNumber,
       },
