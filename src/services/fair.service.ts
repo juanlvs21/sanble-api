@@ -33,7 +33,7 @@ export class FairService {
     if (pageNumber > fairsPages.length) {
       throw new ErrorHandler(
         StatusCodes.UNPROCESSABLE_ENTITY,
-        `La página ${perPageNumber} no existe`
+        `La página ${pageNumber} no existe`
       );
     }
 
