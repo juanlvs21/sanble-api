@@ -1,3 +1,4 @@
+import { ParamsDictionary } from "express-serve-static-core";
 import { StatusCodes } from "http-status-codes";
 
 import { ErrorHandler } from "../error";
@@ -59,5 +60,18 @@ export class FairService {
     fairsDoc.forEach((doc) => fairs.push(fairDataFormat(doc.data() as IFair)));
 
     return fairs;
+  }
+  static async getDetails(params: ParamsDictionary) {
+    const { fairID } = params;
+
+    if (!fairID)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrado");
+
+    const fairDoc = await db.collection("fairs").doc(fairID).get();
+
+    if (!fairDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrado");
+
+    return fairDoc;
   }
 }

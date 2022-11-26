@@ -22,4 +22,13 @@ export class FairController {
       message: "Listado de mejores ferias",
     });
   };
+  static getDetails: Handler = async (req, res) => {
+    const fair = await FairService.getDetails(req.params);
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      data: fair,
+      message: "Detalles de feria",
+    });
+  };
 }

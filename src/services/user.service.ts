@@ -2,10 +2,7 @@ import { StatusCodes } from "http-status-codes";
 
 import { ErrorHandler } from "../error";
 import {
-  IUser,
-  IUserAuth,
   IUserData,
-  IUserFavorites,
   IUserFavoritesBody,
   IUserSignup,
 } from "../interfaces/IUser";
@@ -22,7 +19,7 @@ const welcomeEmailFrom = "Sanble <bienvenido@sanble.juanl.dev>";
 const welcomeEmailSubject = "¡Bienvenido a Sanble!";
 
 export class UserService {
-  static async signUp(userInput: IUserSignup): Promise<IUserAuth> {
+  static async signUp(userInput: IUserSignup) {
     const { name, email, password } = userInput;
     const { user: emailExist } = await checkUserInFirebase(email);
 
@@ -64,7 +61,7 @@ export class UserService {
     return userAuthReturn(userAuth, userDocData);
   }
 
-  static async getProfile(uid: string): Promise<IUser> {
+  static async getProfile(uid: string) {
     const userAuth = await auth.getUser(uid);
 
     if (!userAuth)
@@ -110,10 +107,7 @@ export class UserService {
     }
   }
 
-  static async setFavoriteFair(
-    uid: string,
-    body: IUserFavoritesBody
-  ): Promise<IUserFavorites> {
+  static async setFavoriteFair(uid: string, body: IUserFavoritesBody) {
     const { favoriteID } = body;
     const userAuth = await auth.getUser(uid);
 
@@ -127,9 +121,9 @@ export class UserService {
 
     const fairID = favoriteID || "";
 
-    const standDataDoc = await db.collection("fairs").doc(fairID).get();
+    const fairDataDoc = await db.collection("fairs").doc(fairID).get();
 
-    if (!standDataDoc.exists)
+    if (!fairDataDoc.exists)
       throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrado");
 
     const userData = userDataDoc.data();
@@ -149,10 +143,7 @@ export class UserService {
     return { favorites };
   }
 
-  static async setFavoriteStand(
-    uid: string,
-    body: IUserFavoritesBody
-  ): Promise<IUserFavorites> {
+  static async setFavoriteStand(uid: string, body: IUserFavoritesBody) {
     const { favoriteID } = body;
     const userAuth = await auth.getUser(uid);
 
@@ -188,10 +179,7 @@ export class UserService {
     return { favorites };
   }
 
-  static async setFavoriteProduct(
-    uid: string,
-    body: IUserFavoritesBody
-  ): Promise<IUserFavorites> {
+  static async setFavoriteProduct(uid: string, body: IUserFavoritesBody) {
     const { favoriteID } = body;
     const userAuth = await auth.getUser(uid);
 
