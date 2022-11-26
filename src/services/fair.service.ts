@@ -72,6 +72,6 @@ export class FairService {
     if (!fairDoc.exists)
       throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrado");
 
-    return fairDoc;
+    return fairDataFormat(fairDoc.data() as IFair);
   }
 }

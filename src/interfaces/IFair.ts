@@ -10,7 +10,7 @@ export enum EFairType {
 export interface IFair {
   id: string;
   name: string;
-  geopoint: [number, number];
+  geopoint: [number, number] | null;
   creationTimestamp?: Timestamp;
   creationTime: string;
   celebrationDate: string;
