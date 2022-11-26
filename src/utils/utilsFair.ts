@@ -6,6 +6,8 @@ import { defaultImage } from "./defaultImage";
 export const fairDataFormat = (fair: IFair): IFair => {
   let coverUrl = defaultImage;
 
+  const ownerRefPath = fair.owner.path;
+
   const photographs = fair.photographs.map((photo) => {
     const creationTime = dayjs(
       (photo.creationTimestamp?.seconds || 0) * 1000
@@ -21,6 +23,10 @@ export const fairDataFormat = (fair: IFair): IFair => {
   const fairReturn = {
     ...fair,
     coverUrl,
+    owner: {
+      path: ownerRefPath,
+      id: ownerRefPath.replace("users/", ""),
+    },
     creationTime: dayjs((fair.creationTimestamp?.seconds || 0) * 1000).format(),
     celebrationDate: fair.celebrationDate
       ? dayjs(fair.celebrationDate).format()

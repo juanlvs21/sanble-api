@@ -1,6 +1,7 @@
 import { Timestamp } from "firebase-admin/firestore";
 
 import { IPhotograph } from "./IPhotograph";
+import { IRefBasic } from "./IRef";
 
 export enum EFairType {
   ENTREPRENEURSHIP = "entrepreneurship",
@@ -14,7 +15,7 @@ export interface IFair {
   creationTimestamp?: Timestamp;
   creationTime: string;
   celebrationDate: string;
-  owner: string;
+  owner: IRefBasic;
   address: string;
   description: string;
   stars: number;
