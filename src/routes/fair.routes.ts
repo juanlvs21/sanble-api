@@ -6,6 +6,7 @@ const router = new ErrorRouter();
 
 router.get("/", sessionMiddleware, FairController.getList);
 router.get("/best", sessionMiddleware, FairController.getBest);
-router.get("/:fairID", FairController.getDetails);
+router.get("/geolocation", sessionMiddleware, FairController.getGeolocationAll);
+router.get("/:fairID", sessionMiddleware, FairController.getDetails);
 
 export default router.router;

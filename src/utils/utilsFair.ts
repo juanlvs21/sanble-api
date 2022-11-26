@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 
-import { IFair } from "../interfaces/IFair";
+import { IFair, IFairGeo } from "../interfaces/IFair";
 import { defaultImage } from "./defaultImage";
 
 export const fairDataFormat = (fair: IFair): IFair => {
@@ -31,3 +31,11 @@ export const fairDataFormat = (fair: IFair): IFair => {
 
   return { ...fairReturn, photographs };
 };
+
+export const fairDataFormatGeo = (fair: IFairGeo): IFairGeo => ({
+  id: fair.id,
+  name: fair.name,
+  geopoint: fair.geopoint,
+  stars: fair.stars,
+  type: fair.type,
+});

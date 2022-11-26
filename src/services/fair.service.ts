@@ -2,10 +2,10 @@ import { ParamsDictionary } from "express-serve-static-core";
 import { StatusCodes } from "http-status-codes";
 
 import { ErrorHandler } from "../error";
-import { IFair } from "../interfaces/IFair";
+import { IFair, IFairGeo } from "../interfaces/IFair";
 import { IQueryPagination } from "../interfaces/IRequest";
 import { db } from "../utils/firebase";
-import { fairDataFormat } from "../utils/utilsFair";
+import { fairDataFormat, fairDataFormatGeo } from "../utils/utilsFair";
 
 export class FairService {
   static async getList({ page, perPage }: IQueryPagination) {
@@ -73,5 +73,16 @@ export class FairService {
       throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrado");
 
     return fairDataFormat(fairDoc.data() as IFair);
+  }
+  static async getGeolocationAll() {
+    const fairsDoc = await db.collection("fairs").get();
+
+    const fairs: IFairGeo[] = [];
+
+    fairsDoc.forEach((doc) =>
+      fairs.push(fairDataFormatGeo(doc.data() as IFairGeo))
+    );
+
+    return fairs;
   }
 }

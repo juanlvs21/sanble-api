@@ -31,4 +31,13 @@ export class FairController {
       message: "Detalles de feria",
     });
   };
+  static getGeolocationAll: Handler = async (_req, res) => {
+    const fairs = await FairService.getGeolocationAll();
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      data: fairs,
+      message: "Ubicacion de todas las ferias",
+    });
+  };
 }

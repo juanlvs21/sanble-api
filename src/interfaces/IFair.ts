@@ -24,3 +24,11 @@ export interface IFair {
   photographs: IPhotograph[];
   coverUrl?: string;
 }
+
+export interface IFairGeo {
+  id: string;
+  name: string;
+  geopoint: [number, number] | null;
+  stars: number;
+  type: EFairType;
+}
