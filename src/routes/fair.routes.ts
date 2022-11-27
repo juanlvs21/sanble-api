@@ -4,11 +4,7 @@ import { sessionMiddleware } from "../middlewares/session.middleware";
 
 const router = new ErrorRouter();
 
-router.get(
-  "/",
-  // sessionMiddleware,
-  FairController.getList
-);
+router.get("/list", sessionMiddleware, FairController.getList);
 router.get("/best", sessionMiddleware, FairController.getBest);
 router.get("/geolocation", sessionMiddleware, FairController.getGeolocationAll);
 router.get("/:fairID", sessionMiddleware, FairController.getDetails);
