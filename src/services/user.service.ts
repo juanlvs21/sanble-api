@@ -53,7 +53,7 @@ export class UserService {
       welcomeTemplate(
         name,
         `https://sanble.juanl.dev`
-        // `https://sanble.juanl.dev/auth/verify?token=${userVerifyToken.token}`
+        // TODO: Make user verification work. Link:`https://sanble.juanl.dev/auth/verify?token=${userVerifyToken.token}`
       ),
       welcomeEmailFrom
     );

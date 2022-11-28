@@ -29,7 +29,6 @@ export class FairService {
         arrayPos++;
       }
     });
-    // empanada, licor, pasta, animax, car
 
     if (pageNumber > fairsPages.length) {
       throw new ErrorHandler(
@@ -39,7 +38,7 @@ export class FairService {
     }
 
     return {
-      fairs: fairsPages.length ? fairsPages[pageNumber - 1] : [],
+      list: fairsPages.length ? fairsPages[pageNumber - 1] : [],
       pagination: {
         total: snapshot.docs.length || 0,
         totalPages: fairsPages.length,
