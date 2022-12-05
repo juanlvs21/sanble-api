@@ -28,7 +28,6 @@ export class StandService {
         arrayPos++;
       }
     });
-    // empanada, licor, pasta, animax, car
 
     if (pageNumber > standsPages.length) {
       throw new ErrorHandler(
@@ -48,12 +47,18 @@ export class StandService {
     };
   }
   static async getBest() {
-    // return await prisma.stand.findMany({
-    //   take: 10,
-    //   orderBy: {
-    //     stars: "asc",
-    //   },
-    // });
-    return [];
+    const standsDoc = await db
+      .collection("stands")
+      .orderBy("stars", "desc")
+      .limit(10)
+      .get();
+
+    const stands: IStand[] = [];
+
+    standsDoc.forEach((doc) =>
+      stands.push(standDataFormat(doc.data() as IStand))
+    );
+
+    return stands;
   }
 }
