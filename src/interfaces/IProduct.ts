@@ -1,4 +1,4 @@
-export enum TProductTypeKey {
+export enum EProductTypeKey {
   CLOTHES = "clothes",
   ACCESSORIES = "accessories",
   DRINKS = "drinks",
@@ -8,6 +8,6 @@ export enum TProductTypeKey {
 
 export interface IProductType {
   id: string;
-  key: TProductTypeKey;
+  key: EProductTypeKey;
   name: string;
 }
