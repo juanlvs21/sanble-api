@@ -22,6 +22,7 @@
     "firebase-admin": "11.0.1",
     "http-status-codes": "2.2.0",
     "morgan": "1.10.0",
+    "node-cron": "3.0.2",
     "pino": "8.6.1",
     "randomstring": "1.2.2",
     "uuid": "9.0.0"
@@ -32,6 +33,7 @@
     "@types/http-status-codes": "1.2.0",
     "@types/morgan": "1.9.3",
     "@types/node": "18.7.16",
+    "@types/node-cron": "3.0.6",
     "@types/nodemon": "1.19.2",
     "@types/randomstring": "1.1.8",
     "@types/uuid": "8.3.4",
