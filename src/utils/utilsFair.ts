@@ -1,10 +1,9 @@
 import dayjs from "dayjs";
 
 import { IFair, IFairGeo } from "../interfaces/IFair";
-import { defaultImage } from "./defaultImage";
 
 export const fairDataFormat = (fair: IFair): IFair => {
-  let coverUrl = defaultImage;
+  let coverUrl = undefined;
 
   const ownerRefPath = fair.owner.path;
 

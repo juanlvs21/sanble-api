@@ -2,7 +2,6 @@ import { UserRecord } from "firebase-admin/auth";
 import randomstring from "randomstring";
 
 import { IUser, IUserData, IUserVerifyToken } from "../interfaces/IUser";
-import { defaultImage } from "./defaultImage";
 import { auth } from "./firebase";
 import { dayjs } from "./time";
 
@@ -38,7 +37,7 @@ export const userAuthReturn = (
     email: userAuth.email || "",
     emailVerified: userAuth.emailVerified,
     phoneNumber: userAuth.phoneNumber || "",
-    photoURL: userAuth.photoURL || defaultImage,
+    photoURL: userAuth.photoURL || undefined,
     providerData: userAuth.providerData,
     disabled: userAuth.disabled,
     metadata: userAuth.metadata,
