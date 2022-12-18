@@ -3,20 +3,28 @@ import { StatusCodes } from "http-status-codes";
 
 import { ErrorHandler } from "../error";
 import { IFair, IFairGeo } from "../interfaces/IFair";
-import { IQueryPagination } from "../interfaces/IRequest";
-import { db } from "../utils/firebase";
+import { IQueryListRequest } from "../interfaces/IRequest";
+import { db, OrderByDirection } from "../utils/firebase";
 import { fairDataFormat, fairDataFormatGeo } from "../utils/utilsFair";
 
 export class FairService {
-  static async getList({ page, perPage }: IQueryPagination) {
+  static async getList({
+    page,
+    perPage,
+    orderBy,
+    orderDir,
+  }: IQueryListRequest) {
     const pageNumber = Number(page) || 1;
     const perPageNumber = Number(perPage) || 5;
 
     const fairsPages: IFair[][] = [[]];
 
-    const snapshot = await db
+    let orderField = orderBy || "stars";
+    let orderDirection: OrderByDirection = orderDir || "desc";
+
+    let snapshot = await db
       .collection("fairs")
-      .orderBy("stars", "desc")
+      .orderBy(orderField, orderDirection)
       .get();
 
     let arrayPos = 0;

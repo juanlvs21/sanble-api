@@ -1,13 +1,13 @@
 import { StatusCodes } from "http-status-codes";
 
 import { ErrorHandler } from "../error";
-import { IQueryPagination } from "../interfaces/IRequest";
+import { IQueryListRequest } from "../interfaces/IRequest";
 import { IStand } from "../interfaces/IStand";
 import { db } from "../utils/firebase";
 import { standDataFormat } from "../utils/utilsStand";
 
 export class StandService {
-  static async getList({ page, perPage }: IQueryPagination) {
+  static async getList({ page, perPage }: IQueryListRequest) {
     const pageNumber = Number(page) || 1;
     const perPageNumber = Number(perPage) || 5;
 
