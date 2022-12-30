@@ -40,6 +40,15 @@ export class FairController {
       message: "Ubicacion de todas las ferias",
     });
   };
+  static getListReviews: Handler = async (req, res) => {
+    const reviews = await FairService.getListReviews(req.params, req.query);
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      data: reviews,
+      message: "Listado de opiniones",
+    });
+  };
   static saveReview: Handler = async (req, res) => {
     const review = await FairService.saveReview(req.uid, req.params, req.body);
 

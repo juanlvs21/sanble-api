@@ -14,4 +14,5 @@ export interface IReview {
   ownerPhoto?: string;
   owner: IRefBasic;
   parent: IRefBasic;
+  creationTime: string;
 }

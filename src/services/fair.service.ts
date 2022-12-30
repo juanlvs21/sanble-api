@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { ParamsDictionary } from "express-serve-static-core";
 import { StatusCodes } from "http-status-codes";
 
@@ -56,6 +57,7 @@ export class FairService {
       },
     };
   }
+
   static async getBest() {
     const fairsDoc = await db
       .collection("fairs")
@@ -69,6 +71,7 @@ export class FairService {
 
     return fairs;
   }
+
   static async getDetails(params: ParamsDictionary) {
     const { fairID } = params;
 
@@ -94,6 +97,52 @@ export class FairService {
 
     return fairs;
   }
+
+  static async getListReviews(
+    params: ParamsDictionary,
+    { page, perPage }: IQueryListRequest
+  ) {
+    const { fairID } = params;
+    const pageNumber = Number(page) || 1;
+    const perPageNumber = Number(perPage) || 5;
+
+    const reviewsPages: IReview[][] = [[]];
+
+    let snapshot = await db
+      .collection("reviews")
+      .orderBy("creationTime", "desc")
+      .where("parent", "==", db.doc(`fairs/${fairID}`))
+      .get();
+
+    let arrayPos = 0;
+
+    snapshot.forEach((doc) => {
+      reviewsPages[arrayPos].push(doc.data() as IReview);
+
+      if (reviewsPages[arrayPos].length === perPageNumber) {
+        reviewsPages.push([]);
+        arrayPos++;
+      }
+    });
+
+    if (pageNumber > reviewsPages.length) {
+      throw new ErrorHandler(
+        StatusCodes.UNPROCESSABLE_ENTITY,
+        `La página ${pageNumber} no existe`
+      );
+    }
+
+    return {
+      list: reviewsPages.length ? reviewsPages[pageNumber - 1] : [],
+      pagination: {
+        total: snapshot.docs.length || 0,
+        totalPages: reviewsPages.length,
+        page: pageNumber,
+        perPage: perPageNumber,
+      },
+    };
+  }
+
   static async saveReview(
     uid: string,
     params: ParamsDictionary,
@@ -115,21 +164,38 @@ export class FairService {
 
     const reviewID = `${userAuth.uid}-${fairID}`;
 
-    const reviewDocData: IReview = {
-      id: reviewID,
-      comment: comment,
-      stars: stars,
-      type: reviewType,
-      ownerName: userAuth.displayName || "",
-      ownerPhoto: userAuth.photoURL || "",
-      owner: db.doc(`user/${userAuth.uid}`),
-      parent: db.doc(`fairs/${fairID}`),
-    };
+    const reviewDoc = await db.collection("reviews").doc(reviewID).get();
+
+    let reviewData = {};
+
+    if (reviewDoc.exists) {
+      reviewData = {
+        comment: comment,
+        stars: stars,
+        ownerName: userAuth.displayName || "",
+        ownerPhoto: userAuth.photoURL || "",
+        updateTime: dayjs().format(),
+      };
+    } else {
+      const time = dayjs().format();
+      reviewData = {
+        id: reviewID,
+        comment: comment,
+        stars: stars,
+        type: reviewType,
+        ownerName: userAuth.displayName || "",
+        ownerPhoto: userAuth.photoURL || "",
+        owner: db.doc(`user/${userAuth.uid}`),
+        parent: db.doc(`fairs/${fairID}`),
+        creationTime: time,
+        updateTime: time,
+      };
+    }
 
     await db
       .collection("reviews")
       .doc(reviewID)
-      .set(reviewDocData, { merge: true });
+      .set(reviewData, { merge: true });
 
     const snapshotReviews = await db
       .collection("reviews")
@@ -149,11 +215,11 @@ export class FairService {
     await db.collection("fairs").doc(fairID).update({ stars: fairNewStars });
 
     return {
-      review: reviewDocData,
-      fair: {
-        ...fairDataFormat(fairDoc.data() as IFair),
-        stars: fairNewStars,
+      review: {
+        ...reviewDoc.data(),
+        ...reviewData,
       },
+      fairStars: fairNewStars,
     };
   }
 }
