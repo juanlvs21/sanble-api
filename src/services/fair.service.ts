@@ -4,7 +4,8 @@ import { StatusCodes } from "http-status-codes";
 import { ErrorHandler } from "../error";
 import { IFair, IFairGeo } from "../interfaces/IFair";
 import { IQueryListRequest } from "../interfaces/IRequest";
-import { db, OrderByDirection } from "../utils/firebase";
+import { EReviewType, IReview } from "../interfaces/IReview";
+import { auth, db, OrderByDirection } from "../utils/firebase";
 import { fairDataFormat, fairDataFormatGeo } from "../utils/utilsFair";
 
 export class FairService {
@@ -72,15 +73,16 @@ export class FairService {
     const { fairID } = params;
 
     if (!fairID)
-      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrado");
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
 
     const fairDoc = await db.collection("fairs").doc(fairID).get();
 
     if (!fairDoc.exists)
-      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrado");
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
 
     return fairDataFormat(fairDoc.data() as IFair);
   }
+
   static async getGeolocationAll() {
     const fairsDoc = await db.collection("fairs").get();
 
@@ -91,5 +93,67 @@ export class FairService {
     );
 
     return fairs;
+  }
+  static async saveReview(
+    uid: string,
+    params: ParamsDictionary,
+    body: Pick<IReview, "comment" | "stars">
+  ) {
+    const { fairID } = params;
+    const { stars, comment } = body;
+    const reviewType = EReviewType.FAIR;
+
+    const userAuth = await auth.getUser(uid);
+
+    if (!userAuth)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Usuario no encontrado");
+
+    const fairDoc = await db.collection("fairs").doc(fairID).get();
+
+    if (!fairDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
+
+    const reviewID = `${userAuth.uid}-${fairID}`;
+
+    const reviewDocData: IReview = {
+      id: reviewID,
+      comment: comment,
+      stars: stars,
+      type: reviewType,
+      ownerName: userAuth.displayName || "",
+      ownerPhoto: userAuth.photoURL || "",
+      owner: db.doc(`user/${userAuth.uid}`),
+      parent: db.doc(`fairs/${fairID}`),
+    };
+
+    await db
+      .collection("reviews")
+      .doc(reviewID)
+      .set(reviewDocData, { merge: true });
+
+    const snapshotReviews = await db
+      .collection("reviews")
+      .where("parent", "==", db.doc(`fairs/${fairID}`))
+      .get();
+
+    let reviewsCount = 0;
+    let reviewsStars = 0;
+
+    snapshotReviews.forEach((doc) => {
+      reviewsCount++;
+      reviewsStars = reviewsStars + doc.data().stars;
+    });
+
+    const fairNewStars = reviewsStars / reviewsCount;
+
+    await db.collection("fairs").doc(fairID).update({ stars: fairNewStars });
+
+    return {
+      review: reviewDocData,
+      fair: {
+        ...fairDataFormat(fairDoc.data() as IFair),
+        stars: fairNewStars,
+      },
+    };
   }
 }

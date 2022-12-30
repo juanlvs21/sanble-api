@@ -124,7 +124,7 @@ export class UserService {
     const fairDataDoc = await db.collection("fairs").doc(fairID).get();
 
     if (!fairDataDoc.exists)
-      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrado");
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
 
     const userData = userDataDoc.data();
 

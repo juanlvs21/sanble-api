@@ -28,12 +28,4 @@ const formSignup = [
     ),
 ];
 
-const formSignin = [
-  check("email", "La dirección de correo electrónico es requerida")
-    .not()
-    .isEmpty(),
-  check("password", "La contraseña es requerida").not().isEmpty(),
-];
-
 export const signUpValidator = validate(formSignup);
-export const signInValidator = validate(formSignin);
