@@ -116,7 +116,7 @@ export class FairService {
       .get();
 
     let arrayPos = 0;
-    let reviewUserData = {};
+    let reviewUserData = null;
 
     const reviewUserID = `${uid}-${fairID}`;
 
