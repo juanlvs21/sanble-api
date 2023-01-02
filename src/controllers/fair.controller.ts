@@ -41,7 +41,11 @@ export class FairController {
     });
   };
   static getListReviews: Handler = async (req, res) => {
-    const reviews = await FairService.getListReviews(req.params, req.query);
+    const reviews = await FairService.getListReviews(
+      req.uid,
+      req.params,
+      req.query
+    );
 
     res.status(StatusCodes.OK).json({
       statusCode: StatusCodes.OK,

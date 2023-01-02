@@ -18,6 +18,11 @@ export const sessionMiddleware: Handler = async (req, _res, next) => {
     const decodedToken = await auth.verifyIdToken(idToken);
     req.uid = decodedToken.uid;
 
+    const userAuth = await auth.getUser(req.uid);
+
+    if (!userAuth)
+      next(new ErrorHandler(StatusCodes.UNAUTHORIZED, "Usuario no encontrado"));
+
     next();
   } catch (err) {
     next(

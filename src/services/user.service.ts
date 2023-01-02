@@ -109,12 +109,8 @@ export class UserService {
 
   static async setFavoriteFair(uid: string, body: IUserFavoritesBody) {
     const { favoriteID } = body;
-    const userAuth = await auth.getUser(uid);
 
-    if (!userAuth)
-      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Usuario no encontrado");
-
-    const userDataDoc = await db.collection("users").doc(userAuth.uid).get();
+    const userDataDoc = await db.collection("users").doc(uid).get();
 
     if (!userDataDoc.exists)
       throw new ErrorHandler(StatusCodes.NOT_FOUND, "Usuario no encontrado");
@@ -136,7 +132,7 @@ export class UserService {
       favorites.push(fairID);
     }
 
-    await db.collection("users").doc(userAuth.uid).update({
+    await db.collection("users").doc(uid).update({
       favoriteFairs: favorites,
     });
 
@@ -145,12 +141,7 @@ export class UserService {
 
   static async setFavoriteStand(uid: string, body: IUserFavoritesBody) {
     const { favoriteID } = body;
-    const userAuth = await auth.getUser(uid);
-
-    if (!userAuth)
-      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Usuario no encontrado");
-
-    const userDataDoc = await db.collection("users").doc(userAuth.uid).get();
+    const userDataDoc = await db.collection("users").doc(uid).get();
 
     if (!userDataDoc.exists)
       throw new ErrorHandler(StatusCodes.NOT_FOUND, "Usuario no encontrado");
@@ -172,7 +163,7 @@ export class UserService {
       favorites.push(productID);
     }
 
-    await db.collection("users").doc(userAuth.uid).update({
+    await db.collection("users").doc(uid).update({
       favoriteStands: favorites,
     });
 
@@ -181,12 +172,8 @@ export class UserService {
 
   static async setFavoriteProduct(uid: string, body: IUserFavoritesBody) {
     const { favoriteID } = body;
-    const userAuth = await auth.getUser(uid);
 
-    if (!userAuth)
-      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Usuario no encontrado");
-
-    const userDataDoc = await db.collection("users").doc(userAuth.uid).get();
+    const userDataDoc = await db.collection("users").doc(uid).get();
 
     if (!userDataDoc.exists)
       throw new ErrorHandler(StatusCodes.NOT_FOUND, "Usuario no encontrado");
@@ -208,7 +195,7 @@ export class UserService {
       favorites.push(productID);
     }
 
-    await db.collection("users").doc(userAuth.uid).update({
+    await db.collection("users").doc(uid).update({
       favoriteProducts: favorites,
     });
 

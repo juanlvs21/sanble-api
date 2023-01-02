@@ -99,6 +99,7 @@ export class FairService {
   }
 
   static async getListReviews(
+    uid: string,
     params: ParamsDictionary,
     { page, perPage }: IQueryListRequest
   ) {
@@ -115,9 +116,14 @@ export class FairService {
       .get();
 
     let arrayPos = 0;
+    let reviewUserData = {};
+
+    const reviewUserID = `${uid}-${fairID}`;
 
     snapshot.forEach((doc) => {
       reviewsPages[arrayPos].push(doc.data() as IReview);
+
+      if (doc.data().id === reviewUserID) reviewUserData = doc.data();
 
       if (reviewsPages[arrayPos].length === perPageNumber) {
         reviewsPages.push([]);
@@ -133,6 +139,7 @@ export class FairService {
     }
 
     return {
+      form: reviewUserData,
       list: reviewsPages.length ? reviewsPages[pageNumber - 1] : [],
       pagination: {
         total: snapshot.docs.length || 0,
@@ -153,9 +160,6 @@ export class FairService {
     const reviewType = EReviewType.FAIR;
 
     const userAuth = await auth.getUser(uid);
-
-    if (!userAuth)
-      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Usuario no encontrado");
 
     const fairDoc = await db.collection("fairs").doc(fairID).get();
 
