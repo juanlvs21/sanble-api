@@ -19,9 +19,15 @@ export const fairDataFormat = (fair: IFair): IFair => {
     return { ...photo, creationTime };
   });
 
+  const stands = fair.stands.map((ref) => ({
+    id: ref.path.replace("stands/", ""),
+    path: ref.path,
+  }));
+
   const fairReturn = {
     ...fair,
     coverUrl,
+    stands,
     owner: {
       path: ownerRefPath,
       id: ownerRefPath.replace("users/", ""),

@@ -1,12 +1,6 @@
 import { Timestamp } from "firebase-admin/firestore";
 import { IRefBasic } from "./IRef";
 
-export interface IStandFairParticipates {
-  ref: IRefBasic;
-  name: string;
-  coverUrl?: string;
-}
-
 export interface IStand {
   id: string;
   name: string;
@@ -16,8 +10,10 @@ export interface IStand {
   description: string;
   products: any[]; // TODO: Create the correct data type
   promotions: any[]; // TODO: Create the correct data type
-  fairsParticipates: IStandFairParticipates[];
   owner: IRefBasic;
   slogan?: string;
   stars: number;
+  contactEmail: string;
+  contactPhone: string;
+  fairs: IRefBasic[];
 }

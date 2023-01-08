@@ -24,6 +24,7 @@ export interface IFair {
   contactPhone: string;
   photographs: IPhotograph[];
   coverUrl?: string;
+  stands: IRefBasic[];
 }
 
 export interface IFairGeo {
