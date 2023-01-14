@@ -11,15 +11,13 @@ import { fairDataFormat, fairDataFormatGeo } from "../utils/utilsFair";
 
 export class FairService {
   static async getList({
-    page,
-    perPage,
     orderBy,
     orderDir,
+    limit,
+    lastIndex,
   }: IQueryListRequest) {
-    const pageNumber = Number(page) || 1;
-    const perPageNumber = Number(perPage) || 5;
-
-    const fairsPages: IFair[][] = [[]];
+    const limitNumber = Number(limit) || 5;
+    const firstIndexNumber = Number(lastIndex) || 0;
 
     let orderField = orderBy || "stars";
     let orderDirection: OrderByDirection = orderDir || "desc";
@@ -29,31 +27,22 @@ export class FairService {
       .orderBy(orderField, orderDirection)
       .get();
 
-    let arrayPos = 0;
+    const fairsPages: IFair[] = [];
 
     snapshot.forEach((doc) => {
-      fairsPages[arrayPos].push(fairDataFormat(doc.data() as IFair));
-
-      if (fairsPages[arrayPos].length === perPageNumber) {
-        fairsPages.push([]);
-        arrayPos++;
-      }
+      fairsPages.push(fairDataFormat(doc.data() as IFair));
     });
 
-    if (pageNumber > fairsPages.length) {
-      throw new ErrorHandler(
-        StatusCodes.UNPROCESSABLE_ENTITY,
-        `La página ${pageNumber} no existe`
-      );
-    }
+    const lastIndexNew = firstIndexNumber + limitNumber;
 
     return {
-      list: fairsPages.length ? fairsPages[pageNumber - 1] : [],
+      list: fairsPages.length
+        ? fairsPages.slice(firstIndexNumber, lastIndexNew)
+        : [],
       pagination: {
         total: snapshot.docs.length || 0,
-        totalPages: fairsPages.length,
-        page: pageNumber,
-        perPage: perPageNumber,
+        lastIndex: lastIndexNew,
+        limit: limitNumber,
       },
     };
   }
@@ -101,51 +90,41 @@ export class FairService {
   static async getListReviews(
     uid: string,
     params: ParamsDictionary,
-    { page, perPage }: IQueryListRequest
+    { limit, lastIndex }: IQueryListRequest
   ) {
     const { fairID } = params;
-    const pageNumber = Number(page) || 1;
-    const perPageNumber = Number(perPage) || 5;
+    const limitNumber = Number(limit) || 5;
+    const firstIndexNumber = Number(lastIndex) || 0;
 
-    const reviewsPages: IReview[][] = [[]];
+    const reviewsPages: IReview[] = [];
 
-    let snapshot = await db
+    const snapshot = await db
       .collection("reviews")
       .orderBy("creationTime", "desc")
       .where("parent", "==", db.doc(`fairs/${fairID}`))
       .get();
 
-    let arrayPos = 0;
     let reviewUserData = null;
 
     const reviewUserID = `${uid}-${fairID}`;
 
     snapshot.forEach((doc) => {
-      reviewsPages[arrayPos].push(doc.data() as IReview);
+      reviewsPages.push(doc.data() as IReview);
 
       if (doc.data().id === reviewUserID) reviewUserData = doc.data();
-
-      if (reviewsPages[arrayPos].length === perPageNumber) {
-        reviewsPages.push([]);
-        arrayPos++;
-      }
     });
 
-    if (pageNumber > reviewsPages.length) {
-      throw new ErrorHandler(
-        StatusCodes.UNPROCESSABLE_ENTITY,
-        `La página ${pageNumber} no existe`
-      );
-    }
+    const lastIndexNew = firstIndexNumber + limitNumber;
 
     return {
       form: reviewUserData,
-      list: reviewsPages.length ? reviewsPages[pageNumber - 1] : [],
+      list: reviewsPages.length
+        ? reviewsPages.slice(firstIndexNumber, lastIndexNew)
+        : [],
       pagination: {
         total: snapshot.docs.length || 0,
-        totalPages: reviewsPages.length,
-        page: pageNumber,
-        perPage: perPageNumber,
+        lastIndex: lastIndexNew,
+        limit: limitNumber,
       },
     };
   }
