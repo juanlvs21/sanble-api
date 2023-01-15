@@ -6,8 +6,11 @@ import { ErrorHandler } from "../error";
 import { IFair, IFairGeo } from "../interfaces/IFair";
 import { IQueryListRequest } from "../interfaces/IRequest";
 import { EReviewType, IReview } from "../interfaces/IReview";
+import { IStand } from "../interfaces/IStand";
 import { auth, db, OrderByDirection } from "../utils/firebase";
+import { DEFAULT_LIMIT_VALUE } from "../utils/pagination";
 import { fairDataFormat, fairDataFormatGeo } from "../utils/utilsFair";
+import { standDataFormat } from "../utils/utilsStand";
 
 export class FairService {
   static async getList({
@@ -27,18 +30,16 @@ export class FairService {
       .orderBy(orderField, orderDirection)
       .get();
 
-    const fairsPages: IFair[] = [];
+    const fairs: IFair[] = [];
 
     snapshot.forEach((doc) => {
-      fairsPages.push(fairDataFormat(doc.data() as IFair));
+      fairs.push(fairDataFormat(doc.data() as IFair));
     });
 
     const lastIndexNew = firstIndexNumber + limitNumber;
 
     return {
-      list: fairsPages.length
-        ? fairsPages.slice(firstIndexNumber, lastIndexNew)
-        : [],
+      list: fairs.length ? fairs.slice(firstIndexNumber, lastIndexNew) : [],
       pagination: {
         total: snapshot.docs.length || 0,
         lastIndex: lastIndexNew,
@@ -93,10 +94,10 @@ export class FairService {
     { limit, lastIndex }: IQueryListRequest
   ) {
     const { fairID } = params;
-    const limitNumber = Number(limit) || 5;
+    const limitNumber = Number(limit) || DEFAULT_LIMIT_VALUE;
     const firstIndexNumber = Number(lastIndex) || 0;
 
-    const reviewsPages: IReview[] = [];
+    const reviews: IReview[] = [];
 
     const snapshot = await db
       .collection("reviews")
@@ -109,7 +110,7 @@ export class FairService {
     const reviewUserID = `${uid}-${fairID}`;
 
     snapshot.forEach((doc) => {
-      reviewsPages.push(doc.data() as IReview);
+      reviews.push(doc.data() as IReview);
 
       if (doc.data().id === reviewUserID) reviewUserData = doc.data();
     });
@@ -118,11 +119,51 @@ export class FairService {
 
     return {
       form: reviewUserData,
-      list: reviewsPages.length
-        ? reviewsPages.slice(firstIndexNumber, lastIndexNew)
-        : [],
+      list: reviews.length ? reviews.slice(firstIndexNumber, lastIndexNew) : [],
       pagination: {
         total: snapshot.docs.length || 0,
+        lastIndex: lastIndexNew,
+        limit: limitNumber,
+      },
+    };
+  }
+
+  static async getStands(
+    params: ParamsDictionary,
+    { limit, lastIndex }: IQueryListRequest
+  ) {
+    const { fairID } = params;
+    const limitNumber = Number(limit) || DEFAULT_LIMIT_VALUE;
+    const firstIndexNumber = Number(lastIndex) || 0;
+
+    if (!fairID)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
+
+    const fairDoc = await db.collection("fairs").doc(fairID).get();
+
+    if (!fairDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
+
+    const stands: IStand[] = [];
+    const fairStandsIDs = (fairDoc.data() as IFair).stands.map(
+      (stand) => stand.id
+    );
+
+    const snapshot = await db
+      .collection("stands")
+      .where("id", "in", fairStandsIDs)
+      .get();
+
+    snapshot.forEach((doc) => {
+      stands.push(standDataFormat(doc.data() as IStand));
+    });
+
+    const lastIndexNew = firstIndexNumber + limitNumber;
+
+    return {
+      list: stands.length ? stands.slice(firstIndexNumber, lastIndexNew) : [],
+      pagination: {
+        total: stands.length || 0,
         lastIndex: lastIndexNew,
         limit: limitNumber,
       },

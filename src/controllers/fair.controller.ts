@@ -13,6 +13,7 @@ export class FairController {
       message: "Listado de ferias",
     });
   };
+
   static getBest: Handler = async (_req, res) => {
     const fairs = await FairService.getBest();
 
@@ -22,6 +23,7 @@ export class FairController {
       message: "Listado de mejores ferias",
     });
   };
+
   static getDetails: Handler = async (req, res) => {
     const fair = await FairService.getDetails(req.params);
 
@@ -31,6 +33,7 @@ export class FairController {
       message: "Detalles de feria",
     });
   };
+
   static getGeolocationAll: Handler = async (_req, res) => {
     const fairs = await FairService.getGeolocationAll();
 
@@ -40,6 +43,7 @@ export class FairController {
       message: "Ubicacion de todas las ferias",
     });
   };
+
   static getListReviews: Handler = async (req, res) => {
     const reviews = await FairService.getListReviews(
       req.uid,
@@ -53,6 +57,17 @@ export class FairController {
       message: "Listado de opiniones",
     });
   };
+
+  static getStands: Handler = async (req, res) => {
+    const reviews = await FairService.getStands(req.params, req.query);
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      data: reviews,
+      message: "Listado de stands en esta feria",
+    });
+  };
+
   static saveReview: Handler = async (req, res) => {
     const review = await FairService.saveReview(req.uid, req.params, req.body);
 

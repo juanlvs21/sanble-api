@@ -1,17 +1,15 @@
-import { StatusCodes } from "http-status-codes";
-
-import { ErrorHandler } from "../error";
 import { IQueryListRequest } from "../interfaces/IRequest";
 import { IStand } from "../interfaces/IStand";
 import { db } from "../utils/firebase";
+import { DEFAULT_LIMIT_VALUE } from "../utils/pagination";
 import { standDataFormat } from "../utils/utilsStand";
 
 export class StandService {
   static async getList({ limit, lastIndex }: IQueryListRequest) {
-    const limitNumber = Number(limit) || 5;
+    const limitNumber = Number(limit) || DEFAULT_LIMIT_VALUE;
     const firstIndexNumber = Number(lastIndex) || 0;
 
-    const standsPages: IStand[] = [];
+    const stands: IStand[] = [];
 
     const snapshot = await db
       .collection("stands")
@@ -19,15 +17,13 @@ export class StandService {
       .get();
 
     snapshot.forEach((doc) => {
-      standsPages.push(standDataFormat(doc.data() as IStand));
+      stands.push(standDataFormat(doc.data() as IStand));
     });
 
     const lastIndexNew = firstIndexNumber + limitNumber;
 
     return {
-      list: standsPages.length
-        ? standsPages.slice(firstIndexNumber, lastIndexNew)
-        : [],
+      list: stands.length ? stands.slice(firstIndexNumber, lastIndexNew) : [],
       pagination: {
         total: snapshot.docs.length || 0,
         lastIndex: lastIndexNew,

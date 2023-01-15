@@ -9,6 +9,7 @@ router.get("/", sessionMiddleware, FairController.getList);
 router.get("/best", sessionMiddleware, FairController.getBest);
 router.get("/geolocation", sessionMiddleware, FairController.getGeolocationAll);
 router.get("/:fairID", sessionMiddleware, FairController.getDetails);
+router.get("/:fairID/stands", sessionMiddleware, FairController.getStands);
 router.get(
   "/:fairID/reviews",
   sessionMiddleware,
