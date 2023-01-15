@@ -1,20 +1,28 @@
 import { IQueryListRequest } from "../interfaces/IRequest";
 import { IStand } from "../interfaces/IStand";
-import { db } from "../utils/firebase";
+import { db, OrderByDirection } from "../utils/firebase";
 import { DEFAULT_LIMIT_VALUE } from "../utils/pagination";
 import { standDataFormat } from "../utils/utilsStand";
 
 export class StandService {
-  static async getList({ limit, lastIndex }: IQueryListRequest) {
+  static async getList({
+    orderBy,
+    orderDir,
+    limit,
+    lastIndex,
+  }: IQueryListRequest) {
     const limitNumber = Number(limit) || DEFAULT_LIMIT_VALUE;
     const firstIndexNumber = Number(lastIndex) || 0;
 
-    const stands: IStand[] = [];
+    const orderField = orderBy || "stars";
+    const orderDirection: OrderByDirection = orderDir || "desc";
 
     const snapshot = await db
       .collection("stands")
-      .orderBy("stars", "desc")
+      .orderBy(orderField, orderDirection)
       .get();
+
+    const stands: IStand[] = [];
 
     snapshot.forEach((doc) => {
       stands.push(standDataFormat(doc.data() as IStand));
@@ -31,6 +39,7 @@ export class StandService {
       },
     };
   }
+
   static async getBest() {
     const standsDoc = await db
       .collection("stands")

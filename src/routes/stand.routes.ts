@@ -4,7 +4,7 @@ import { sessionMiddleware } from "../middlewares/session.middleware";
 
 const router = new ErrorRouter();
 
-router.get("/list", sessionMiddleware, StandController.getList);
+router.get("/", sessionMiddleware, StandController.getList);
 router.get("/best", sessionMiddleware, StandController.getBest);
 
 export default router.router;

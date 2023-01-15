@@ -13,6 +13,7 @@ export class StandController {
       message: "Listado de stands",
     });
   };
+
   static getBest: Handler = async (_req, res) => {
     const stands = await StandService.getBest();
 

@@ -22,10 +22,10 @@ export class FairService {
     const limitNumber = Number(limit) || 5;
     const firstIndexNumber = Number(lastIndex) || 0;
 
-    let orderField = orderBy || "stars";
-    let orderDirection: OrderByDirection = orderDir || "desc";
+    const orderField = orderBy || "stars";
+    const orderDirection: OrderByDirection = orderDir || "desc";
 
-    let snapshot = await db
+    const snapshot = await db
       .collection("fairs")
       .orderBy(orderField, orderDirection)
       .get();
