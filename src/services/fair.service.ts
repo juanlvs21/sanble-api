@@ -152,6 +152,7 @@ export class FairService {
     const snapshot = await db
       .collection("stands")
       .where("id", "in", fairStandsIDs)
+      .orderBy("name", "asc")
       .get();
 
     snapshot.forEach((doc) => {
