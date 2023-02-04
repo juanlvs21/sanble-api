@@ -21,5 +21,10 @@ router.post(
   reviewValidator,
   FairController.saveReview
 );
+router.post(
+  "/:fairID/photograph",
+  sessionMiddleware,
+  FairController.uploadPhotograph
+);
 
 export default router.router;

@@ -2,6 +2,7 @@ import { Handler } from "express";
 import { StatusCodes } from "http-status-codes";
 
 import { FairService } from "../services/fair.service";
+import { parseFormData } from "../utils/request";
 
 export class FairController {
   static getList: Handler = async (req, res) => {
@@ -44,6 +45,16 @@ export class FairController {
     });
   };
 
+  static getStands: Handler = async (req, res) => {
+    const reviews = await FairService.getStands(req.params, req.query);
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      data: reviews,
+      message: "Listado de stands en esta feria",
+    });
+  };
+
   static getListReviews: Handler = async (req, res) => {
     const reviews = await FairService.getListReviews(
       req.uid,
@@ -58,16 +69,6 @@ export class FairController {
     });
   };
 
-  static getStands: Handler = async (req, res) => {
-    const reviews = await FairService.getStands(req.params, req.query);
-
-    res.status(StatusCodes.OK).json({
-      statusCode: StatusCodes.OK,
-      data: reviews,
-      message: "Listado de stands en esta feria",
-    });
-  };
-
   static saveReview: Handler = async (req, res) => {
     const review = await FairService.saveReview(req.uid, req.params, req.body);
 
@@ -75,6 +76,22 @@ export class FairController {
       statusCode: StatusCodes.CREATED,
       data: review,
       message: "Opinión guardada con éxito",
+    });
+  };
+
+  static uploadPhotograph: Handler = async (req, res) => {
+    const parse: any = await parseFormData(req);
+
+    const photograph = await FairService.uploadPhotograph(
+      req.uid,
+      req.params,
+      parse
+    );
+
+    res.status(StatusCodes.CREATED).json({
+      statusCode: StatusCodes.CREATED,
+      data: photograph,
+      message: "Fotografia guardada con éxito",
     });
   };
 }

@@ -1,13 +1,16 @@
 import dayjs from "dayjs";
 import { ParamsDictionary } from "express-serve-static-core";
 import { StatusCodes } from "http-status-codes";
+import { v4 as uuidv4 } from "uuid";
 
 import { ErrorHandler } from "../error";
 import { IFair, IFairGeo } from "../interfaces/IFair";
+import { IPhotograph, IPhotographForm } from "../interfaces/IPhotograph";
 import { IQueryListRequest } from "../interfaces/IRequest";
 import { EReviewType, IReview } from "../interfaces/IReview";
 import { IStand } from "../interfaces/IStand";
-import { auth, db, OrderByDirection } from "../utils/firebase";
+import { auth, db, OrderByDirection, Timestamp } from "../utils/firebase";
+import { uploadFile } from "../utils/imagekit";
 import { DEFAULT_LIMIT_VALUE } from "../utils/pagination";
 import { fairDataFormat, fairDataFormatGeo } from "../utils/utilsFair";
 import { standDataFormat } from "../utils/utilsStand";
@@ -245,6 +248,53 @@ export class FairService {
         ...reviewData,
       },
       fairStars: fairNewStars,
+    };
+  }
+
+  static async uploadPhotograph(
+    uid: string,
+    params: ParamsDictionary,
+    body: IPhotographForm
+  ) {
+    const { fairID } = params;
+
+    if (!fairID)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
+
+    const fairDoc = await db.collection("fairs").doc(fairID).get();
+
+    if (!fairDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
+
+    if ((fairDoc.data() as IFair).owner.path !== `users/${uid}`) {
+      throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
+    }
+
+    const { url } = await uploadFile({
+      file: body.files[0],
+      mimetype: body.files[0].mimetype || "",
+    });
+
+    body.isCover = body.isCover.toString() === "true";
+
+    let photographs = (fairDoc.data() as IFair).photographs.map((photo) =>
+      body.isCover ? { ...photo, isCover: false } : photo
+    );
+
+    const newPhoto: IPhotograph = {
+      id: uuidv4(),
+      description: body.description,
+      creationTimestamp: Timestamp.now(),
+      isCover: body.isCover,
+      url,
+    };
+
+    photographs = [newPhoto].concat(photographs);
+
+    await db.collection("fairs").doc(fairID).update({ photographs });
+
+    return {
+      photograph: newPhoto,
     };
   }
 }
