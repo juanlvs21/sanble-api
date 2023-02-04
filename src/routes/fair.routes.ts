@@ -25,7 +25,7 @@ router.post(
 router.post(
   "/:fairID/photograph",
   sessionMiddleware,
-  fairPhotographValidator,
+  // fairPhotographValidator,
   FairController.uploadPhotograph
 );
 

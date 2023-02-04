@@ -13,6 +13,7 @@ import { auth, db, OrderByDirection, Timestamp } from "../utils/firebase";
 import { uploadFile } from "../utils/imagekit";
 import { DEFAULT_LIMIT_VALUE } from "../utils/pagination";
 import { fairDataFormat, fairDataFormatGeo } from "../utils/utilsFair";
+import { validPhotographForm } from "../utils/utilsPhotograph";
 import { standDataFormat } from "../utils/utilsStand";
 
 export class FairService {
@@ -257,6 +258,12 @@ export class FairService {
     body: IPhotographForm
   ) {
     const { fairID } = params;
+
+    const validatorResult = validPhotographForm(body);
+
+    if (validatorResult.length) {
+      throw new ErrorHandler(StatusCodes.UNPROCESSABLE_ENTITY, validatorResult);
+    }
 
     if (!fairID)
       throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");

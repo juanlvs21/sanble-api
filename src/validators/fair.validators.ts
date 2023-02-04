@@ -24,8 +24,8 @@ const formFairPhotograph = [
       error = "El tamaño máximo del archivo es de 10MB";
     }
 
-    if (error) throw new Error(error);
-    else return true;
+    if (error) return Promise.reject(error);
+    else return Promise.resolve("Fotografía válida");
   }),
   check("description").custom(async (_value, { req }) => {
     const parse: any = await parseFormData(req as any);
