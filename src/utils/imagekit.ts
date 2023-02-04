@@ -12,8 +12,8 @@ import { IFileUploadInput } from "../interfaces/IFile";
 
 export const EXTENSION_FILE: Record<string, string> = {
   "image/png": "png",
+  "image/jpg": "jpg",
   "image/jpeg": "jpeg",
-  "image/jpg": "jpeg",
 };
 
 export const uploadFile = async ({

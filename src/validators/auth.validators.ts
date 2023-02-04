@@ -6,8 +6,7 @@ const lengthMax = 40;
 
 const formSignup = [
   check("name", "El nombre es requerido")
-    .not()
-    .isEmpty()
+    .notEmpty()
     .isLength({ max: lengthMax })
     .withMessage(`El nombre debe tener máximo ${lengthMax} caracteres`),
   check("email", "El correo electrónico es requerido")
@@ -20,8 +19,7 @@ const formSignup = [
     "password",
     `La contraseña debe tener mínimo ${passMin} y máximo ${lengthMax} caracteres`
   )
-    .not()
-    .isEmpty()
+    .notEmpty()
     .isLength({ min: passMin, max: lengthMax })
     .withMessage(
       `La contraseña debe tener mínimo ${passMin} y máximo ${lengthMax} caracteres`
