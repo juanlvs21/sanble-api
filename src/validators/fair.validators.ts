@@ -1,4 +1,3 @@
-import { Request } from "express";
 import { check } from "express-validator";
 
 import { validate } from "../middlewares/validator.middleware";
@@ -8,7 +7,7 @@ const lengthMax = 500;
 
 const formFairPhotograph = [
   check("image").custom(async (_value, { req }) => {
-    const parse: any = await parseFormData(req as Request<Record<string, any>>);
+    const parse: any = await parseFormData(req as any);
 
     if (!parse.files.length) {
       throw new Error("La fotografía es requerida");
@@ -29,7 +28,7 @@ const formFairPhotograph = [
     return true;
   }),
   check("description").custom(async (_value, { req }) => {
-    const parse: any = await parseFormData(req as Request<Record<string, any>>);
+    const parse: any = await parseFormData(req as any);
 
     if (!parse.description) {
       throw new Error("La descripción es requerida");
