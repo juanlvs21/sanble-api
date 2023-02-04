@@ -4,6 +4,7 @@ import { IFormidableFiles } from "./IFile";
 
 export interface IPhotographBase {
   id?: string;
+  name: string;
   description: string;
   creationTimestamp?: Timestamp;
   creationTime?: string;

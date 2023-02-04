@@ -28,10 +28,21 @@ const formFairPhotograph = [
 
     return true;
   }),
-  check("description", `La descripción es requerida`)
-    .notEmpty()
-    .isLength({ max: lengthMax })
-    .withMessage(`La descripción debe tener máximo ${lengthMax} caracteres`),
+  check("description").custom(async (_value, { req }) => {
+    const parse: any = await parseFormData(req as Request<Record<string, any>>);
+
+    if (!parse.description) {
+      throw new Error("La descripción es requerida");
+    }
+
+    if (parse.description.length > lengthMax) {
+      throw new Error(
+        `La descripción debe tener máximo ${lengthMax} caracteres`
+      );
+    }
+
+    return true;
+  }),
 ];
 
 export const fairPhotographValidator = validate(formFairPhotograph);

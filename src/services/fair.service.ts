@@ -270,7 +270,7 @@ export class FairService {
       throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
     }
 
-    const { url } = await uploadFile({
+    const { url, name } = await uploadFile({
       file: body.files[0],
       mimetype: body.files[0].mimetype || "",
     });
@@ -286,6 +286,7 @@ export class FairService {
       description: body.description,
       creationTimestamp: Timestamp.now(),
       isCover: body.isCover,
+      name,
       url,
     };
 
