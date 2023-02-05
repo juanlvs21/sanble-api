@@ -91,7 +91,17 @@ export class FairController {
     res.status(StatusCodes.CREATED).json({
       statusCode: StatusCodes.CREATED,
       data: photograph,
-      message: "Fotografia guardada con éxito",
+      message: "Fotografía guardada con éxito",
+    });
+  };
+
+  static getPhotograph: Handler = async (req, res) => {
+    const photograph = await FairService.getPhotograph(req.uid, req.params);
+
+    res.status(StatusCodes.CREATED).json({
+      statusCode: StatusCodes.CREATED,
+      data: photograph,
+      message: "Detalles de Fotografía",
     });
   };
 }

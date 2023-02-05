@@ -305,4 +305,34 @@ export class FairService {
       photograph: newPhoto,
     };
   }
+
+  static async getPhotograph(uid: string, params: ParamsDictionary) {
+    const { fairID, photoID } = params;
+
+    if (!fairID)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
+
+    if (!photoID)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Fotografía no encontrada");
+
+    const fairDoc = await db.collection("fairs").doc(fairID).get();
+
+    if (!fairDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
+
+    if ((fairDoc.data() as IFair).owner.path !== `users/${uid}`) {
+      throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
+    }
+
+    const photograph = (fairDoc.data() as IFair).photographs.filter(
+      (photo) => photo.id === photoID
+    );
+
+    if (!photograph.length)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Fotografía no encontrada");
+
+    return {
+      photograph,
+    };
+  }
 }

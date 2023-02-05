@@ -25,8 +25,12 @@ router.post(
 router.post(
   "/:fairID/photograph",
   sessionMiddleware,
-  // fairPhotographValidator,
   FairController.uploadPhotograph
+);
+router.get(
+  "/:fairID/photograph/:photoID",
+  sessionMiddleware,
+  FairController.getPhotograph
 );
 
 export default router.router;
