@@ -98,8 +98,8 @@ export class FairController {
   static getPhotograph: Handler = async (req, res) => {
     const photograph = await FairService.getPhotograph(req.uid, req.params);
 
-    res.status(StatusCodes.CREATED).json({
-      statusCode: StatusCodes.CREATED,
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
       data: photograph,
       message: "Detalles de Fotografía",
     });

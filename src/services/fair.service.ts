@@ -332,7 +332,7 @@ export class FairService {
       throw new ErrorHandler(StatusCodes.NOT_FOUND, "Fotografía no encontrada");
 
     return {
-      photograph,
+      photograph: photograph[0],
     };
   }
 }
