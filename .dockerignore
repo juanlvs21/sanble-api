@@ -5,3 +5,4 @@ node_modules
 .git
 firebase-adminsdk.json
 build
+.github
