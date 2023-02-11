@@ -16,18 +16,18 @@ export const EXTENSION_FILE: Record<string, string> = {
   "image/jpeg": "jpeg",
 };
 
+const imagekit = new ImageKit({
+  publicKey: IMAGEKIT_PUBLIC_KEY,
+  privateKey: IMAGEKIT_PRIVATE_KEY,
+  urlEndpoint: IMAGEKIT_URL_ENDPOINT,
+});
+
 export const uploadFile = async ({
   file,
   mimetype,
   fileName,
   folder,
 }: IFileUploadInput): Promise<UploadResponse> => {
-  const imagekit = new ImageKit({
-    publicKey: IMAGEKIT_PUBLIC_KEY,
-    privateKey: IMAGEKIT_PRIVATE_KEY,
-    urlEndpoint: IMAGEKIT_URL_ENDPOINT,
-  });
-
   return await new Promise((resolve, reject) => {
     let name = "";
 
@@ -41,7 +41,19 @@ export const uploadFile = async ({
         folder,
       })
       .then((response) => {
-        console.log(response);
+        resolve(response);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};
+
+export const deleteFile = async (fileId: string) => {
+  return await new Promise((resolve, reject) => {
+    imagekit
+      .deleteFile(fileId)
+      .then((response) => {
         resolve(response);
       })
       .catch((error) => {

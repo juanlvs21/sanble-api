@@ -31,5 +31,10 @@ router.get(
   sessionMiddleware,
   FairController.getPhotograph
 );
+router.delete(
+  "/:fairID/photograph/:photoID",
+  sessionMiddleware,
+  FairController.deletePhotograph
+);
 
 export default router.router;

@@ -104,4 +104,14 @@ export class FairController {
       message: "Detalles de Fotografía",
     });
   };
+
+  static deletePhotograph: Handler = async (req, res) => {
+    const photograph = await FairService.deletePhotograph(req.uid, req.params);
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      data: photograph,
+      message: "Fotografía Eliminada con éxito",
+    });
+  };
 }

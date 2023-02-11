@@ -37,9 +37,10 @@ export const validPhotographForm = (form: IPhotographForm) => {
 };
 
 export const photographFormat = ({
+  fileId,
   creationTimestamp,
   ...rest
-}: IPhotograph): IPhotograph => ({
+}: IPhotograph): Omit<IPhotograph, "fileId"> => ({
   ...rest,
   creationTime: dayjs((creationTimestamp?.seconds || 0) * 1000).format(),
 });

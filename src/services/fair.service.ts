@@ -11,7 +11,7 @@ import { IQueryListRequest } from "../interfaces/IRequest";
 import { EReviewType, IReview } from "../interfaces/IReview";
 import { IStand } from "../interfaces/IStand";
 import { auth, db, OrderByDirection, Timestamp } from "../utils/firebase";
-import { uploadFile } from "../utils/imagekit";
+import { deleteFile, uploadFile } from "../utils/imagekit";
 import { DEFAULT_LIMIT_VALUE } from "../utils/pagination";
 import { fairDataFormat, fairDataFormatGeo } from "../utils/utilsFair";
 import {
@@ -285,7 +285,7 @@ export class FairService {
       throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
     }
 
-    const { url, name } = await uploadFile({
+    const { url, name, fileId } = await uploadFile({
       file: body.files[0],
       mimetype: body.files[0].mimetype || "",
       folder: `${EFolderName.FAIRS}/${fairData.id}`,
@@ -302,6 +302,7 @@ export class FairService {
       description: body.description,
       creationTimestamp: Timestamp.now(),
       isCover: body.isCover || fairData.photographs.length === 0,
+      fileId,
       name,
       url,
     };
@@ -311,7 +312,7 @@ export class FairService {
     await db.collection("fairs").doc(fairID).update({ photographs });
 
     return {
-      photograph: newPhoto,
+      photograph: photographFormat(newPhoto),
       ownerID: fairData.owner.path.replace("users/", ""),
     };
   }
@@ -342,6 +343,48 @@ export class FairService {
     return {
       photograph: photographFormat(photograph[0]),
       ownerID: fairData.owner.path.replace("users/", ""),
+    };
+  }
+
+  static async deletePhotograph(uid: string, params: ParamsDictionary) {
+    const { fairID, photoID } = params;
+
+    if (!fairID)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
+
+    if (!photoID)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Fotografía no encontrada");
+
+    const fairDoc = await db.collection("fairs").doc(fairID).get();
+
+    if (!fairDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
+
+    const fairData = fairDoc.data() as IFair;
+
+    if (fairData.owner.path !== `users/${uid}`) {
+      throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
+    }
+
+    const photographs: IPhotograph[] = [];
+    let fileId = "";
+
+    fairData.photographs.forEach((photo) => {
+      if (photo.id === photoID) fileId = photo.fileId;
+      else photographs.push(photo);
+    });
+
+    if (!fileId)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Fotografía no encontrada");
+
+    const data = await deleteFile(fileId);
+
+    console.log(data);
+
+    await db.collection("fairs").doc(fairID).update({ photographs });
+
+    return {
+      photographID: photoID,
     };
   }
 }

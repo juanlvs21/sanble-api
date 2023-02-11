@@ -13,6 +13,7 @@ export interface IPhotographBase {
 
 export interface IPhotograph extends IPhotographBase {
   url: string;
+  fileId: string;
 }
 
 export interface IPhotographForm extends IPhotographBase {
