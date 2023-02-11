@@ -1,4 +1,6 @@
-import { IPhotographForm } from "../interfaces/IPhotograph";
+import dayjs from "dayjs";
+
+import { IPhotograph, IPhotographForm } from "../interfaces/IPhotograph";
 
 const lengthMax = 500;
 
@@ -32,3 +34,11 @@ export const validPhotographForm = (form: IPhotographForm) => {
 
   return errors;
 };
+
+export const photographFormat = ({
+  creationTimestamp,
+  ...rest
+}: IPhotograph): IPhotograph => ({
+  ...rest,
+  creationTime: dayjs((creationTimestamp?.seconds || 0) * 1000).format(),
+});

@@ -13,7 +13,10 @@ import { auth, db, OrderByDirection, Timestamp } from "../utils/firebase";
 import { uploadFile } from "../utils/imagekit";
 import { DEFAULT_LIMIT_VALUE } from "../utils/pagination";
 import { fairDataFormat, fairDataFormatGeo } from "../utils/utilsFair";
-import { validPhotographForm } from "../utils/utilsPhotograph";
+import {
+  photographFormat,
+  validPhotographForm,
+} from "../utils/utilsPhotograph";
 import { standDataFormat } from "../utils/utilsStand";
 
 export class FairService {
@@ -153,15 +156,17 @@ export class FairService {
       (stand) => stand.id
     );
 
-    const snapshot = await db
-      .collection("stands")
-      .where("id", "in", fairStandsIDs)
-      .orderBy("name", "asc")
-      .get();
+    if (fairStandsIDs.length) {
+      const snapshot = await db
+        .collection("stands")
+        .where("id", "in", fairStandsIDs)
+        .orderBy("name", "asc")
+        .get();
 
-    snapshot.forEach((doc) => {
-      stands.push(standDataFormat(doc.data() as IStand));
-    });
+      snapshot.forEach((doc) => {
+        stands.push(standDataFormat(doc.data() as IStand));
+      });
+    }
 
     const lastIndexNew = firstIndexNumber + limitNumber;
 
@@ -273,7 +278,9 @@ export class FairService {
     if (!fairDoc.exists)
       throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
 
-    if ((fairDoc.data() as IFair).owner.path !== `users/${uid}`) {
+    const fairData = fairDoc.data() as IFair;
+
+    if (fairData.owner.path !== `users/${uid}`) {
       throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
     }
 
@@ -284,7 +291,7 @@ export class FairService {
 
     body.isCover = body.isCover.toString() === "true";
 
-    let photographs = (fairDoc.data() as IFair).photographs.map((photo) =>
+    let photographs = fairData.photographs.map((photo) =>
       body.isCover ? { ...photo, isCover: false } : photo
     );
 
@@ -292,7 +299,7 @@ export class FairService {
       id: uuidv4(),
       description: body.description,
       creationTimestamp: Timestamp.now(),
-      isCover: body.isCover,
+      isCover: body.isCover || fairData.photographs.length === 0,
       name,
       url,
     };
@@ -303,6 +310,7 @@ export class FairService {
 
     return {
       photograph: newPhoto,
+      ownerID: fairData.owner.path.replace("users/", ""),
     };
   }
 
@@ -320,11 +328,9 @@ export class FairService {
     if (!fairDoc.exists)
       throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
 
-    if ((fairDoc.data() as IFair).owner.path !== `users/${uid}`) {
-      throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
-    }
+    const fairData = fairDoc.data() as IFair;
 
-    const photograph = (fairDoc.data() as IFair).photographs.filter(
+    const photograph = fairData.photographs.filter(
       (photo) => photo.id === photoID
     );
 
@@ -332,7 +338,8 @@ export class FairService {
       throw new ErrorHandler(StatusCodes.NOT_FOUND, "Fotografía no encontrada");
 
     return {
-      photograph: photograph[0],
+      photograph: photographFormat(photograph[0]),
+      ownerID: fairData.owner.path.replace("users/", ""),
     };
   }
 }
