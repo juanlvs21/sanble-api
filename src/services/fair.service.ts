@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import { ErrorHandler } from "../error";
 import { IFair, IFairGeo } from "../interfaces/IFair";
+import { EFolderName } from "../interfaces/IFile";
 import { IPhotograph, IPhotographForm } from "../interfaces/IPhotograph";
 import { IQueryListRequest } from "../interfaces/IRequest";
 import { EReviewType, IReview } from "../interfaces/IReview";
@@ -287,6 +288,7 @@ export class FairService {
     const { url, name } = await uploadFile({
       file: body.files[0],
       mimetype: body.files[0].mimetype || "",
+      folder: EFolderName.FAIRS,
     });
 
     body.isCover = body.isCover.toString() === "true";

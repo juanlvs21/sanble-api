@@ -20,6 +20,7 @@ export const uploadFile = async ({
   file,
   mimetype,
   fileName,
+  folder,
 }: IFileUploadInput): Promise<UploadResponse> => {
   const imagekit = new ImageKit({
     publicKey: IMAGEKIT_PUBLIC_KEY,
@@ -37,6 +38,7 @@ export const uploadFile = async ({
       .upload({
         file: fs.createReadStream(file.filepath),
         fileName: name,
+        folder,
       })
       .then((response) => {
         console.log(response);
