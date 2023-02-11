@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import { IPhotograph, IPhotographForm } from "../interfaces/IPhotograph";
 
 const lengthMax = 500;
+const fileMax10MB = 10000000;
 
 export const validPhotographForm = (form: IPhotographForm) => {
   const errors: string[] = [];
@@ -27,7 +28,7 @@ export const validPhotographForm = (form: IPhotographForm) => {
       errors.push("Los tipos de archivos permitidos son jpg, png, jpeg");
     }
 
-    if (file.size > 1000000) {
+    if (file.size > fileMax10MB) {
       errors.push("El tamaño máximo del archivo es de 10MB");
     }
   }
