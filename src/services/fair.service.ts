@@ -288,7 +288,7 @@ export class FairService {
     const { url, name } = await uploadFile({
       file: body.files[0],
       mimetype: body.files[0].mimetype || "",
-      folder: EFolderName.FAIRS,
+      folder: `${EFolderName.FAIRS}/${fairData.id}`,
     });
 
     body.isCover = body.isCover.toString() === "true";
