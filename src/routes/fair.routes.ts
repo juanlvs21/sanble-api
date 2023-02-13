@@ -21,15 +21,15 @@ router.post(
   reviewValidator,
   FairController.saveReview
 );
-router.post(
-  "/:fairID/photograph",
-  sessionMiddleware,
-  FairController.uploadPhotograph
-);
 router.get(
   "/:fairID/photograph/:photoID",
   sessionMiddleware,
   FairController.getPhotograph
+);
+router.post(
+  "/:fairID/photograph",
+  sessionMiddleware,
+  FairController.uploadPhotograph
 );
 router.delete(
   "/:fairID/photograph/:photoID",

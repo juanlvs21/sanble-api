@@ -96,7 +96,7 @@ export class FairController {
   };
 
   static getPhotograph: Handler = async (req, res) => {
-    const photograph = await FairService.getPhotograph(req.uid, req.params);
+    const photograph = await FairService.getPhotograph(req.params);
 
     res.status(StatusCodes.OK).json({
       statusCode: StatusCodes.OK,

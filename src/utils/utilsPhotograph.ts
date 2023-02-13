@@ -8,7 +8,7 @@ const fileMax10MB = 10000000;
 export const validPhotographForm = (form: IPhotographForm) => {
   const errors: string[] = [];
 
-  const description = form.description;
+  const { description, id } = form;
   const file = form.files[0] || null;
 
   if (!description) {
@@ -19,17 +19,19 @@ export const validPhotographForm = (form: IPhotographForm) => {
     }
   }
 
-  if (!file) {
-    errors.push("La fotografía es requerida");
-  } else {
-    if (
-      !["image/png", "image/jpg", "image/jpeg"].includes(file?.mimetype || "")
-    ) {
-      errors.push("Los tipos de archivos permitidos son jpg, png, jpeg");
-    }
+  if (!id) {
+    if (!file) {
+      errors.push("La fotografía es requerida");
+    } else {
+      if (
+        !["image/png", "image/jpg", "image/jpeg"].includes(file?.mimetype || "")
+      ) {
+        errors.push("Los tipos de archivos permitidos son jpg, png, jpeg");
+      }
 
-    if (file.size > fileMax10MB) {
-      errors.push("El tamaño máximo del archivo es de 10MB");
+      if (file.size > fileMax10MB) {
+        errors.push("El tamaño máximo del archivo es de 10MB");
+      }
     }
   }
 
