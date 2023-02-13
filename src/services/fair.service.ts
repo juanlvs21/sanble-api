@@ -258,6 +258,35 @@ export class FairService {
     };
   }
 
+  static async getPhotograph(params: ParamsDictionary) {
+    const { fairID, photoID } = params;
+
+    if (!fairID)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
+
+    if (!photoID)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Fotografía no encontrada");
+
+    const fairDoc = await db.collection("fairs").doc(fairID).get();
+
+    if (!fairDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
+
+    const fairData = fairDoc.data() as IFair;
+
+    const photograph = fairData.photographs.filter(
+      (photo) => photo.id === photoID
+    );
+
+    if (!photograph.length)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Fotografía no encontrada");
+
+    return {
+      photograph: photographFormat(photograph[0]),
+      ownerID: fairData.owner.path.replace("users/", ""),
+    };
+  }
+
   static async uploadPhotograph(
     uid: string,
     params: ParamsDictionary,
@@ -285,9 +314,71 @@ export class FairService {
       throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
     }
 
+    const { url, name, fileId } = await uploadFile({
+      file: body.files[0],
+      mimetype: body.files[0].mimetype || "",
+      folder: `${EFolderName.FAIRS}/${fairData.id}`,
+    });
+
+    body.isCover = body.isCover.toString() === "true";
+
+    let photographs = fairData.photographs.map((photo) =>
+      body.isCover ? { ...photo, isCover: false } : photo
+    );
+
+    const newPhoto: IPhotograph = {
+      id: uuidv4(),
+      description: body.description,
+      creationTimestamp: Timestamp.now(),
+      isCover: body.isCover || fairData.photographs.length === 0,
+      fileId,
+      name,
+      url,
+    };
+
+    photographs = [newPhoto].concat(photographs);
+
+    await db.collection("fairs").doc(fairID).update({ photographs });
+
+    return {
+      photograph: photographFormat(newPhoto),
+      ownerID: fairData.owner.path.replace("users/", ""),
+    };
+  }
+
+  static async updatePhotograph(
+    uid: string,
+    params: ParamsDictionary,
+    body: IPhotographForm
+  ) {
+    const { fairID, photoID } = params;
+
+    const validatorResult = validPhotographForm(body, false);
+
+    if (validatorResult.length) {
+      throw new ErrorHandler(StatusCodes.UNPROCESSABLE_ENTITY, validatorResult);
+    }
+
+    if (!fairID)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
+
+    if (!photoID)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Fotografía no encontrada");
+
+    const fairDoc = await db.collection("fairs").doc(fairID).get();
+
+    if (!fairDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
+
+    const fairData = fairDoc.data() as IFair;
+
+    if (fairData.owner.path !== `users/${uid}`) {
+      throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
+    }
+
     let formPhoto = fairData.photographs.find((photo) => photo.id === body.id);
 
-    if (body.id && !formPhoto) {
+    if (!body.id && !formPhoto) {
       throw new ErrorHandler(StatusCodes.NOT_FOUND, "Fotografía no encontrada");
     }
 
@@ -329,35 +420,6 @@ export class FairService {
 
     return {
       photograph: photographFormat(formPhoto as IPhotograph),
-      ownerID: fairData.owner.path.replace("users/", ""),
-    };
-  }
-
-  static async getPhotograph(params: ParamsDictionary) {
-    const { fairID, photoID } = params;
-
-    if (!fairID)
-      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
-
-    if (!photoID)
-      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Fotografía no encontrada");
-
-    const fairDoc = await db.collection("fairs").doc(fairID).get();
-
-    if (!fairDoc.exists)
-      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
-
-    const fairData = fairDoc.data() as IFair;
-
-    const photograph = fairData.photographs.filter(
-      (photo) => photo.id === photoID
-    );
-
-    if (!photograph.length)
-      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Fotografía no encontrada");
-
-    return {
-      photograph: photographFormat(photograph[0]),
       ownerID: fairData.owner.path.replace("users/", ""),
     };
   }

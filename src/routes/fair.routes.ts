@@ -31,6 +31,11 @@ router.post(
   sessionMiddleware,
   FairController.uploadPhotograph
 );
+router.post(
+  "/:fairID/photograph/:photoID",
+  sessionMiddleware,
+  FairController.updatePhotograph
+);
 router.delete(
   "/:fairID/photograph/:photoID",
   sessionMiddleware,

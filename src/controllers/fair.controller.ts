@@ -79,6 +79,16 @@ export class FairController {
     });
   };
 
+  static getPhotograph: Handler = async (req, res) => {
+    const photograph = await FairService.getPhotograph(req.params);
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      data: photograph,
+      message: "Detalles de Fotografía",
+    });
+  };
+
   static uploadPhotograph: Handler = async (req, res) => {
     const parse: any = await parseFormData(req);
 
@@ -95,13 +105,19 @@ export class FairController {
     });
   };
 
-  static getPhotograph: Handler = async (req, res) => {
-    const photograph = await FairService.getPhotograph(req.params);
+  static updatePhotograph: Handler = async (req, res) => {
+    const parse: any = await parseFormData(req);
 
-    res.status(StatusCodes.OK).json({
-      statusCode: StatusCodes.OK,
+    const photograph = await FairService.updatePhotograph(
+      req.uid,
+      req.params,
+      parse
+    );
+
+    res.status(StatusCodes.CREATED).json({
+      statusCode: StatusCodes.CREATED,
       data: photograph,
-      message: "Detalles de Fotografía",
+      message: "Fotografía guardada con éxito",
     });
   };
 
