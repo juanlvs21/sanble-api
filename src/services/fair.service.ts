@@ -376,50 +376,47 @@ export class FairService {
       throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
     }
 
-    let formPhoto = fairData.photographs.find((photo) => photo.id === body.id);
+    let formPhoto = fairData.photographs.find((photo) => photo.id === photoID);
 
-    if (!body.id && !formPhoto) {
+    if (!formPhoto) {
       throw new ErrorHandler(StatusCodes.NOT_FOUND, "Fotografía no encontrada");
     }
 
     body.isCover = body.isCover.toString() === "true";
 
-    let photographs = fairData.photographs.map((photo) => {
-      if (photo.id === body.id) {
-        return {
+    const photographs: IPhotograph[] = [];
+
+    for (let i = 0; i < fairData.photographs.length; i++) {
+      const photo = fairData.photographs[i];
+      if (photo.id === photoID) {
+        formPhoto = {
           ...photo,
           description: body.description,
           isCover: body.isCover,
         };
+
+        if (body.files.length) {
+          const { url, name, fileId } = await uploadFile({
+            file: body.files[0],
+            mimetype: body.files[0].mimetype || "",
+            folder: `${EFolderName.FAIRS}/${fairData.id}`,
+          });
+
+          await deleteFile(photo.fileId);
+
+          formPhoto = { ...formPhoto, url, name, fileId };
+        }
+
+        photographs.push(formPhoto);
       } else {
-        return body.isCover ? { ...photo, isCover: false } : photo;
+        photographs.push(body.isCover ? { ...photo, isCover: false } : photo);
       }
-    });
-
-    if (body.files.length) {
-      const { url, name, fileId } = await uploadFile({
-        file: body.files[0],
-        mimetype: body.files[0].mimetype || "",
-        folder: `${EFolderName.FAIRS}/${fairData.id}`,
-      });
-
-      formPhoto = {
-        id: uuidv4(),
-        description: body.description,
-        creationTimestamp: Timestamp.now(),
-        isCover: body.isCover || fairData.photographs.length === 0,
-        fileId,
-        name,
-        url,
-      };
-
-      photographs = [formPhoto].concat(photographs);
     }
 
     await db.collection("fairs").doc(fairID).update({ photographs });
 
     return {
-      photograph: photographFormat(formPhoto as IPhotograph),
+      photograph: photographFormat(formPhoto),
       ownerID: fairData.owner.path.replace("users/", ""),
     };
   }
