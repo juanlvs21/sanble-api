@@ -413,6 +413,9 @@ export class FairService {
       }
     }
 
+    const hasCover = photographs.some((photo) => photo.isCover);
+    if (!hasCover && photographs.length) photographs[0].isCover = true;
+
     await db.collection("fairs").doc(fairID).update({ photographs });
 
     return {
@@ -437,6 +440,10 @@ export class FairService {
 
     const fairData = fairDoc.data() as IFair;
 
+    if (fairData.owner.path !== `users/${uid}`) {
+      throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
+    }
+
     const photographs: IPhotograph[] = [];
     let fileId = "";
 
@@ -448,9 +455,10 @@ export class FairService {
     if (!fileId)
       throw new ErrorHandler(StatusCodes.NOT_FOUND, "Fotografía no encontrada");
 
-    const data = await deleteFile(fileId);
+    await deleteFile(fileId);
 
-    console.log(data);
+    const hasCover = photographs.some((photo) => photo.isCover);
+    if (!hasCover && photographs.length) photographs[0].isCover = true;
 
     await db.collection("fairs").doc(fairID).update({ photographs });
 
