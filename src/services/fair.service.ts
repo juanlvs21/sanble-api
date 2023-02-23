@@ -96,46 +96,6 @@ export class FairService {
     return fairs;
   }
 
-  static async getListReviews(
-    uid: string,
-    params: ParamsDictionary,
-    { limit, lastIndex }: IQueryListRequest
-  ) {
-    const { fairID } = params;
-    const limitNumber = Number(limit) || DEFAULT_LIMIT_VALUE;
-    const firstIndexNumber = Number(lastIndex) || 0;
-
-    const reviews: IReview[] = [];
-
-    const snapshot = await db
-      .collection("reviews")
-      .orderBy("creationTime", "desc")
-      .where("parent", "==", db.doc(`fairs/${fairID}`))
-      .get();
-
-    let reviewUserData = null;
-
-    const reviewUserID = `${uid}-${fairID}`;
-
-    snapshot.forEach((doc) => {
-      reviews.push(doc.data() as IReview);
-
-      if (doc.data().id === reviewUserID) reviewUserData = doc.data();
-    });
-
-    const lastIndexNew = firstIndexNumber + limitNumber;
-
-    return {
-      form: reviewUserData,
-      list: reviews.length ? reviews.slice(firstIndexNumber, lastIndexNew) : [],
-      pagination: {
-        total: snapshot.docs.length || 0,
-        lastIndex: lastIndexNew,
-        limit: limitNumber,
-      },
-    };
-  }
-
   static async getStands(
     params: ParamsDictionary,
     { limit, lastIndex }: IQueryListRequest
@@ -175,6 +135,46 @@ export class FairService {
       list: stands.length ? stands.slice(firstIndexNumber, lastIndexNew) : [],
       pagination: {
         total: stands.length || 0,
+        lastIndex: lastIndexNew,
+        limit: limitNumber,
+      },
+    };
+  }
+
+  static async getListReviews(
+    uid: string,
+    params: ParamsDictionary,
+    { limit, lastIndex }: IQueryListRequest
+  ) {
+    const { fairID } = params;
+    const limitNumber = Number(limit) || DEFAULT_LIMIT_VALUE;
+    const firstIndexNumber = Number(lastIndex) || 0;
+
+    const reviews: IReview[] = [];
+
+    const snapshot = await db
+      .collection("reviews")
+      .orderBy("creationTime", "desc")
+      .where("parent", "==", db.doc(`fairs/${fairID}`))
+      .get();
+
+    let reviewUserData = null;
+
+    const reviewUserID = `${uid}-${fairID}`;
+
+    snapshot.forEach((doc) => {
+      reviews.push(doc.data() as IReview);
+
+      if (doc.data().id === reviewUserID) reviewUserData = doc.data();
+    });
+
+    const lastIndexNew = firstIndexNumber + limitNumber;
+
+    return {
+      form: reviewUserData,
+      list: reviews.length ? reviews.slice(firstIndexNumber, lastIndexNew) : [],
+      pagination: {
+        total: snapshot.docs.length || 0,
         lastIndex: lastIndexNew,
         limit: limitNumber,
       },

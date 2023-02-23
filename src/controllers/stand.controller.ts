@@ -33,4 +33,28 @@ export class StandController {
       message: "Detalles de stand",
     });
   };
+
+  static getListReviews: Handler = async (req, res) => {
+    const reviews = await StandService.getListReviews(
+      req.uid,
+      req.params,
+      req.query
+    );
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      data: reviews,
+      message: "Listado de opiniones",
+    });
+  };
+
+  static saveReview: Handler = async (req, res) => {
+    const review = await StandService.saveReview(req.uid, req.params, req.body);
+
+    res.status(StatusCodes.CREATED).json({
+      statusCode: StatusCodes.CREATED,
+      data: review,
+      message: "Opinión guardada con éxito",
+    });
+  };
 }
