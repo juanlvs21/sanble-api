@@ -1,3 +1,7 @@
+import { ParamsDictionary } from "express-serve-static-core";
+import { StatusCodes } from "http-status-codes";
+
+import { ErrorHandler } from "../error";
 import { IQueryListRequest } from "../interfaces/IRequest";
 import { IStand } from "../interfaces/IStand";
 import { db, OrderByDirection } from "../utils/firebase";
@@ -54,5 +58,19 @@ export class StandService {
     );
 
     return stands;
+  }
+
+  static async getDetails(params: ParamsDictionary) {
+    const { standID } = params;
+
+    if (!standID)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrado");
+
+    const standDoc = await db.collection("stands").doc(standID).get();
+
+    if (!standDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrado");
+
+    return standDataFormat(standDoc.data() as IStand);
   }
 }

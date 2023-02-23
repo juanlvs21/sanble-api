@@ -23,4 +23,14 @@ export class StandController {
       message: "Listado de mejores stands",
     });
   };
+
+  static getDetails: Handler = async (req, res) => {
+    const fair = await StandService.getDetails(req.params);
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      data: fair,
+      message: "Detalles de stand",
+    });
+  };
 }
