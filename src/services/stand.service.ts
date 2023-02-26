@@ -43,6 +43,10 @@ export class StandService {
         lastIndex: lastIndexNew,
         limit: limitNumber,
       },
+      order: {
+        orderBy,
+        orderDir,
+      },
     };
   }
 

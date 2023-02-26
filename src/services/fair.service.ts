@@ -53,6 +53,10 @@ export class FairService {
         lastIndex: lastIndexNew,
         limit: limitNumber,
       },
+      order: {
+        orderBy,
+        orderDir,
+      },
     };
   }
 
