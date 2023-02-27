@@ -466,7 +466,7 @@ export class FairService {
 
     await db.collection("fairs").doc(fairID).update({ photographs });
 
-    const photographCover = photographs.filter((photo) => photo.id === photoID);
+    const photographCover = photographs.filter((photo) => photo.isCover);
 
     return {
       photographID: photoID,
