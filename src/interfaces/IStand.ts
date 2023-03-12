@@ -1,4 +1,5 @@
 import { Timestamp } from "firebase-admin/firestore";
+import { IPhotograph } from "./IPhotograph";
 import { IRefBasic } from "./IRef";
 
 export interface IStand {
@@ -8,11 +9,10 @@ export interface IStand {
   creationTime: string;
   coverUrl?: string;
   description: string;
-  products: any[]; // TODO: Create the correct data type
-  promotions: any[]; // TODO: Create the correct data type
   owner: IRefBasic;
   slogan?: string;
   stars: number;
+  photographs: IPhotograph[];
   contactEmail: string;
   contactPhone: string;
   fairs: IRefBasic[];

@@ -28,6 +28,7 @@ export const fairDataFormat = (fair: IFair): IFair => {
     ...fair,
     coverUrl,
     stands,
+    photographs,
     owner: {
       path: ownerRefPath,
       id: ownerRefPath.replace("users/", ""),
@@ -40,7 +41,7 @@ export const fairDataFormat = (fair: IFair): IFair => {
 
   delete fairReturn.creationTimestamp;
 
-  return { ...fairReturn, photographs };
+  return fairReturn;
 };
 
 export const fairDataFormatGeo = (fair: IFairGeo): IFairGeo => ({
