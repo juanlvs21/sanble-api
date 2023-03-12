@@ -19,5 +19,20 @@ router.post(
   reviewValidator,
   StandController.saveReview
 );
+router.post(
+  "/:standID/photograph",
+  sessionMiddleware,
+  StandController.uploadPhotograph
+);
+router.post(
+  "/:standID/photograph/:photoID",
+  sessionMiddleware,
+  StandController.updatePhotograph
+);
+router.delete(
+  "/:standID/photograph/:photoID",
+  sessionMiddleware,
+  StandController.deletePhotograph
+);
 
 export default router.router;
