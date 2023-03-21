@@ -21,22 +21,32 @@ import {
 import { standDataFormat } from "../utils/utilsStand";
 
 export class FairService {
-  static async getList({
-    orderBy,
-    orderDir,
-    limit,
-    lastIndex,
-  }: IQueryListRequest) {
+  static async getList(
+    { orderBy, orderDir, limit, lastIndex }: IQueryListRequest,
+    uid?: string
+  ) {
     const limitNumber = Number(limit) || 5;
     const firstIndexNumber = Number(lastIndex) || 0;
 
     const orderField = orderBy || "stars";
     const orderDirection: OrderByDirection = orderDir || "desc";
 
-    const snapshot = await db
-      .collection("fairs")
-      .orderBy(orderField, orderDirection)
-      .get();
+    // db.doc(`fairs/${fairID}`)
+
+    let snapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>;
+
+    if (uid) {
+      snapshot = await db
+        .collection("fairs")
+        .orderBy(orderField, orderDirection)
+        .where("owner", "==", db.doc(`users/${uid}`))
+        .get();
+    } else {
+      snapshot = await db
+        .collection("fairs")
+        .orderBy(orderField, orderDirection)
+        .get();
+    }
 
     const fairs: IFair[] = [];
 
