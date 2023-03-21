@@ -19,22 +19,30 @@ import {
 import { standDataFormat } from "../utils/utilsStand";
 
 export class StandService {
-  static async getList({
-    orderBy,
-    orderDir,
-    limit,
-    lastIndex,
-  }: IQueryListRequest) {
+  static async getList(
+    { orderBy, orderDir, limit, lastIndex }: IQueryListRequest,
+    uid?: string
+  ) {
     const limitNumber = Number(limit) || DEFAULT_LIMIT_VALUE;
     const firstIndexNumber = Number(lastIndex) || 0;
 
     const orderField = orderBy || "stars";
     const orderDirection: OrderByDirection = orderDir || "desc";
 
-    const snapshot = await db
-      .collection("stands")
-      .orderBy(orderField, orderDirection)
-      .get();
+    let snapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>;
+
+    if (uid) {
+      snapshot = await db
+        .collection("stands")
+        .orderBy(orderField, orderDirection)
+        .where("owner", "==", db.doc(`users/${uid}`))
+        .get();
+    } else {
+      snapshot = await db
+        .collection("stands")
+        .orderBy(orderField, orderDirection)
+        .get();
+    }
 
     const stands: IStand[] = [];
 

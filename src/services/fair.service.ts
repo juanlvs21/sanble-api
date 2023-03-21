@@ -31,8 +31,6 @@ export class FairService {
     const orderField = orderBy || "stars";
     const orderDirection: OrderByDirection = orderDir || "desc";
 
-    // db.doc(`fairs/${fairID}`)
-
     let snapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>;
 
     if (uid) {
