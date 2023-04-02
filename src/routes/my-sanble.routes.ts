@@ -5,6 +5,6 @@ import { sessionMiddleware } from "../middlewares/session.middleware";
 const router = new ErrorRouter();
 
 router.get("/fairs", sessionMiddleware, MySanbleController.getFairsList);
-router.get("/stands", sessionMiddleware, MySanbleController.getFairsList);
+router.get("/stands", sessionMiddleware, MySanbleController.getStandsList);
 
 export default router.router;
