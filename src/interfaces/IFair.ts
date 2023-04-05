@@ -34,3 +34,15 @@ export interface IFairGeo {
   stars: number;
   type: EFairType;
 }
+
+export interface IFairForm {
+  id?: string;
+  name: string;
+  geopoint: [number, number];
+  celebrationDate?: string;
+  address: string;
+  description: string;
+  type: EFairType;
+  contactEmail: string;
+  contactPhone: string;
+}

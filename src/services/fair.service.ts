@@ -4,13 +4,13 @@ import { StatusCodes } from "http-status-codes";
 import { v4 as uuidv4 } from "uuid";
 
 import { ErrorHandler } from "../error";
-import { IFair, IFairGeo } from "../interfaces/IFair";
+import { IFair, IFairForm, IFairGeo } from "../interfaces/IFair";
 import { EFolderName } from "../interfaces/IFile";
 import { IPhotograph, IPhotographForm } from "../interfaces/IPhotograph";
 import { IQueryListRequest } from "../interfaces/IRequest";
 import { EReviewType, IReview } from "../interfaces/IReview";
 import { IStand } from "../interfaces/IStand";
-import { auth, db, OrderByDirection, Timestamp } from "../utils/firebase";
+import { OrderByDirection, Timestamp, auth, db } from "../utils/firebase";
 import { deleteFile, uploadFile } from "../utils/imagekit";
 import { DEFAULT_LIMIT_VALUE } from "../utils/pagination";
 import { fairDataFormat, fairDataFormatGeo } from "../utils/utilsFair";
@@ -21,6 +21,27 @@ import {
 import { standDataFormat } from "../utils/utilsStand";
 
 export class FairService {
+  static async saveFair(body: IFairForm, uid: string) {
+    const user = await auth.getUser(uid);
+
+    if (!user)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Usuario no encontrado");
+
+    const id = uuidv4();
+
+    const newFair = {
+      ...body,
+      id,
+      owner: db.doc(`user/${uid}`),
+      creationTimestamp: Timestamp.now(),
+      stands: [],
+      photographs: [],
+      stars: 0,
+    };
+
+    await db.collection("users").doc(id).set(newFair);
+  }
+
   static async getList(
     { orderBy, orderDir, limit, lastIndex }: IQueryListRequest,
     uid?: string
