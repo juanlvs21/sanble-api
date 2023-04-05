@@ -19,12 +19,14 @@ import {
   validPhotographForm,
 } from "../utils/utilsPhotograph";
 import { standDataFormat } from "../utils/utilsStand";
+import { IUser } from "../interfaces/IUser";
 
 export class FairService {
   static async saveFair(body: IFairForm, uid: string) {
     const user = await auth.getUser(uid);
+    const userDoc = await db.collection("users").doc(uid).get();
 
-    if (!user)
+    if (!user || !userDoc.exists)
       throw new ErrorHandler(StatusCodes.NOT_FOUND, "Usuario no encontrado");
 
     const id = uuidv4();
@@ -32,7 +34,7 @@ export class FairService {
     const newFair: any = {
       ...body,
       id,
-      owner: db.doc(`user/${uid}`),
+      owner: db.doc(`users/${uid}`),
       creationTimestamp: Timestamp.now(),
       stands: [],
       photographs: [],
@@ -40,6 +42,14 @@ export class FairService {
     };
 
     await db.collection("fairs").doc(id).set(newFair);
+
+    const userData = userDoc.data() as IUser;
+    await db
+      .collection("users")
+      .doc(uid)
+      .update({
+        ownerFairs: [...userData.ownerFairs, db.doc(`fairs/${newFair.id}`)],
+      });
 
     return fairDataFormat(newFair as IFair);
   }
@@ -255,7 +265,7 @@ export class FairService {
         type: reviewType,
         ownerName: userAuth.displayName || "",
         ownerPhoto: userAuth.photoURL || "",
-        owner: db.doc(`user/${userAuth.uid}`),
+        owner: db.doc(`users/${userAuth.uid}`),
         parent: db.doc(`fairs/${fairID}`),
         creationTime: time,
         updateTime: time,

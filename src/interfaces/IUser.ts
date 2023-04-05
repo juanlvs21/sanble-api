@@ -1,5 +1,6 @@
 import { UserInfo, UserMetadata } from "firebase-admin/auth";
 import { Timestamp } from "firebase-admin/firestore";
+import { IRefBasic } from "./IRef";
 
 export interface IUserAuth {
   uid: string;
@@ -21,6 +22,8 @@ export interface IUserData {
   favoriteFairs: string[];
   favoriteStands: string[];
   favoriteProducts: string[];
+  ownerFairs: IRefBasic[];
+  ownerStands: IRefBasic[];
 }
 
 export interface IUser extends IUserAuth, IUserData {}
