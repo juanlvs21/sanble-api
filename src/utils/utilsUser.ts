@@ -47,6 +47,8 @@ export const userAuthReturn = (
     favoriteStands: userDoc.favoriteStands,
     favoriteProducts: userDoc.favoriteProducts,
     favoriteFairs: userDoc.favoriteFairs,
+    ownerFairs: userDoc.ownerFairs,
+    ownerStands: userDoc.ownerStands,
   };
 };
 

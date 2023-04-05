@@ -44,6 +44,8 @@ export class UserService {
       favoriteFairs: [],
       favoriteStands: [],
       favoriteProducts: [],
+      ownerFairs: [],
+      ownerStands: [],
     };
     await db.collection("users").doc(userAuth.uid).set(userDocData);
 
@@ -80,6 +82,8 @@ export class UserService {
         favoriteFairs: userData?.favoriteFairs,
         favoriteStands: userData?.favoriteStands,
         favoriteProducts: userData?.favoriteProducts,
+        ownerFairs: userData?.ownerFairs,
+        ownerStands: userData?.ownerStands,
       };
 
       return userAuthReturn(userAuth, userDocData);
@@ -92,6 +96,8 @@ export class UserService {
         favoriteFairs: [],
         favoriteStands: [],
         favoriteProducts: [],
+        ownerFairs: [],
+        ownerStands: [],
       };
 
       await db.collection("users").doc(userAuth.uid).set(userDocData);
