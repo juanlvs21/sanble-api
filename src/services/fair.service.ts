@@ -29,7 +29,7 @@ export class FairService {
 
     const id = uuidv4();
 
-    const newFair = {
+    const newFair: any = {
       ...body,
       id,
       owner: db.doc(`user/${uid}`),
@@ -39,7 +39,9 @@ export class FairService {
       stars: 0,
     };
 
-    await db.collection("users").doc(id).set(newFair);
+    await db.collection("fairs").doc(id).set(newFair);
+
+    return fairDataFormat(newFair as IFair);
   }
 
   static async getList(
