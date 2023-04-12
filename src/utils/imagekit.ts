@@ -34,16 +34,18 @@ export const uploadFile = async ({
     if (fileName) name = fileName;
     else name = `${uuidv4()}.${EXTENSION_FILE[mimetype]}`;
 
-    const uploadData = {
-      file: fs.createReadStream(file.filepath),
+    console.info("imagekit.upload data: ", {
+      filepath: file.filepath,
       fileName: name,
       folder,
-    };
-
-    console.info("imagekit.upload data: ", uploadData);
+    });
 
     imagekit
-      .upload(uploadData)
+      .upload({
+        file: fs.createReadStream(file.filepath),
+        fileName: name,
+        folder,
+      })
       .then((response) => {
         console.info("imagekit.upload sucess: ", response);
         resolve(response);
