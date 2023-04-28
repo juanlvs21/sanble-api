@@ -29,9 +29,9 @@ const formFairs = [
     .withMessage(
       `El tipo de feria debe ser "Gastronónica" o de "Emprendimiento"`
     ),
-  check("contactEmail", "El correo electrónico de contacto es requerido")
-    .isEmpty()
+  check("contactEmail")
     .optional()
+    .isEmpty()
     .isEmail()
     .isLength({ max: lengthMaxShort })
     .withMessage(
