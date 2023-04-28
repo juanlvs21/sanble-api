@@ -30,12 +30,12 @@ const formFairs = [
       `El tipo de feria debe ser "Gastronónica" o de "Emprendimiento"`
     ),
   check("contactEmail")
+    .optional()
     .isEmail()
     .isLength({ max: lengthMaxShort })
     .withMessage(
       `El correo electrónico de contacto debe tener máximo ${lengthMaxShort} caracteres`
-    )
-    .optional(),
+    ),
   check("contactPhone", "El teléfono de contacto es requerido")
     .isString()
     .notEmpty()
