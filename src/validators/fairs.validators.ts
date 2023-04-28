@@ -31,11 +31,11 @@ const formFairs = [
     ),
   check("contactEmail")
     .isEmail()
-    .optional()
     .isLength({ max: lengthMaxShort })
     .withMessage(
       `El correo electrónico de contacto debe tener máximo ${lengthMaxShort} caracteres`
-    ),
+    )
+    .optional(),
   check("contactPhone", "El teléfono de contacto es requerido")
     .isString()
     .notEmpty()
