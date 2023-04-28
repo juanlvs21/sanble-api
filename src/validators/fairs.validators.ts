@@ -30,7 +30,7 @@ const formFairs = [
       `El tipo de feria debe ser "Gastronónica" o de "Emprendimiento"`
     ),
   check("contactEmail", "El correo electrónico de contacto es inválido")
-    .optional()
+    .optional({ checkFalsy: true })
     .isEmail()
     .isLength({ max: lengthMaxShort })
     .withMessage(
