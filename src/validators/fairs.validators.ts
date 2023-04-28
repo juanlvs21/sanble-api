@@ -18,9 +18,9 @@ const formFairs = [
   check("description", "La descripción de la feria es requerida")
     .isString()
     .notEmpty()
-    .isLength({ max: lengthMaxShort })
+    .isLength({ max: lengthMaxLong })
     .withMessage(
-      `La descripción de la feria debe tener máximo ${lengthMaxShort} caracteres`
+      `La descripción de la feria debe tener máximo ${lengthMaxLong} caracteres`
     ),
   check("type", "El tipo de feria es requerido")
     .isString()
