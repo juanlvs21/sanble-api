@@ -37,6 +37,7 @@ const formFairs = [
     ),
   check("contactPhone", "El teléfono de contacto es requerido")
     .isString()
+    .notEmpty()
     .isLength({ min: lengthMaxPhone, max: lengthMaxPhone })
     .withMessage(
       `El teléfono de contacto debe tener ${lengthMaxShort} caracteres`
