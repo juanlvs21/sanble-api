@@ -31,6 +31,7 @@ const formFairs = [
     ),
   check("contactEmail", "El correo electrónico de contacto es requerido")
     .isEmail()
+    .optional()
     .isLength({ max: lengthMaxShort })
     .withMessage(
       `El correo electrónico de contacto debe tener máximo ${lengthMaxShort} caracteres`
@@ -42,10 +43,9 @@ const formFairs = [
     .withMessage(
       `El teléfono de contacto debe tener ${lengthMaxShort} caracteres`
     ),
-  check(
-    "celebrationDate",
-    "La fecha de celebración debe ser un texto"
-  ).isString(),
+  check("celebrationDate", "La fecha de celebración debe ser un texto")
+    .isString()
+    .optional(),
   check("address", "La dirección es requerida")
     .isString()
     .notEmpty()
