@@ -17,3 +17,12 @@ export interface IStand {
   contactPhone: string;
   fairs: IRefBasic[];
 }
+
+export interface IStandForm {
+  id?: string;
+  name: string;
+  slogan?: string;
+  description: string;
+  contactEmail: string;
+  contactPhone: string;
+}

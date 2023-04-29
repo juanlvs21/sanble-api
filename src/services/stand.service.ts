@@ -8,7 +8,7 @@ import { EFolderName } from "../interfaces/IFile";
 import { IPhotograph, IPhotographForm } from "../interfaces/IPhotograph";
 import { IQueryListRequest } from "../interfaces/IRequest";
 import { EReviewType, IReview } from "../interfaces/IReview";
-import { IStand } from "../interfaces/IStand";
+import { IStand, IStandForm } from "../interfaces/IStand";
 import { auth, db, OrderByDirection, Timestamp } from "../utils/firebase";
 import { deleteFile, uploadFile } from "../utils/imagekit";
 import { DEFAULT_LIMIT_VALUE } from "../utils/pagination";
@@ -17,8 +17,41 @@ import {
   validPhotographForm,
 } from "../utils/utilsPhotograph";
 import { standDataFormat } from "../utils/utilsStand";
+import { IUser } from "../interfaces/IUser";
 
 export class StandService {
+  static async saveStand(body: IStandForm, uid: string) {
+    const user = await auth.getUser(uid);
+    const userDoc = await db.collection("users").doc(uid).get();
+
+    if (!user || !userDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Usuario no encontrado");
+
+    const id = uuidv4();
+
+    const newStand: any = {
+      ...body,
+      id,
+      owner: db.doc(`users/${uid}`),
+      creationTimestamp: Timestamp.now(),
+      fairs: [],
+      photographs: [],
+      stars: 0,
+    };
+
+    await db.collection("stands").doc(id).set(newStand);
+
+    const userData = userDoc.data() as IUser;
+    await db
+      .collection("users")
+      .doc(uid)
+      .update({
+        ownerStands: [...userData.ownerStands, db.doc(`stands/${newStand.id}`)],
+      });
+
+    return standDataFormat(newStand as IStand);
+  }
+
   static async getList(
     { orderBy, orderDir, limit, lastIndex }: IQueryListRequest,
     uid?: string

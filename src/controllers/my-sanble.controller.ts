@@ -16,11 +16,11 @@ export class MySanbleController {
   };
 
   static saveFair: Handler = async (req, res) => {
-    const fairs = await FairService.saveFair(req.body, req.uid);
+    const fair = await FairService.saveFair(req.body, req.uid);
 
     res.status(StatusCodes.OK).json({
       statusCode: StatusCodes.OK,
-      data: fairs,
+      data: fair,
       message: "Feria creada exitosamente",
     });
   };
@@ -32,6 +32,16 @@ export class MySanbleController {
       statusCode: StatusCodes.OK,
       data: stands,
       message: "Listado de stands",
+    });
+  };
+
+  static saveStand: Handler = async (req, res) => {
+    const stand = await StandService.saveStand(req.body, req.uid);
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      data: stand,
+      message: "Feria creada exitosamente",
     });
   };
 }

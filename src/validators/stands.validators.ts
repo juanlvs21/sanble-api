@@ -7,27 +7,20 @@ const lengthMaxLong = 500;
 const lengthMaxShort = 40;
 const lengthMaxPhone = 10;
 
-const formFairs = [
-  check("name", "El nombre de la feria es requerido")
+const formStand = [
+  check("name", "El nombre del stand es requerido")
     .isString()
     .notEmpty()
     .isLength({ max: lengthMaxShort })
     .withMessage(
-      `El nombre de la feria debe tener máximo ${lengthMaxShort} caracteres`
+      `El nombre del stand debe tener máximo ${lengthMaxShort} caracteres`
     ),
-  check("description", "La descripción de la feria es requerida")
+  check("description", "La descripción del stand es requerida")
     .isString()
     .notEmpty()
     .isLength({ max: lengthMaxLong })
     .withMessage(
-      `La descripción de la feria debe tener máximo ${lengthMaxLong} caracteres`
-    ),
-  check("type", "El tipo de feria es requerido")
-    .isString()
-    .notEmpty()
-    .isIn([EFairType.ENTREPRENEURSHIP, EFairType.GASTRONOMIC])
-    .withMessage(
-      `El tipo de feria debe ser "Gastronónica" o de "Emprendimiento"`
+      `La descripción del stand debe tener máximo ${lengthMaxLong} caracteres`
     ),
   check("contactEmail", "El correo electrónico de contacto es inválido")
     .optional({ checkFalsy: true })
@@ -43,14 +36,11 @@ const formFairs = [
     .withMessage(
       `El teléfono de contacto debe tener ${lengthMaxShort} caracteres`
     ),
-  check("celebrationDate", "La fecha de celebración debe ser un texto")
+  check("slogan")
+    .optional({ checkFalsy: true })
     .isString()
-    .optional(),
-  check("address", "La dirección es requerida")
-    .isString()
-    .notEmpty()
     .isLength({ max: lengthMaxLong })
-    .withMessage(`La dirección debe tener máximo ${lengthMaxLong} caracteres`),
+    .withMessage(`El slogan debe tener máximo ${lengthMaxLong} caracteres`),
 ];
 
-export const fairValidator = validate(formFairs);
+export const standValidator = validate(formStand);
