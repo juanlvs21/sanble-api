@@ -1,16 +1,24 @@
-# fly.toml file generated for sanble-api on 2022-12-30T12:08:59-04:00
+# fly.toml app configuration file generated for sanble-api on 2023-07-02T13:54:49-04:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
 
 app = "sanble-api"
 kill_signal = "SIGINT"
 kill_timeout = 5
+primary_region = "mia"
 processes = []
+
+[build]
 
 [env]
   PORT = "8080"
 
 [experimental]
-  allowed_public_ports = []
   auto_rollback = true
+  cmd = []
+  entrypoint = []
+  exec = []
 
 [[services]]
   http_checks = []
