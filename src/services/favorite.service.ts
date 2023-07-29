@@ -18,7 +18,6 @@ export class FavoriteService {
     const limitNumber = Number(limit) || DEFAULT_LIMIT_VALUE;
     const firstIndexNumber = Number(lastIndex) || 0;
 
-    // TODO: Crear los index de todos los orders en firebase
     const orderField = orderBy || "stars";
     const orderDirection: OrderByDirection = orderDir || "desc";
 
