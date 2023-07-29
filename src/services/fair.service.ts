@@ -58,7 +58,7 @@ export class FairService {
     { orderBy, orderDir, limit, lastIndex }: IQueryListRequest,
     uid?: string
   ) {
-    const limitNumber = Number(limit) || 5;
+    const limitNumber = Number(limit) || DEFAULT_LIMIT_VALUE;
     const firstIndexNumber = Number(lastIndex) || 0;
 
     const orderField = orderBy || "stars";
