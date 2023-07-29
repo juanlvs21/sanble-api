@@ -10,7 +10,7 @@ import mySanbleRoutes from "./my-sanble.routes";
 const router = Router();
 
 router.use("/user", userRoutes);
-router.use("/favorite", favoriteRoutes);
+router.use("/favorites", favoriteRoutes);
 router.use("/fairs", fairRoutes);
 router.use("/stands", standRoutes);
 router.use("/products", productRoutes);
