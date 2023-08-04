@@ -115,7 +115,6 @@ export class UserService {
   }
 
   static async updateUser(uid: string, userInput: IUserUpdate) {
-    const { email, displayName, phoneNumber } = userInput;
     const userAuth = await auth.getUser(uid);
 
     if (!userAuth)
@@ -140,11 +139,12 @@ export class UserService {
       ownerStands: userData?.ownerStands,
     };
 
-    let newInput: IUserUpdate = { displayName, email };
-
-    if (phoneNumber) newInput.phoneNumber = phoneNumber;
-
-    const newUser = await auth.updateUser(uid, newInput);
+    const newUser = await auth.updateUser(uid, {
+      ...userInput,
+      phoneNumber: userInput?.phoneNumber
+        ? `+58${userInput.phoneNumber}`
+        : null,
+    });
 
     return userAuthReturn(newUser, userDocData);
   }
