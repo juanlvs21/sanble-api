@@ -5,6 +5,7 @@ import {
   IUserChangePassword,
   IUserData,
   IUserFavoritesBody,
+  IUserRecoveryPassword,
   IUserSignup,
   IUserUpdate,
 } from "../interfaces/IUser";
@@ -157,5 +158,14 @@ export class UserService {
       throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Usuario no existe");
 
     await auth.updateUser(uid, passwordInput);
+  }
+
+  static async recoveryPassword(passwordInput: IUserRecoveryPassword) {
+    const userAuth = await auth.getUserByEmail(passwordInput?.email ?? "");
+
+    if (!userAuth)
+      throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Usuario no existe");
+
+    await auth.generatePasswordResetLink(passwordInput.email);
   }
 }

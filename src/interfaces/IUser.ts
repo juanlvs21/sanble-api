@@ -57,3 +57,7 @@ export interface IUserUpdate {
 export interface IUserChangePassword {
   password: string;
 }
+
+export interface IUserRecoveryPassword {
+  email: string;
+}

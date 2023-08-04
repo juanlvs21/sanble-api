@@ -42,4 +42,13 @@ export class UserController {
       message: "Contraseña cambiada exitosamente",
     });
   };
+
+  static recoveryPassword: Handler = async (req, res) => {
+    await UserService.recoveryPassword(req.body);
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      message: "Solicitud de recuperación de contraseña enviada exitosamente",
+    });
+  };
 }

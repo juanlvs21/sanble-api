@@ -52,6 +52,16 @@ const changePassword = [
     ),
 ];
 
+const recoveryPassword = [
+  check("email", "El correo electrónico es requerido")
+    .isEmail()
+    .isLength({ max: lengthMax })
+    .withMessage(
+      `El correo electrónico debe tener máximo ${lengthMax} caracteres`
+    ),
+];
+
 export const signUpValidator = validate(formSignup);
 export const updateUserValidator = validate(updateUser);
 export const changePasswordValidator = validate(changePassword);
+export const recoveryPasswordValidator = validate(recoveryPassword);
