@@ -4,7 +4,6 @@ import { ErrorHandler } from "../error";
 import {
   IUserChangePassword,
   IUserData,
-  IUserFavoritesBody,
   IUserRecoveryPassword,
   IUserSignup,
   IUserUpdate,
@@ -17,6 +16,7 @@ import {
   userAuthReturn,
   userVerifyGenerateToken,
 } from "../utils/utilsUser";
+import { recoveryTemplate } from "../mail/templates/recovery";
 
 const welcomeEmailFrom = "Sanble <bienvenido@sanble.juanl.dev>";
 const welcomeEmailSubject = "¡Bienvenido a Sanble!";
@@ -52,14 +52,12 @@ export class UserService {
     };
     await db.collection("users").doc(userAuth.uid).set(userDocData);
 
+    const verifyEmailLink = await auth.generateEmailVerificationLink(email);
+
     sendEmail(
       email,
       welcomeEmailSubject,
-      welcomeTemplate(
-        name,
-        `https://sanble.juanl.dev`
-        // TODO: Make user verification work. Link:`https://sanble.juanl.dev/auth/verify?token=${userVerifyToken.token}`
-      ),
+      welcomeTemplate(name, verifyEmailLink),
       welcomeEmailFrom
     );
 
@@ -106,7 +104,7 @@ export class UserService {
       await db.collection("users").doc(userAuth.uid).set(userDocData);
 
       sendEmail(
-        userAuth.email || "",
+        userAuth?.email ?? "",
         welcomeEmailSubject,
         welcomeTemplate(userAuth.displayName || ""),
         welcomeEmailFrom
@@ -161,11 +159,19 @@ export class UserService {
   }
 
   static async recoveryPassword(passwordInput: IUserRecoveryPassword) {
-    const userAuth = await auth.getUserByEmail(passwordInput?.email ?? "");
+    const { email } = passwordInput;
+    const userAuth = await auth.getUserByEmail(email);
 
     if (!userAuth)
       throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Usuario no existe");
 
-    await auth.generatePasswordResetLink(passwordInput.email);
+    const verifyEmailLink = await auth.generatePasswordResetLink(email);
+
+    sendEmail(
+      userAuth?.email ?? "",
+      "Recuperar contraseña",
+      recoveryTemplate(userAuth?.displayName ?? "", verifyEmailLink),
+      "Sanble <soporte@sanble.juanl.dev>"
+    );
   }
 }

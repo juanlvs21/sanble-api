@@ -1,4 +1,4 @@
-export function welcomeTemplate(userName: string, urlValidate: string = "") {
+export function recoveryTemplate(userName: string, urlValidate: string = "") {
   return `
 <!DOCTYPE html>
 <html>
@@ -126,7 +126,7 @@ export function welcomeTemplate(userName: string, urlValidate: string = "") {
         visibility: hidden;
         width: 0;
       "
-      >Bienvenido a Sanble, ${userName}</span
+      >Recupera tu contraseña, ${userName}.</span
     >
     <table
       role="presentation"
@@ -246,13 +246,7 @@ export function welcomeTemplate(userName: string, urlValidate: string = "") {
                             margin-bottom: 15px;
                           "
                         >
-                          Hola ${userName}, Gracias por registrarte en <b>Sanble</b>.
-                          Esperamos que disfrutes tu experiencia y encuentres
-                          todos tus intereses. ${
-                            urlValidate
-                              ? "Una cosa más, necesitarás verificar tu cuenta."
-                              : ""
-                          }
+                          Hola ${userName}, Has solicitado la recuperación de tu contraseña.
                         </p>
                         ${
                           urlValidate
@@ -330,7 +324,7 @@ export function welcomeTemplate(userName: string, urlValidate: string = "") {
                                               border-color: #ff8634;
                                               color: #ffffff;
                                             "
-                                            >Verificar Cuenta</a
+                                            >Recuperar contraseña</a
                                           >
                                         </td>
                                       </tr>
@@ -352,9 +346,7 @@ export function welcomeTemplate(userName: string, urlValidate: string = "") {
                             margin-bottom: 15px;
                           "
                         >
-                          Ahora podras buscar tu feria favorita, si tienes tu
-                          propia feria tambien es este tu lugar perfecto para
-                          estar.
+                          Si no has sido tu, ignora este mensaje.
                         </p>
                         <p
                           style="
