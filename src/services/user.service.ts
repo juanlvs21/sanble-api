@@ -115,6 +115,7 @@ export class UserService {
   }
 
   static async updateUser(uid: string, userInput: IUserUpdate) {
+    const { email, displayName, phoneNumber } = userInput;
     const userAuth = await auth.getUser(uid);
 
     if (!userAuth)
@@ -139,9 +140,13 @@ export class UserService {
       ownerStands: userData?.ownerStands,
     };
 
-    const newData = await auth.updateUser(uid, userInput);
+    let newInput: IUserUpdate = { displayName, email };
 
-    return userAuthReturn(newData, userDocData);
+    if (phoneNumber) newInput.phoneNumber = phoneNumber;
+
+    const newUser = await auth.updateUser(uid, newInput);
+
+    return userAuthReturn(newUser, userDocData);
   }
 
   static async changePassword(uid: string, passwordInput: IUserChangePassword) {

@@ -50,8 +50,8 @@ export interface IUserFavoritesBody {
 
 export interface IUserUpdate {
   email: string;
-  phoneNumber: string;
   displayName: string;
+  phoneNumber?: string;
 }
 
 export interface IUserChangePassword {
