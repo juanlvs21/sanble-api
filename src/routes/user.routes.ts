@@ -11,9 +11,9 @@ import {
 const router = new ErrorRouter();
 
 router.post("/signup", signUpValidator, UserController.signUp);
-router.get("/profile", sessionMiddleware, UserController.getProfile);
+router.get("/", sessionMiddleware, UserController.getProfile);
 router.put(
-  "/profile",
+  "/",
   sessionMiddleware,
   updateUserValidator,
   UserController.updateUser
