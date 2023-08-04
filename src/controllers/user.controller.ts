@@ -23,4 +23,23 @@ export class UserController {
       message: "Datos del usuario con sesión iniciada",
     });
   };
+
+  static updateUser: Handler = async (req, res) => {
+    const userData = await UserService.updateUser(req.uid, req.body);
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      data: userData,
+      message: "Usuario actualizado exitosamente",
+    });
+  };
+
+  static changePassword: Handler = async (req, res) => {
+    await UserService.changePassword(req.uid, req.body);
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      message: "Contraseña cambiada exitosamente",
+    });
+  };
 }

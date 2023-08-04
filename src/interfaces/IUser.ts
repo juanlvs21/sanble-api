@@ -47,3 +47,13 @@ export interface IUserSignin {
 export interface IUserFavoritesBody {
   favoriteID?: string;
 }
+
+export interface IUserUpdate {
+  email: string;
+  phoneNumber: string;
+  displayName: string;
+}
+
+export interface IUserChangePassword {
+  password: string;
+}

@@ -2,9 +2,11 @@ import { StatusCodes } from "http-status-codes";
 
 import { ErrorHandler } from "../error";
 import {
+  IUserChangePassword,
   IUserData,
   IUserFavoritesBody,
   IUserSignup,
+  IUserUpdate,
 } from "../interfaces/IUser";
 import { sendEmail } from "../mail/sendgrid";
 import { welcomeTemplate } from "../mail/templates/welcome";
@@ -113,98 +115,47 @@ export class UserService {
     }
   }
 
-  static async setFavoriteFair(uid: string, body: IUserFavoritesBody) {
-    const { favoriteID } = body;
+  static async updateUser(uid: string, userInput: IUserUpdate) {
+    const userAuth = await auth.getUser(uid);
 
-    const userDataDoc = await db.collection("users").doc(uid).get();
+    if (!userAuth)
+      throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Usuario no existe");
+
+    const userDataDoc = await db.collection("users").doc(userAuth.uid).get();
 
     if (!userDataDoc.exists)
-      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Usuario no encontrado");
-
-    const fairID = favoriteID || "";
-
-    const fairDataDoc = await db.collection("fairs").doc(fairID).get();
-
-    if (!fairDataDoc.exists)
-      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
+      throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Usuario no existe");
 
     const userData = userDataDoc.data();
 
-    let favorites: string[] = userData?.favoriteFairs;
+    const userDocData: IUserData = {
+      uid: userAuth.uid,
+      isAdmin: userData?.userData || false,
+      creationTime: userData?.creationTime,
+      verifyTokens: userData?.verifyTokens,
+      favoriteFairs: userData?.favoriteFairs,
+      favoriteStands: userData?.favoriteStands,
+      favoriteProducts: userData?.favoriteProducts,
+      ownerFairs: userData?.ownerFairs,
+      ownerStands: userData?.ownerStands,
+    };
 
-    if (favorites.includes(fairID)) {
-      favorites = favorites.filter((fav) => fav !== favoriteID);
-    } else {
-      favorites.push(fairID);
-    }
+    const newData = await auth.updateUser(uid, userInput);
 
-    await db.collection("users").doc(uid).update({
-      favoriteFairs: favorites,
-    });
-
-    return { favorites };
+    return userAuthReturn(newData, userDocData);
   }
 
-  static async setFavoriteStand(uid: string, body: IUserFavoritesBody) {
-    const { favoriteID } = body;
-    const userDataDoc = await db.collection("users").doc(uid).get();
+  static async changePassword(uid: string, passwordInput: IUserChangePassword) {
+    const userAuth = await auth.getUser(uid);
+
+    if (!userAuth)
+      throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Usuario no existe");
+
+    const userDataDoc = await db.collection("users").doc(userAuth.uid).get();
 
     if (!userDataDoc.exists)
-      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Usuario no encontrado");
+      throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Usuario no existe");
 
-    const productID = favoriteID || "";
-
-    const standDataDoc = await db.collection("stands").doc(productID).get();
-
-    if (!standDataDoc.exists)
-      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrado");
-
-    const userData = userDataDoc.data();
-
-    let favorites: string[] = userData?.favoriteStands;
-
-    if (favorites.includes(productID)) {
-      favorites = favorites.filter((fav) => fav !== favoriteID);
-    } else {
-      favorites.push(productID);
-    }
-
-    await db.collection("users").doc(uid).update({
-      favoriteStands: favorites,
-    });
-
-    return { favorites };
-  }
-
-  static async setFavoriteProduct(uid: string, body: IUserFavoritesBody) {
-    const { favoriteID } = body;
-
-    const userDataDoc = await db.collection("users").doc(uid).get();
-
-    if (!userDataDoc.exists)
-      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Usuario no encontrado");
-
-    const productID = favoriteID || "";
-
-    const standDataDoc = await db.collection("products").doc(productID).get();
-
-    if (!standDataDoc.exists)
-      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Producto no encontrado");
-
-    const userData = userDataDoc.data();
-
-    let favorites: string[] = userData?.favoriteProducts;
-
-    if (favorites.includes(productID)) {
-      favorites = favorites.filter((fav) => fav !== favoriteID);
-    } else {
-      favorites.push(productID);
-    }
-
-    await db.collection("users").doc(uid).update({
-      favoriteProducts: favorites,
-    });
-
-    return { favorites };
+    await auth.updateUser(uid, passwordInput);
   }
 }
