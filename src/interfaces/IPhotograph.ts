@@ -1,6 +1,5 @@
 import { Timestamp } from "firebase-admin/firestore";
 import { File } from "formidable";
-import { IFormidableFiles } from "./IFile";
 
 export interface IPhotographBase {
   id?: string;

@@ -18,6 +18,7 @@ router.put(
   updateUserValidator,
   UserController.updateUser
 );
+router.post("/photo", sessionMiddleware, UserController.uploadPhotograph);
 router.patch(
   "/change-password",
   sessionMiddleware,

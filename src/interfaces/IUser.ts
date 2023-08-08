@@ -1,6 +1,7 @@
 import { UserInfo, UserMetadata } from "firebase-admin/auth";
 import { Timestamp } from "firebase-admin/firestore";
 import { IRefBasic } from "./IRef";
+import { File } from "formidable";
 
 export interface IUserAuth {
   uid: string;
@@ -52,6 +53,10 @@ export interface IUserUpdate {
   email: string;
   displayName: string;
   phoneNumber?: string;
+}
+
+export interface IUserPhoto {
+  files: File[];
 }
 
 export interface IUserChangePassword {

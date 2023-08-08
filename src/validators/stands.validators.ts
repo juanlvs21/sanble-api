@@ -1,6 +1,5 @@
 import { check } from "express-validator";
 
-import { EFairType } from "../interfaces/IFair";
 import { validate } from "../middlewares/validator.middleware";
 
 const lengthMaxLong = 500;

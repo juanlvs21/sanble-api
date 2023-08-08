@@ -21,7 +21,7 @@ const validPhotographBase = (form: IPhotographForm) => {
   return errors;
 };
 
-const validPhotographFile = (form: IPhotographForm) => {
+export const validPhotographFile = (form: IPhotographForm) => {
   const errors: string[] = [];
 
   const file = form.files[0] || null;

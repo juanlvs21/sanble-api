@@ -2,6 +2,7 @@ import { Handler } from "express";
 import { StatusCodes } from "http-status-codes";
 
 import { UserService } from "../services/user.service";
+import { parseFormData } from "../utils/request";
 
 export class UserController {
   static signUp: Handler = async (req, res) => {
@@ -31,6 +32,18 @@ export class UserController {
       statusCode: StatusCodes.OK,
       data: userData,
       message: "Usuario actualizado exitosamente",
+    });
+  };
+
+  static uploadPhotograph: Handler = async (req, res) => {
+    const parse: any = await parseFormData(req);
+
+    const photograph = await UserService.uploadPhotograph(req.uid, parse);
+
+    res.status(StatusCodes.CREATED).json({
+      statusCode: StatusCodes.CREATED,
+      data: photograph,
+      message: "Fotografía de perfil guardada con éxito",
     });
   };
 

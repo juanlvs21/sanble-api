@@ -1,9 +1,16 @@
 import { UserRecord } from "firebase-admin/auth";
 import randomstring from "randomstring";
 
-import { IUser, IUserData, IUserVerifyToken } from "../interfaces/IUser";
+import {
+  IUser,
+  IUserData,
+  IUserPhoto,
+  IUserVerifyToken,
+} from "../interfaces/IUser";
 import { auth } from "./firebase";
 import { dayjs } from "./time";
+import { IPhotographForm } from "../interfaces/IPhotograph";
+import { validPhotographFile } from "./utilsPhotograph";
 
 interface ICheckUserReturn {
   isError: boolean;
@@ -58,3 +65,9 @@ export function userVerifyGenerateToken(): IUserVerifyToken {
     token: randomstring.generate(40) + dayjs().unix(),
   };
 }
+
+export const validPhotoUser = (form: IUserPhoto) => {
+  const errors = validPhotographFile(form as any);
+
+  return errors;
+};
