@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 
-import { ParamsDictionary } from "express-serve-static-core";
 import { ErrorHandler } from "../error";
+import { EFolderName } from "../interfaces/IFile";
 import { IPhotographForm } from "../interfaces/IPhotograph";
 import {
   IUserChangePassword,
@@ -14,14 +14,12 @@ import { sendEmail } from "../mail/sendgrid";
 import { recoveryTemplate } from "../mail/templates/recovery";
 import { welcomeTemplate } from "../mail/templates/welcome";
 import { Timestamp, auth, db } from "../utils/firebase";
+import { deleteFile, listFiles, uploadFile } from "../utils/imagekit";
 import {
   checkUserInFirebase,
   userAuthReturn,
   userVerifyGenerateToken,
-  validPhotoUser,
 } from "../utils/utilsUser";
-import { uploadFile } from "../utils/imagekit";
-import { EFolderName } from "../interfaces/IFile";
 
 const welcomeEmailFrom = "Sanble <bienvenido@sanble.juanl.dev>";
 const welcomeEmailSubject = "¡Bienvenido a Sanble!";
@@ -155,11 +153,17 @@ export class UserService {
 
     const userData = userDataDoc.data() as IUserData;
 
+    const list = await listFiles(`${EFolderName.USERS}/${userAuth.uid}`);
+
     const { url } = await uploadFile({
       file: body.files[0],
       mimetype: body.files[0].mimetype || "",
       folder: `${EFolderName.USERS}/${userAuth.uid}`,
     });
+
+    for (let i = 0; i < list.length; i++) {
+      await deleteFile(list[i].fileId);
+    }
 
     const newUser = await auth.updateUser(uid, {
       photoURL: url,

@@ -1,6 +1,7 @@
 import fs from "fs";
 import ImageKit from "imagekit";
-import { UploadResponse } from "imagekit/dist/libs/interfaces";
+import { FileObject, UploadResponse } from "imagekit/dist/libs/interfaces";
+import IKResponse from "imagekit/dist/libs/interfaces/IKResponse";
 import { v4 as uuidv4 } from "uuid";
 
 import {
@@ -52,6 +53,23 @@ export const uploadFile = async ({
       })
       .catch((error) => {
         console.error("imagekit.upload error: ", error);
+        reject(error);
+      });
+  });
+};
+
+export const listFiles = async (
+  path: string
+): Promise<IKResponse<FileObject[]>> => {
+  return await new Promise((resolve, reject) => {
+    imagekit
+      .listFiles({
+        path,
+      })
+      .then((response) => {
+        resolve(response);
+      })
+      .catch((error) => {
         reject(error);
       });
   });
