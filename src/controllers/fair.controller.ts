@@ -35,6 +35,16 @@ export class FairController {
     });
   };
 
+  static updateDetails: Handler = async (req, res) => {
+    const fair = await FairService.updateDetails(req.uid, req.params, req.body);
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      data: fair,
+      message: "Feria editada con éxito",
+    });
+  };
+
   static getGeolocationAll: Handler = async (_req, res) => {
     const fairs = await FairService.getGeolocationAll();
 

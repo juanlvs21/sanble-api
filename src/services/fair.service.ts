@@ -129,6 +129,34 @@ export class FairService {
     return fairDataFormat(fairDoc.data() as IFair);
   }
 
+  static async updateDetails(
+    uid: string,
+    params: ParamsDictionary,
+    body: IFairForm
+  ) {
+    const { fairID } = params;
+
+    if (!fairID)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
+
+    const fairDoc = await db.collection("fairs").doc(fairID).get();
+
+    if (!fairDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
+
+    const fairData = fairDoc.data() as IFair;
+
+    if (fairData.owner.path !== `users/${uid}`) {
+      throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
+    }
+
+    const newData = { ...fairData, ...body };
+
+    await db.collection("fairs").doc(fairID).update(newData);
+
+    return fairDataFormat(newData as IFair);
+  }
+
   static async getGeolocationAll() {
     const fairsDoc = await db.collection("fairs").get();
 
