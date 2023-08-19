@@ -397,7 +397,7 @@ export class FairService {
     const { url, name, fileId } = await uploadFile({
       file: body.files[0],
       mimetype: body.files[0].mimetype || "",
-      folder: `${EFolderName.FAIRS}/${fairData.id}`,
+      folder: `${EFolderName.FAIRS}/photos/${fairData.id}`,
     });
 
     body.isCover = body.isCover.toString() === "true";
@@ -479,7 +479,7 @@ export class FairService {
           const { url, name, fileId } = await uploadFile({
             file: body.files[0],
             mimetype: body.files[0].mimetype || "",
-            folder: `${EFolderName.FAIRS}/${fairData.id}`,
+            folder: `${EFolderName.FAIRS}/photos/${fairData.id}`,
           });
 
           await deleteFile(photo.fileId);
