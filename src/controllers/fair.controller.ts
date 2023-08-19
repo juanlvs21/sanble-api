@@ -140,4 +140,16 @@ export class FairController {
       message: "Fotografía Eliminada con éxito",
     });
   };
+
+  static savePost: Handler = async (req, res) => {
+    const parse: any = await parseFormData(req);
+
+    const photograph = await FairService.savePost(req.uid, req.params, parse);
+
+    res.status(StatusCodes.CREATED).json({
+      statusCode: StatusCodes.CREATED,
+      data: photograph,
+      message: "Pubicación creada con éxito",
+    });
+  };
 }

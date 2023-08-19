@@ -7,10 +7,19 @@ import { ErrorHandler } from "../error";
 import { IFair, IFairForm, IFairGeo } from "../interfaces/IFair";
 import { EFolderName } from "../interfaces/IFile";
 import { IPhotograph, IPhotographForm } from "../interfaces/IPhotograph";
+import { IPost, IPostForm } from "../interfaces/IPost";
 import { IQueryListRequest } from "../interfaces/IRequest";
-import { EReviewType, IReview } from "../interfaces/IReview";
+import { IReview } from "../interfaces/IReview";
 import { IStand } from "../interfaces/IStand";
-import { OrderByDirection, Timestamp, auth, db } from "../utils/firebase";
+import { IUser } from "../interfaces/IUser";
+import {
+  DocumentData,
+  DocumentSnapshot,
+  OrderByDirection,
+  Timestamp,
+  auth,
+  db,
+} from "../utils/firebase";
 import { deleteFile, uploadFile } from "../utils/imagekit";
 import { DEFAULT_LIMIT_VALUE } from "../utils/pagination";
 import { fairDataFormat, fairDataFormatGeo } from "../utils/utilsFair";
@@ -18,8 +27,8 @@ import {
   photographFormat,
   validPhotographForm,
 } from "../utils/utilsPhotograph";
+import { postFormat, validPostForm } from "../utils/utilsPosts";
 import { standDataFormat } from "../utils/utilsStand";
-import { IUser } from "../interfaces/IUser";
 
 export class FairService {
   static async saveFair(body: IFairForm, uid: string) {
@@ -226,7 +235,7 @@ export class FairService {
     const reviews: IReview[] = [];
 
     const snapshot = await db
-      .collection("reviews")
+      .collection("fairs_reviews")
       .orderBy("creationTime", "desc")
       .where("parent", "==", db.doc(`fairs/${fairID}`))
       .get();
@@ -261,7 +270,6 @@ export class FairService {
   ) {
     const { fairID } = params;
     const { stars, comment } = body;
-    const reviewType = EReviewType.FAIR;
 
     const userAuth = await auth.getUser(uid);
 
@@ -272,7 +280,7 @@ export class FairService {
 
     const reviewID = `${userAuth.uid}-${fairID}`;
 
-    const reviewDoc = await db.collection("reviews").doc(reviewID).get();
+    const reviewDoc = await db.collection("fairs_reviews").doc(reviewID).get();
 
     let reviewData = {};
 
@@ -290,7 +298,6 @@ export class FairService {
         id: reviewID,
         comment: comment,
         stars: stars,
-        type: reviewType,
         ownerName: userAuth.displayName || "",
         ownerPhoto: userAuth.photoURL || "",
         owner: db.doc(`users/${userAuth.uid}`),
@@ -301,12 +308,12 @@ export class FairService {
     }
 
     await db
-      .collection("reviews")
+      .collection("fairs_reviews")
       .doc(reviewID)
       .set(reviewData, { merge: true });
 
     const snapshotReviews = await db
-      .collection("reviews")
+      .collection("fairs_reviews")
       .where("parent", "==", db.doc(`fairs/${fairID}`))
       .get();
 
@@ -537,6 +544,87 @@ export class FairService {
 
     return {
       photographID: photoID,
+    };
+  }
+
+  static async savePost(
+    uid: string,
+    params: ParamsDictionary,
+    body: IPostForm
+  ) {
+    const { fairID } = params;
+
+    const validatorResult = validPostForm(body);
+
+    if (validatorResult.length) {
+      throw new ErrorHandler(StatusCodes.UNPROCESSABLE_ENTITY, validatorResult);
+    }
+
+    if (!fairID)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
+
+    const fairDoc = await db.collection("fairs").doc(fairID).get();
+
+    if (!fairDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
+
+    const fairData = fairDoc.data() as IFair;
+
+    if (fairData.owner.path !== `users/${uid}`) {
+      throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
+    }
+
+    let postDoc: DocumentSnapshot<DocumentData> | undefined = undefined;
+    let postData: IPost = {
+      id: "",
+      text: body.text,
+      parent: db.doc(`fairs/${fairID}`),
+    };
+
+    if (body.files.length) {
+      const { url, name, fileId } = await uploadFile({
+        file: body.files[0],
+        mimetype: body.files[0].mimetype || "",
+        folder: `${EFolderName.FAIRS}/posts/${fairData.id}`,
+      });
+
+      postData = { ...postData, fileName: name, fileUrl: url, fileId };
+    }
+
+    if (body.id) {
+      postDoc = await db.collection("fairs_reviews").doc(body.id).get();
+    }
+
+    if (postDoc?.exists) {
+      const currentData = postDoc.data() as IPost;
+
+      postData = {
+        ...currentData,
+        ...postData,
+        id: currentData.id,
+      };
+
+      if (body.files.length && currentData.fileId) {
+        await deleteFile(currentData.fileId);
+      }
+    } else {
+      const time = dayjs().format();
+      postData = {
+        ...postData,
+        id: uuidv4(),
+        creationTimestamp: Timestamp.now(),
+        creationTime: time,
+      };
+    }
+
+    await db
+      .collection("fairs_posts")
+      .doc(postData.id ?? "")
+      .update({ ...postData });
+
+    return {
+      post: postFormat(postData),
+      fairID: fairID,
     };
   }
 }

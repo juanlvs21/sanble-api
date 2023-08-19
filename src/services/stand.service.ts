@@ -7,9 +7,10 @@ import { ErrorHandler } from "../error";
 import { EFolderName } from "../interfaces/IFile";
 import { IPhotograph, IPhotographForm } from "../interfaces/IPhotograph";
 import { IQueryListRequest } from "../interfaces/IRequest";
-import { EReviewType, IReview } from "../interfaces/IReview";
+import { IReview } from "../interfaces/IReview";
 import { IStand, IStandForm } from "../interfaces/IStand";
-import { auth, db, OrderByDirection, Timestamp } from "../utils/firebase";
+import { IUser } from "../interfaces/IUser";
+import { OrderByDirection, Timestamp, auth, db } from "../utils/firebase";
 import { deleteFile, uploadFile } from "../utils/imagekit";
 import { DEFAULT_LIMIT_VALUE } from "../utils/pagination";
 import {
@@ -17,7 +18,6 @@ import {
   validPhotographForm,
 } from "../utils/utilsPhotograph";
 import { standDataFormat } from "../utils/utilsStand";
-import { IUser } from "../interfaces/IUser";
 
 export class StandService {
   static async saveStand(body: IStandForm, uid: string) {
@@ -141,7 +141,7 @@ export class StandService {
     const reviews: IReview[] = [];
 
     const snapshot = await db
-      .collection("reviews")
+      .collection("stands_reviews")
       .orderBy("creationTime", "desc")
       .where("parent", "==", db.doc(`stands/${standID}`))
       .get();
@@ -176,7 +176,6 @@ export class StandService {
   ) {
     const { standID } = params;
     const { stars, comment } = body;
-    const reviewType = EReviewType.STAND;
 
     const userAuth = await auth.getUser(uid);
 
@@ -187,7 +186,7 @@ export class StandService {
 
     const reviewID = `${userAuth.uid}-${standID}`;
 
-    const reviewDoc = await db.collection("reviews").doc(reviewID).get();
+    const reviewDoc = await db.collection("stands_reviews").doc(reviewID).get();
 
     let reviewData = {};
 
@@ -205,7 +204,6 @@ export class StandService {
         id: reviewID,
         comment: comment,
         stars: stars,
-        type: reviewType,
         ownerName: userAuth.displayName || "",
         ownerPhoto: userAuth.photoURL || "",
         owner: db.doc(`user/${userAuth.uid}`),
@@ -216,12 +214,12 @@ export class StandService {
     }
 
     await db
-      .collection("reviews")
+      .collection("stands_reviews")
       .doc(reviewID)
       .set(reviewData, { merge: true });
 
     const snapshotReviews = await db
-      .collection("reviews")
+      .collection("stands_reviews")
       .where("parent", "==", db.doc(`stands/${standID}`))
       .get();
 
