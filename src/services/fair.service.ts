@@ -547,6 +547,51 @@ export class FairService {
     };
   }
 
+  static async getListPosts(
+    params: ParamsDictionary,
+    { limit, lastIndex }: IQueryListRequest
+  ) {
+    const { fairID } = params;
+    const limitNumber = Number(limit) || DEFAULT_LIMIT_VALUE;
+    const firstIndexNumber = Number(lastIndex) || 0;
+
+    const posts: IPost[] = [];
+
+    const snapshot = await db
+      .collection("fairs_posts")
+      .orderBy("creationTime", "desc")
+      .where("parent", "==", db.doc(`fairs/${fairID}`))
+      .get();
+
+    snapshot.forEach(async (doc) => {
+      let post = doc.data() as IPost;
+
+      // const parent = await post.parent.get();
+
+      // if (parent.exists) {
+      //   const fair = parent.data() as IFair;
+
+      //   post.parentName = fair.name;
+      //   post.parentPhoto = fair.photographs.find((photo) => photo.isCover)?.url;
+      // }
+
+      posts.push(post);
+    });
+
+    const lastIndexNew = firstIndexNumber + limitNumber;
+
+    console.log({ firstIndexNumber, lastIndexNew });
+
+    return {
+      list: posts.length ? posts.slice(firstIndexNumber, lastIndexNew) : [],
+      pagination: {
+        total: snapshot.docs.length || 0,
+        lastIndex: lastIndexNew,
+        limit: limitNumber,
+      },
+    };
+  }
+
   static async savePost(
     uid: string,
     params: ParamsDictionary,
@@ -574,11 +619,15 @@ export class FairService {
       throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
     }
 
+    let postID = "";
     let postDoc: DocumentSnapshot<DocumentData> | undefined = undefined;
     let postData: IPost = {
       id: "",
       text: body.text,
       parent: db.doc(`fairs/${fairID}`),
+      fileName: null,
+      fileUrl: null,
+      fileId: null,
     };
 
     if (body.files.length) {
@@ -592,16 +641,17 @@ export class FairService {
     }
 
     if (body.id) {
-      postDoc = await db.collection("fairs_reviews").doc(body.id).get();
+      postDoc = await db.collection("fairs_posts").doc(body.id).get();
     }
 
     if (postDoc?.exists) {
       const currentData = postDoc.data() as IPost;
+      postID = currentData.id ?? "";
 
       postData = {
         ...currentData,
         ...postData,
-        id: currentData.id,
+        id: postID,
       };
 
       if (body.files.length && currentData.fileId) {
@@ -609,9 +659,11 @@ export class FairService {
       }
     } else {
       const time = dayjs().format();
+      postID = uuidv4();
+
       postData = {
         ...postData,
-        id: uuidv4(),
+        id: postID,
         creationTimestamp: Timestamp.now(),
         creationTime: time,
       };
@@ -619,8 +671,8 @@ export class FairService {
 
     await db
       .collection("fairs_posts")
-      .doc(postData.id ?? "")
-      .update({ ...postData });
+      .doc(postID)
+      .set(postData, { merge: true });
 
     return {
       post: postFormat(postData),

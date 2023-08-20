@@ -48,6 +48,7 @@ router.delete(
   sessionMiddleware,
   FairController.deletePhotograph
 );
+router.get("/:fairID/posts", sessionMiddleware, FairController.getListPosts);
 router.post("/:fairID/posts", sessionMiddleware, FairController.savePost);
 
 export default router.router;

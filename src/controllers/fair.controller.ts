@@ -141,6 +141,16 @@ export class FairController {
     });
   };
 
+  static getListPosts: Handler = async (req, res) => {
+    const reviews = await FairService.getListPosts(req.params, req.query);
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      data: reviews,
+      message: "Listado de publicaciones",
+    });
+  };
+
   static savePost: Handler = async (req, res) => {
     const parse: any = await parseFormData(req);
 
