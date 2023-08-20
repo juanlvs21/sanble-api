@@ -624,7 +624,6 @@ export class FairService {
 
     return {
       post: postFormat(postData),
-      fairID: fairID,
     };
   }
 }
