@@ -48,6 +48,6 @@ router.delete(
   sessionMiddleware,
   FairController.deletePhotograph
 );
-router.post("/:fairID/post", sessionMiddleware, FairController.savePost);
+router.post("/:fairID/posts", sessionMiddleware, FairController.savePost);
 
 export default router.router;
