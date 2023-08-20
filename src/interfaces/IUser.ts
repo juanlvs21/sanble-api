@@ -1,7 +1,8 @@
 import { UserInfo, UserMetadata } from "firebase-admin/auth";
-import { Timestamp } from "firebase-admin/firestore";
-import { IRefBasic } from "./IRef";
+import { DocumentReference, Timestamp } from "firebase-admin/firestore";
 import { File } from "formidable";
+
+import { IRefBasic } from "./IRef";
 
 export interface IUserAuth {
   uid: string;
@@ -23,8 +24,8 @@ export interface IUserData {
   favoriteFairs: string[];
   favoriteStands: string[];
   favoriteProducts: string[];
-  ownerFairs: IRefBasic[];
-  ownerStands: IRefBasic[];
+  ownerFairs: IRefBasic[] | DocumentReference[];
+  ownerStands: IRefBasic[] | DocumentReference[];
 }
 
 export interface IUser extends IUserAuth, IUserData {}
@@ -65,4 +66,11 @@ export interface IUserChangePassword {
 
 export interface IUserRecoveryPassword {
   email: string;
+}
+
+export interface IUserOwnerData {
+  uid: string;
+  email: string;
+  displayName: string;
+  photoURL?: string;
 }

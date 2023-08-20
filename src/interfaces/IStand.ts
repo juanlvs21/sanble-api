@@ -1,6 +1,8 @@
-import { Timestamp } from "firebase-admin/firestore";
+import { DocumentReference, Timestamp } from "firebase-admin/firestore";
+
 import { IPhotograph } from "./IPhotograph";
 import { IRefBasic } from "./IRef";
+import { IUserOwnerData } from "./IUser";
 
 export interface IStand {
   id: string;
@@ -9,13 +11,14 @@ export interface IStand {
   creationTime: string;
   coverUrl?: string;
   description: string;
-  owner: IRefBasic;
+  ownerRef: DocumentReference;
+  owner: IUserOwnerData;
   slogan?: string;
   stars: number;
   photographs: IPhotograph[];
   contactEmail: string;
   contactPhone: string;
-  fairs: IRefBasic[];
+  fairs: DocumentReference[] | IRefBasic[];
 }
 
 export interface IStandForm {

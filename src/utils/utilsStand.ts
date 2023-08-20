@@ -4,7 +4,6 @@ import { IStand } from "../interfaces/IStand";
 
 export const standDataFormat = (stand: IStand): IStand => {
   let coverUrl = undefined;
-  const ownerRefPath = stand.owner.path;
 
   const photographs = stand.photographs.map((photo) => {
     const creationTime = dayjs(
@@ -31,10 +30,6 @@ export const standDataFormat = (stand: IStand): IStand => {
     creationTime: dayjs(
       (stand.creationTimestamp?.seconds || 0) * 1000
     ).format(),
-    owner: {
-      path: ownerRefPath,
-      id: ownerRefPath.replace("users/", ""),
-    },
   };
 
   delete standReturn.creationTimestamp;

@@ -5,8 +5,6 @@ import { IFair, IFairGeo } from "../interfaces/IFair";
 export const fairDataFormat = (fair: IFair): IFair => {
   let coverUrl = undefined;
 
-  const ownerRefPath = fair.owner.path;
-
   const photographs = fair.photographs.map((photo) => {
     const creationTime = dayjs(
       (photo.creationTimestamp?.seconds || 0) * 1000
@@ -29,10 +27,6 @@ export const fairDataFormat = (fair: IFair): IFair => {
     coverUrl,
     stands,
     photographs,
-    owner: {
-      path: ownerRefPath,
-      id: ownerRefPath.replace("users/", ""),
-    },
     creationTime: dayjs((fair.creationTimestamp?.seconds || 0) * 1000).format(),
     celebrationDate: fair.celebrationDate
       ? dayjs(fair.celebrationDate).format()

@@ -14,6 +14,7 @@ import { IStand } from "../interfaces/IStand";
 import { IUser } from "../interfaces/IUser";
 import {
   DocumentData,
+  DocumentReference,
   DocumentSnapshot,
   OrderByDirection,
   Timestamp,
@@ -23,6 +24,7 @@ import {
 import { deleteFile, uploadFile } from "../utils/imagekit";
 import { DEFAULT_LIMIT_VALUE } from "../utils/pagination";
 import { fairDataFormat, fairDataFormatGeo } from "../utils/utilsFair";
+import { getOwnerUserData } from "../utils/utilsOwner";
 import {
   photographFormat,
   validPhotographForm,
@@ -43,7 +45,7 @@ export class FairService {
     const newFair: any = {
       ...body,
       id,
-      owner: db.doc(`users/${uid}`),
+      ownerRef: db.doc(`users/${uid}`),
       creationTimestamp: Timestamp.now(),
       stands: [],
       photographs: [],
@@ -60,7 +62,10 @@ export class FairService {
         ownerFairs: [...userData.ownerFairs, db.doc(`fairs/${newFair.id}`)],
       });
 
-    return fairDataFormat(newFair as IFair);
+    let fair: IFair = fairDataFormat(newFair as IFair);
+    fair.owner = await getOwnerUserData(fair.ownerRef);
+
+    return fair;
   }
 
   static async getList(
@@ -79,7 +84,7 @@ export class FairService {
       snapshot = await db
         .collection("fairs")
         .orderBy(orderField, orderDirection)
-        .where("owner", "==", db.doc(`users/${uid}`))
+        .where("ownerRef", "==", db.doc(`users/${uid}`))
         .get();
     } else {
       snapshot = await db
@@ -135,7 +140,10 @@ export class FairService {
     if (!fairDoc.exists)
       throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
 
-    return fairDataFormat(fairDoc.data() as IFair);
+    let fair: IFair = fairDataFormat(fairDoc.data() as IFair);
+    fair.owner = await getOwnerUserData(fair.ownerRef);
+
+    return fair;
   }
 
   static async updateDetails(
@@ -155,7 +163,7 @@ export class FairService {
 
     const fairData = fairDoc.data() as IFair;
 
-    if (fairData.owner.path !== `users/${uid}`) {
+    if (fairData.ownerRef.id !== uid) {
       throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
     }
 
@@ -240,15 +248,20 @@ export class FairService {
       .where("parent", "==", db.doc(`fairs/${fairID}`))
       .get();
 
-    let reviewUserData = null;
+    let reviewUserData: IReview | null = null;
 
     const reviewUserID = `${uid}-${fairID}`;
 
     snapshot.forEach((doc) => {
-      reviews.push(doc.data() as IReview);
+      let data = doc.data() as IReview;
+      reviews.push(data);
 
-      if (doc.data().id === reviewUserID) reviewUserData = doc.data();
+      if (doc.data().id === reviewUserID) reviewUserData = data;
     });
+
+    for (let i = 0; i < reviews.length; i++) {
+      reviews[i].owner = await getOwnerUserData(reviews[i].ownerRef);
+    }
 
     const lastIndexNew = firstIndexNumber + limitNumber;
 
@@ -288,8 +301,6 @@ export class FairService {
       reviewData = {
         comment: comment,
         stars: stars,
-        ownerName: userAuth.displayName || "",
-        ownerPhoto: userAuth.photoURL || "",
         updateTime: dayjs().format(),
       };
     } else {
@@ -298,9 +309,7 @@ export class FairService {
         id: reviewID,
         comment: comment,
         stars: stars,
-        ownerName: userAuth.displayName || "",
-        ownerPhoto: userAuth.photoURL || "",
-        owner: db.doc(`users/${userAuth.uid}`),
+        ownerRef: db.doc(`users/${userAuth.uid}`),
         parent: db.doc(`fairs/${fairID}`),
         creationTime: time,
         updateTime: time,
@@ -363,7 +372,7 @@ export class FairService {
 
     return {
       photograph: photographFormat(photograph[0]),
-      ownerID: fairData.owner.path.replace("users/", ""),
+      ownerID: fairData.ownerRef.id,
     };
   }
 
@@ -390,7 +399,7 @@ export class FairService {
 
     const fairData = fairDoc.data() as IFair;
 
-    if (fairData.owner.path !== `users/${uid}`) {
+    if (fairData.ownerRef.id !== uid) {
       throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
     }
 
@@ -422,7 +431,7 @@ export class FairService {
 
     return {
       photograph: photographFormat(newPhoto),
-      ownerID: fairData.owner.path.replace("users/", ""),
+      ownerID: fairData.ownerRef.id,
     };
   }
 
@@ -452,7 +461,7 @@ export class FairService {
 
     const fairData = fairDoc.data() as IFair;
 
-    if (fairData.owner.path !== `users/${uid}`) {
+    if (fairData.ownerRef.id !== uid) {
       throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
     }
 
@@ -500,7 +509,7 @@ export class FairService {
 
     return {
       photograph: photographFormat(formPhoto),
-      ownerID: fairData.owner.path.replace("users/", ""),
+      ownerID: fairData.ownerRef.id,
     };
   }
 
@@ -520,7 +529,7 @@ export class FairService {
 
     const fairData = fairDoc.data() as IFair;
 
-    if (fairData.owner.path !== `users/${uid}`) {
+    if (fairData.ownerRef.id !== uid) {
       throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
     }
 
@@ -580,8 +589,6 @@ export class FairService {
 
     const lastIndexNew = firstIndexNumber + limitNumber;
 
-    console.log({ firstIndexNumber, lastIndexNew });
-
     return {
       list: posts.length ? posts.slice(firstIndexNumber, lastIndexNew) : [],
       pagination: {
@@ -615,7 +622,7 @@ export class FairService {
 
     const fairData = fairDoc.data() as IFair;
 
-    if (fairData.owner.path !== `users/${uid}`) {
+    if (fairData.ownerRef.id !== uid) {
       throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
     }
 

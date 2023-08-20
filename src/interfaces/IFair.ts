@@ -1,7 +1,8 @@
-import { Timestamp } from "firebase-admin/firestore";
+import { DocumentReference, Timestamp } from "firebase-admin/firestore";
 
 import { IPhotograph } from "./IPhotograph";
 import { IRefBasic } from "./IRef";
+import { IUserOwnerData } from "./IUser";
 
 export enum EFairType {
   ENTREPRENEURSHIP = "entrepreneurship",
@@ -15,7 +16,8 @@ export interface IFair {
   creationTimestamp?: Timestamp;
   creationTime: string;
   celebrationDate: string;
-  owner: IRefBasic;
+  ownerRef: DocumentReference;
+  owner: IUserOwnerData;
   address: string;
   description: string;
   stars: number;
@@ -24,7 +26,7 @@ export interface IFair {
   contactPhone: string;
   photographs: IPhotograph[];
   coverUrl?: string;
-  stands: IRefBasic[];
+  stands: DocumentReference[] | IRefBasic[];
 }
 
 export interface IFairGeo {

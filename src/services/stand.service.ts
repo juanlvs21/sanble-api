@@ -10,7 +10,13 @@ import { IQueryListRequest } from "../interfaces/IRequest";
 import { IReview } from "../interfaces/IReview";
 import { IStand, IStandForm } from "../interfaces/IStand";
 import { IUser } from "../interfaces/IUser";
-import { OrderByDirection, Timestamp, auth, db } from "../utils/firebase";
+import {
+  DocumentReference,
+  OrderByDirection,
+  Timestamp,
+  auth,
+  db,
+} from "../utils/firebase";
 import { deleteFile, uploadFile } from "../utils/imagekit";
 import { DEFAULT_LIMIT_VALUE } from "../utils/pagination";
 import {
@@ -18,6 +24,7 @@ import {
   validPhotographForm,
 } from "../utils/utilsPhotograph";
 import { standDataFormat } from "../utils/utilsStand";
+import { getOwnerUserData } from "../utils/utilsOwner";
 
 export class StandService {
   static async saveStand(body: IStandForm, uid: string) {
@@ -32,7 +39,7 @@ export class StandService {
     const newStand: any = {
       ...body,
       id,
-      owner: db.doc(`users/${uid}`),
+      ownerRef: db.doc(`users/${uid}`),
       creationTimestamp: Timestamp.now(),
       fairs: [],
       photographs: [],
@@ -49,7 +56,10 @@ export class StandService {
         ownerStands: [...userData.ownerStands, db.doc(`stands/${newStand.id}`)],
       });
 
-    return standDataFormat(newStand as IStand);
+    let stand: IStand = standDataFormat(newStand as IStand);
+    stand.owner = await getOwnerUserData(stand.ownerRef);
+
+    return stand;
   }
 
   static async getList(
@@ -68,7 +78,7 @@ export class StandService {
       snapshot = await db
         .collection("stands")
         .orderBy(orderField, orderDirection)
-        .where("owner", "==", db.doc(`users/${uid}`))
+        .where("ownerRef", "==", db.doc(`users/${uid}`))
         .get();
     } else {
       snapshot = await db
@@ -126,7 +136,10 @@ export class StandService {
     if (!standDoc.exists)
       throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrado");
 
-    return standDataFormat(standDoc.data() as IStand);
+    let stand: IStand = standDataFormat(standDoc.data() as IStand);
+    stand.owner = await getOwnerUserData(stand.ownerRef);
+
+    return stand;
   }
 
   static async getListReviews(
@@ -151,10 +164,15 @@ export class StandService {
     const reviewUserID = `${uid}-${standID}`;
 
     snapshot.forEach((doc) => {
-      reviews.push(doc.data() as IReview);
+      let data = doc.data() as IReview;
+      reviews.push(data);
 
-      if (doc.data().id === reviewUserID) reviewUserData = doc.data();
+      if (doc.data().id === reviewUserID) reviewUserData = data;
     });
+
+    for (let i = 0; i < reviews.length; i++) {
+      reviews[i].owner = await getOwnerUserData(reviews[i].ownerRef);
+    }
 
     const lastIndexNew = firstIndexNumber + limitNumber;
 
@@ -194,8 +212,6 @@ export class StandService {
       reviewData = {
         comment: comment,
         stars: stars,
-        ownerName: userAuth.displayName || "",
-        ownerPhoto: userAuth.photoURL || "",
         updateTime: dayjs().format(),
       };
     } else {
@@ -204,9 +220,7 @@ export class StandService {
         id: reviewID,
         comment: comment,
         stars: stars,
-        ownerName: userAuth.displayName || "",
-        ownerPhoto: userAuth.photoURL || "",
-        owner: db.doc(`user/${userAuth.uid}`),
+        ownerRef: db.doc(`user/${userAuth.uid}`),
         parent: db.doc(`stands/${standID}`),
         creationTime: time,
         updateTime: time,
@@ -267,7 +281,7 @@ export class StandService {
 
     const standData = standDoc.data() as IStand;
 
-    if (standData.owner.path !== `users/${uid}`) {
+    if (standData.ownerRef.id !== uid) {
       throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
     }
 
@@ -299,7 +313,7 @@ export class StandService {
 
     return {
       photograph: photographFormat(newPhoto),
-      ownerID: standData.owner.path.replace("users/", ""),
+      ownerID: standData.ownerRef.id,
     };
   }
 
@@ -329,7 +343,7 @@ export class StandService {
 
     const standData = standDoc.data() as IStand;
 
-    if (standData.owner.path !== `users/${uid}`) {
+    if (standData.ownerRef.id !== uid) {
       throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
     }
 
@@ -377,7 +391,7 @@ export class StandService {
 
     return {
       photograph: photographFormat(formPhoto),
-      ownerID: standData.owner.path.replace("users/", ""),
+      ownerID: standData.ownerRef.id,
     };
   }
 
@@ -397,7 +411,7 @@ export class StandService {
 
     const standData = standDoc.data() as IStand;
 
-    if (standData.owner.path !== `users/${uid}`) {
+    if (standData.ownerRef.id !== uid) {
       throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
     }
 

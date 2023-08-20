@@ -1,12 +1,14 @@
 import { Timestamp, DocumentReference } from "firebase-admin/firestore";
 import { File } from "formidable";
 
+import { IRefBasic } from "./IRef";
+
 export interface IPostBase {
   id?: string;
   text: string;
   creationTimestamp?: Timestamp;
   creationTime?: string;
-  parent: DocumentReference;
+  parent: DocumentReference | IRefBasic;
   parentName?: string;
   parentPhoto?: string;
 }
