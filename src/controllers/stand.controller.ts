@@ -59,6 +59,16 @@ export class StandController {
     });
   };
 
+  static deleteReview: Handler = async (req, res) => {
+    const review = await StandService.deleteReview(req.uid, req.params);
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      data: review,
+      message: "Opinión eliminada con éxito",
+    });
+  };
+
   static uploadPhotograph: Handler = async (req, res) => {
     const parse: any = await parseFormData(req);
 

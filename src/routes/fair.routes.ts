@@ -28,6 +28,11 @@ router.post(
   reviewValidator,
   FairController.saveReview
 );
+router.delete(
+  "/:fairID/reviews",
+  sessionMiddleware,
+  FairController.deleteReview
+);
 router.get(
   "/:fairID/photograph/:photoID",
   sessionMiddleware,

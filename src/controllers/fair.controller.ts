@@ -89,6 +89,16 @@ export class FairController {
     });
   };
 
+  static deleteReview: Handler = async (req, res) => {
+    const review = await FairService.deleteReview(req.uid, req.params);
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      data: review,
+      message: "Opinión eliminada con éxito",
+    });
+  };
+
   static getPhotograph: Handler = async (req, res) => {
     const photograph = await FairService.getPhotograph(req.params);
 

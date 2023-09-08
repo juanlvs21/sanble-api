@@ -352,6 +352,31 @@ export class FairService {
     };
   }
 
+  static async deleteReview(uid: string, params: ParamsDictionary) {
+    const { fairID } = params;
+
+    const userAuth = await auth.getUser(uid);
+
+    const fairDoc = await db.collection("fairs").doc(fairID).get();
+
+    if (!fairDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
+
+    const reviewID = `${userAuth.uid}-${fairID}`;
+
+    const reviewDoc = await db.collection("fairs_reviews").doc(reviewID).get();
+
+    if (!reviewDoc.exists) {
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Opinión no encontrada");
+    }
+
+    await db.collection("fairs_reviews").doc(reviewID).delete();
+
+    return {
+      reviewID,
+    };
+  }
+
   static async getPhotograph(params: ParamsDictionary) {
     const { fairID, photoID } = params;
 

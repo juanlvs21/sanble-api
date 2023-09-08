@@ -262,6 +262,31 @@ export class StandService {
     };
   }
 
+  static async deleteReview(uid: string, params: ParamsDictionary) {
+    const { standID } = params;
+
+    const userAuth = await auth.getUser(uid);
+
+    const standDoc = await db.collection("stands").doc(standID).get();
+
+    if (!standDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrado");
+
+    const reviewID = `${userAuth.uid}-${standID}`;
+
+    const reviewDoc = await db.collection("stands_reviews").doc(reviewID).get();
+
+    if (!reviewDoc.exists) {
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Opinión no encontrada");
+    }
+
+    await db.collection("stands_reviews").doc(reviewID).delete();
+
+    return {
+      reviewID,
+    };
+  }
+
   static async uploadPhotograph(
     uid: string,
     params: ParamsDictionary,

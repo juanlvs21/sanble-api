@@ -19,6 +19,11 @@ router.post(
   reviewValidator,
   StandController.saveReview
 );
+router.delete(
+  "/:standID/reviews",
+  sessionMiddleware,
+  StandController.deleteReview
+);
 router.post(
   "/:standID/photograph",
   sessionMiddleware,
