@@ -93,13 +93,15 @@ export class StandService {
       stands.push(standDataFormat(doc.data() as IStand));
     });
 
-    const lastIndexNew = firstIndexNumber + limitNumber;
+    const list = stands.length
+      ? stands.slice(firstIndexNumber, firstIndexNumber + limitNumber)
+      : [];
 
     return {
-      list: stands.length ? stands.slice(firstIndexNumber, lastIndexNew) : [],
+      list,
       pagination: {
         total: snapshot.docs.length || 0,
-        lastIndex: lastIndexNew,
+        lastIndex: firstIndexNumber + list.length,
         limit: limitNumber,
       },
       order: {
@@ -174,14 +176,16 @@ export class StandService {
       reviews[i].owner = await getOwnerUserData(reviews[i].ownerRef);
     }
 
-    const lastIndexNew = firstIndexNumber + limitNumber;
+    const list = reviews.length
+      ? reviews.slice(firstIndexNumber, firstIndexNumber + limitNumber)
+      : [];
 
     return {
+      list,
       form: reviewUserData,
-      list: reviews.length ? reviews.slice(firstIndexNumber, lastIndexNew) : [],
       pagination: {
         total: snapshot.docs.length || 0,
-        lastIndex: lastIndexNew,
+        lastIndex: firstIndexNumber + list.length,
         limit: limitNumber,
       },
     };

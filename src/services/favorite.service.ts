@@ -43,13 +43,15 @@ export class FavoriteService {
       fairs.push(fairDataFormat(doc.data() as IFair));
     });
 
-    const lastIndexNew = firstIndexNumber + limitNumber;
+    const list = fairs.length
+      ? fairs.slice(firstIndexNumber, firstIndexNumber + limitNumber)
+      : [];
 
     return {
-      list: fairs.length ? fairs.slice(firstIndexNumber, lastIndexNew) : [],
+      list,
       pagination: {
         total: snapshot.docs.length || 0,
-        lastIndex: lastIndexNew,
+        lastIndex: firstIndexNumber + list.length,
         limit: limitNumber,
       },
       order: {
@@ -91,13 +93,15 @@ export class FavoriteService {
       stands.push(standDataFormat(doc.data() as IStand));
     });
 
-    const lastIndexNew = firstIndexNumber + limitNumber;
+    const list = stands.length
+      ? stands.slice(firstIndexNumber, firstIndexNumber + limitNumber)
+      : [];
 
     return {
-      list: stands.length ? stands.slice(firstIndexNumber, lastIndexNew) : [],
+      list,
       pagination: {
         total: snapshot.docs.length || 0,
-        lastIndex: lastIndexNew,
+        lastIndex: firstIndexNumber + list.length,
         limit: limitNumber,
       },
       order: {
