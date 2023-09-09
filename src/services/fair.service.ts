@@ -717,4 +717,45 @@ export class FairService {
       post: postFormat(postData),
     };
   }
+  static async deletePost(uid: string, params: ParamsDictionary) {
+    const { fairID, postID } = params;
+
+    if (!fairID)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
+
+    if (!postID)
+      throw new ErrorHandler(
+        StatusCodes.NOT_FOUND,
+        "Publicación no encontrada"
+      );
+
+    const fairDoc = await db.collection("fairs").doc(fairID).get();
+
+    if (!fairDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
+
+    const fairData = fairDoc.data() as IFair;
+
+    if (fairData.ownerRef.id !== uid) {
+      throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
+    }
+
+    const postDoc = await db.collection("fairs_posts").doc(postID).get();
+
+    if (!postDoc.exists)
+      throw new ErrorHandler(
+        StatusCodes.NOT_FOUND,
+        "Publicación no encontrada"
+      );
+
+    const postData = postDoc.data() as IPost;
+
+    if (postData.fileId) await deleteFile(postData.fileId);
+
+    await db.collection("fairs_posts").doc(postID).delete();
+
+    return {
+      postID,
+    };
+  }
 }

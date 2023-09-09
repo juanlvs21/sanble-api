@@ -164,12 +164,22 @@ export class FairController {
   static savePost: Handler = async (req, res) => {
     const parse: any = await parseFormData(req);
 
-    const photograph = await FairService.savePost(req.uid, req.params, parse);
+    const post = await FairService.savePost(req.uid, req.params, parse);
 
     res.status(StatusCodes.CREATED).json({
       statusCode: StatusCodes.CREATED,
-      data: photograph,
+      data: post,
       message: "Pubicación creada con éxito",
+    });
+  };
+
+  static deletePost: Handler = async (req, res) => {
+    const post = await FairService.deletePost(req.uid, req.params);
+
+    res.status(StatusCodes.CREATED).json({
+      statusCode: StatusCodes.CREATED,
+      data: post,
+      message: "Pubicación eliminada con éxito",
     });
   };
 }
