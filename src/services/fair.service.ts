@@ -717,6 +717,115 @@ export class FairService {
       post: postFormat(postData),
     };
   }
+
+  static async updatePost(
+    uid: string,
+    params: ParamsDictionary,
+    body: IPostForm
+  ) {
+    const { fairID, postID } = params;
+
+    const validatorResult = validPostForm(body);
+
+    if (validatorResult.length) {
+      throw new ErrorHandler(StatusCodes.UNPROCESSABLE_ENTITY, validatorResult);
+    }
+
+    if (!fairID)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
+
+    if (!postID)
+      throw new ErrorHandler(
+        StatusCodes.NOT_FOUND,
+        "Publicación no encontrada"
+      );
+
+    const fairDoc = await db.collection("fairs").doc(fairID).get();
+
+    if (!fairDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
+
+    const fairData = fairDoc.data() as IFair;
+
+    if (fairData.ownerRef.id !== uid) {
+      throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
+    }
+
+    const currentPostDoc = await db.collection("fairs_posts").doc(postID).get();
+
+    const currentPostData = currentPostDoc.data() as IPost;
+
+    if (!currentPostDoc.exists)
+      throw new ErrorHandler(
+        StatusCodes.NOT_FOUND,
+        "Publicación no encontrada"
+      );
+
+    let postDoc: DocumentSnapshot<DocumentData> | undefined = undefined;
+    let postData: IPost = {
+      id: "",
+      text: body.text,
+      parent: db.doc(`fairs/${fairID}`),
+      fileName: null,
+      fileUrl: null,
+      fileId: null,
+    };
+
+    if (body.files.length) {
+      const { url, name, fileId } = await uploadFile({
+        file: body.files[0],
+        mimetype: body.files[0].mimetype || "",
+        folder: `${EFolderName.FAIRS}/posts/${fairData.id}`,
+      });
+
+      if (body.files.length && currentPostData.fileId) {
+        await deleteFile(currentPostData.fileId);
+      }
+
+      postData = { ...postData, fileName: name, fileUrl: url, fileId };
+    }
+
+    if (body.id) {
+      postDoc = await db.collection("fairs_posts").doc(body.id).get();
+    }
+
+    // TODO: Finish this service
+
+    // if (postDoc?.exists) {
+    //   const currentData = postDoc.data() as IPost;
+    //   postID = currentData.id ?? "";
+
+    //   postData = {
+    //     ...currentData,
+    //     ...postData,
+    //     id: postID,
+    //   };
+
+    //   if (body.files.length && currentData.fileId) {
+    //     await deleteFile(currentData.fileId);
+    //   }
+    // } else {
+    //   const time = dayjs().format();
+    //   postID = uuidv4();
+
+    //   postData = {
+    //     ...postData,
+    //     id: postID,
+    //     creationTimestamp: Timestamp.now(),
+    //     creationTime: time,
+    //   };
+    // }
+
+    await db
+      .collection("fairs_posts")
+      .doc(postID)
+      .set(postData, { merge: true });
+
+    return {
+      post: postFormat(postData),
+    };
+  }
+
   static async deletePost(uid: string, params: ParamsDictionary) {
     const { fairID, postID } = params;
 

@@ -55,6 +55,11 @@ router.delete(
 );
 router.get("/:fairID/posts", sessionMiddleware, FairController.getListPosts);
 router.post("/:fairID/posts", sessionMiddleware, FairController.savePost);
+router.put(
+  "/:fairID/posts/:postID",
+  sessionMiddleware,
+  FairController.updatePost
+);
 router.delete(
   "/:fairID/posts/:postID",
   sessionMiddleware,
