@@ -789,7 +789,6 @@ export class FairService {
     }
 
     // TODO: Finish this service
-
     // if (postDoc?.exists) {
     //   const currentData = postDoc.data() as IPost;
     //   postID = currentData.id ?? "";
