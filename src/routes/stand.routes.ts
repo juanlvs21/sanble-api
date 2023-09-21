@@ -39,5 +39,12 @@ router.delete(
   sessionMiddleware,
   StandController.deletePhotograph
 );
+router.get("/:standID/posts", sessionMiddleware, StandController.getListPosts);
+router.post("/:standID/posts", sessionMiddleware, StandController.savePost);
+router.delete(
+  "/:standID/posts/:postID",
+  sessionMiddleware,
+  StandController.deletePost
+);
 
 export default router.router;

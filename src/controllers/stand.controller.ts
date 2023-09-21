@@ -110,4 +110,36 @@ export class StandController {
       message: "Fotografía Eliminada con éxito",
     });
   };
+
+  static getListPosts: Handler = async (req, res) => {
+    const reviews = await StandService.getListPosts(req.params, req.query);
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      data: reviews,
+      message: "Listado de publicaciones",
+    });
+  };
+
+  static savePost: Handler = async (req, res) => {
+    const parse: any = await parseFormData(req);
+
+    const post = await StandService.savePost(req.uid, req.params, parse);
+
+    res.status(StatusCodes.CREATED).json({
+      statusCode: StatusCodes.CREATED,
+      data: post,
+      message: "Pubicación creada con éxito",
+    });
+  };
+
+  static deletePost: Handler = async (req, res) => {
+    const post = await StandService.deletePost(req.uid, req.params);
+
+    res.status(StatusCodes.CREATED).json({
+      statusCode: StatusCodes.CREATED,
+      data: post,
+      message: "Pubicación eliminada con éxito",
+    });
+  };
 }

@@ -11,7 +11,9 @@ import { IReview } from "../interfaces/IReview";
 import { IStand, IStandForm } from "../interfaces/IStand";
 import { IUser } from "../interfaces/IUser";
 import {
+  DocumentData,
   DocumentReference,
+  DocumentSnapshot,
   OrderByDirection,
   Timestamp,
   auth,
@@ -25,6 +27,8 @@ import {
 } from "../utils/utilsPhotograph";
 import { standDataFormat } from "../utils/utilsStand";
 import { getOwnerUserData } from "../utils/utilsOwner";
+import { IPost, IPostForm } from "../interfaces/IPost";
+import { postFormat, validPostForm } from "../utils/utilsPosts";
 
 export class StandService {
   static async saveStand(body: IStandForm, uid: string) {
@@ -464,6 +468,179 @@ export class StandService {
 
     return {
       photographID: photoID,
+    };
+  }
+
+  static async getListPosts(
+    params: ParamsDictionary,
+    { limit, lastIndex }: IQueryListRequest
+  ) {
+    const { standID } = params;
+    const limitNumber = Number(limit) || DEFAULT_LIMIT_VALUE;
+    const firstIndexNumber = Number(lastIndex) || 0;
+
+    if (!standID)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrado");
+
+    const standDoc = await db.collection("stands").doc(standID).get();
+
+    if (!standDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrado");
+
+    const posts: IPost[] = [];
+
+    const snapshot = await db
+      .collection("stands_posts")
+      .orderBy("creationTime", "desc")
+      .where("parent", "==", db.doc(`stands/${standID}`))
+      .get();
+
+    snapshot.forEach(async (doc) => {
+      let post = doc.data() as IPost;
+
+      posts.push(post);
+    });
+
+    const list = posts.length
+      ? posts.slice(firstIndexNumber, firstIndexNumber + limitNumber)
+      : [];
+
+    return {
+      list,
+      pagination: {
+        total: snapshot.docs.length || 0,
+        lastIndex: firstIndexNumber + list.length,
+        limit: limitNumber,
+      },
+    };
+  }
+
+  static async savePost(
+    uid: string,
+    params: ParamsDictionary,
+    body: IPostForm
+  ) {
+    const { standID } = params;
+
+    const validatorResult = validPostForm(body);
+
+    if (validatorResult.length) {
+      throw new ErrorHandler(StatusCodes.UNPROCESSABLE_ENTITY, validatorResult);
+    }
+
+    if (!standID)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrado");
+
+    const standDoc = await db.collection("stands").doc(standID).get();
+
+    if (!standDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrado");
+
+    const standData = standDoc.data() as IStand;
+
+    if (standData.ownerRef.id !== uid) {
+      throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
+    }
+
+    let postID = "";
+    let postDoc: DocumentSnapshot<DocumentData> | undefined = undefined;
+    let postData: IPost = {
+      id: "",
+      text: body.text,
+      parent: db.doc(`stands/${standID}`),
+      fileName: null,
+      fileUrl: null,
+      fileId: null,
+    };
+
+    if (body.files.length) {
+      const { url, name, fileId } = await uploadFile({
+        file: body.files[0],
+        mimetype: body.files[0].mimetype || "",
+        folder: `${EFolderName.STANDS}/posts/${standData.id}`,
+      });
+
+      postData = { ...postData, fileName: name, fileUrl: url, fileId };
+    }
+
+    if (body.id) {
+      postDoc = await db.collection("stands_posts").doc(body.id).get();
+    }
+
+    if (postDoc?.exists) {
+      const currentData = postDoc.data() as IPost;
+      postID = currentData.id ?? "";
+
+      postData = {
+        ...currentData,
+        ...postData,
+        id: postID,
+      };
+
+      if (body.files.length && currentData.fileId) {
+        await deleteFile(currentData.fileId);
+      }
+    } else {
+      const time = dayjs().format();
+      postID = uuidv4();
+
+      postData = {
+        ...postData,
+        id: postID,
+        creationTimestamp: Timestamp.now(),
+        creationTime: time,
+      };
+    }
+
+    await db
+      .collection("stands_posts")
+      .doc(postID)
+      .set(postData, { merge: true });
+
+    return {
+      post: postFormat(postData),
+    };
+  }
+
+  static async deletePost(uid: string, params: ParamsDictionary) {
+    const { standID, postID } = params;
+
+    if (!standID)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrado");
+
+    if (!postID)
+      throw new ErrorHandler(
+        StatusCodes.NOT_FOUND,
+        "Publicación no encontrada"
+      );
+
+    const standDoc = await db.collection("stands").doc(standID).get();
+
+    if (!standDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrado");
+
+    const fairData = standDoc.data() as IStand;
+
+    if (fairData.ownerRef.id !== uid) {
+      throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
+    }
+
+    const postDoc = await db.collection("stands_posts").doc(postID).get();
+
+    if (!postDoc.exists)
+      throw new ErrorHandler(
+        StatusCodes.NOT_FOUND,
+        "Publicación no encontrada"
+      );
+
+    const postData = postDoc.data() as IPost;
+
+    if (postData.fileId) await deleteFile(postData.fileId);
+
+    await db.collection("stands_posts").doc(postID).delete();
+
+    return {
+      postID,
     };
   }
 }

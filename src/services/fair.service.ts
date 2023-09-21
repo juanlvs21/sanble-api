@@ -594,6 +594,14 @@ export class FairService {
     const limitNumber = Number(limit) || DEFAULT_LIMIT_VALUE;
     const firstIndexNumber = Number(lastIndex) || 0;
 
+    if (!fairID)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
+
+    const fairDoc = await db.collection("fairs").doc(fairID).get();
+
+    if (!fairDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
+
     const posts: IPost[] = [];
 
     const snapshot = await db
@@ -604,15 +612,6 @@ export class FairService {
 
     snapshot.forEach(async (doc) => {
       let post = doc.data() as IPost;
-
-      // const parent = await post.parent.get();
-
-      // if (parent.exists) {
-      //   const fair = parent.data() as IFair;
-
-      //   post.parentName = fair.name;
-      //   post.parentPhoto = fair.photographs.find((photo) => photo.isCover)?.url;
-      // }
 
       posts.push(post);
     });
