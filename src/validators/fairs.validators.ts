@@ -41,7 +41,7 @@ const formFairs = [
     .notEmpty()
     .isLength({ min: lengthMaxPhone, max: lengthMaxPhone })
     .withMessage(
-      `El teléfono de contacto debe tener ${lengthMaxShort} caracteres`
+      `El teléfono de contacto debe tener ${lengthMaxPhone} caracteres`
     ),
   check("celebrationDate", "La fecha de celebración debe ser un texto")
     .isString()
