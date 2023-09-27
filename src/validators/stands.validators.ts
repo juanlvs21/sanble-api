@@ -33,7 +33,7 @@ const formStand = [
     .notEmpty()
     .isLength({ min: lengthMaxPhone, max: lengthMaxPhone })
     .withMessage(
-      `El teléfono de contacto debe tener ${lengthMaxShort} caracteres`
+      `El teléfono de contacto debe tener ${lengthMaxPhone} caracteres`
     ),
   check("slogan")
     .optional({ checkFalsy: true })
