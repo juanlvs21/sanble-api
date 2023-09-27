@@ -13,12 +13,24 @@ router.post(
   fairValidator,
   MySanbleController.saveFair
 );
+router.patch(
+  "/:fairID",
+  sessionMiddleware,
+  fairValidator,
+  MySanbleController.updateFair
+);
 router.get("/stands", sessionMiddleware, MySanbleController.getStandsList);
 router.post(
   "/stands",
   sessionMiddleware,
   standValidator,
   MySanbleController.saveStand
+);
+router.patch(
+  "/:fairID",
+  sessionMiddleware,
+  standValidator,
+  MySanbleController.updateStand
 );
 
 export default router.router;

@@ -25,6 +25,16 @@ export class MySanbleController {
     });
   };
 
+  static updateFair: Handler = async (req, res) => {
+    const fair = await FairService.updateDetails(req.uid, req.params, req.body);
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      data: fair,
+      message: "Feria editada con éxito",
+    });
+  };
+
   static getStandsList: Handler = async (req, res) => {
     const stands = await StandService.getList(req.query, req.uid);
 
@@ -42,6 +52,20 @@ export class MySanbleController {
       statusCode: StatusCodes.OK,
       data: stand,
       message: "Feria creada exitosamente",
+    });
+  };
+
+  static updateStand: Handler = async (req, res) => {
+    const fair = await StandService.updateDetails(
+      req.uid,
+      req.params,
+      req.body
+    );
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      data: fair,
+      message: "Stand editado con éxito",
     });
   };
 }

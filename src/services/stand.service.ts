@@ -66,6 +66,34 @@ export class StandService {
     return stand;
   }
 
+  static async updateDetails(
+    uid: string,
+    params: ParamsDictionary,
+    body: IStandForm
+  ) {
+    const { standID } = params;
+
+    if (!standID)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrado");
+
+    const standDoc = await db.collection("stands").doc(standID).get();
+
+    if (!standDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrado");
+
+    const standData = standDoc.data() as IStand;
+
+    if (standData.ownerRef.id !== uid) {
+      throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
+    }
+
+    const newData = { ...standData, ...body };
+
+    await db.collection("stands").doc(standID).update(newData);
+
+    return standDataFormat(newData as IStand);
+  }
+
   static async getList(
     { orderBy, orderDir, limit, lastIndex }: IQueryListRequest,
     uid?: string
