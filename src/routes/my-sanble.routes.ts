@@ -14,7 +14,7 @@ router.post(
   MySanbleController.saveFair
 );
 router.patch(
-  "/:fairID",
+  "/fairs/:fairID",
   sessionMiddleware,
   fairValidator,
   MySanbleController.updateFair
@@ -27,7 +27,7 @@ router.post(
   MySanbleController.saveStand
 );
 router.patch(
-  "/:fairID",
+  "/stands/:standID",
   sessionMiddleware,
   standValidator,
   MySanbleController.updateStand
