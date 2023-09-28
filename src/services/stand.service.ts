@@ -349,7 +349,7 @@ export class StandService {
     const { url, name, fileId } = await uploadFile({
       file: body.files[0],
       mimetype: body.files[0].mimetype || "",
-      folder: `${EFolderName.STANDS}/photos/${standData.id}`,
+      folder: `sanble/${EFolderName.STANDS}/photos/${standData.id}`,
     });
 
     body.isCover = body.isCover.toString() === "true";
@@ -431,7 +431,7 @@ export class StandService {
           const { url, name, fileId } = await uploadFile({
             file: body.files[0],
             mimetype: body.files[0].mimetype || "",
-            folder: `${EFolderName.FAIRS}/photos/${standData.id}`,
+            folder: `sanble/${EFolderName.FAIRS}/photos/${standData.id}`,
           });
 
           await deleteFile(photo.fileId);
@@ -585,7 +585,7 @@ export class StandService {
       const { url, name, fileId } = await uploadFile({
         file: body.files[0],
         mimetype: body.files[0].mimetype || "",
-        folder: `${EFolderName.STANDS}/posts/${standData.id}`,
+        folder: `sanble/${EFolderName.STANDS}/posts/${standData.id}`,
       });
 
       postData = { ...postData, fileName: name, fileUrl: url, fileId };

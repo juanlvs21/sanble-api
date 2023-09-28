@@ -1,7 +1,14 @@
-import { dayjs } from "../../utils/time";
+import fetch from "cross-fetch";
 
-export function testTask() {
-  process.stdout.write(
-    `⏱️ Running a task every 10 minute ${dayjs().format("DD/MM/YYYY HH:mm")} \n`
-  );
+import { HEALTHCHECK_URL } from "../../config/env";
+
+export async function testTask() {
+  const response = await fetch(HEALTHCHECK_URL);
+
+  try {
+    if (response.ok) process.stdout.write("API HealthCheck - Success");
+    else process.stdout.write("API HealthCheck - Error");
+  } catch (error) {
+    process.stdout.write("API HealthCheck - Error");
+  }
 }

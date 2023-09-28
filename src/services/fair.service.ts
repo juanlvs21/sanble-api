@@ -436,7 +436,7 @@ export class FairService {
     const { url, name, fileId } = await uploadFile({
       file: body.files[0],
       mimetype: body.files[0].mimetype || "",
-      folder: `${EFolderName.FAIRS}/photos/${fairData.id}`,
+      folder: `sanble/${EFolderName.FAIRS}/photos/${fairData.id}`,
     });
 
     body.isCover = body.isCover.toString() === "true";
@@ -518,7 +518,7 @@ export class FairService {
           const { url, name, fileId } = await uploadFile({
             file: body.files[0],
             mimetype: body.files[0].mimetype || "",
-            folder: `${EFolderName.FAIRS}/photos/${fairData.id}`,
+            folder: `sanble/${EFolderName.FAIRS}/photos/${fairData.id}`,
           });
 
           await deleteFile(photo.fileId);
@@ -672,7 +672,7 @@ export class FairService {
       const { url, name, fileId } = await uploadFile({
         file: body.files[0],
         mimetype: body.files[0].mimetype || "",
-        folder: `${EFolderName.FAIRS}/posts/${fairData.id}`,
+        folder: `sanble/${EFolderName.FAIRS}/posts/${fairData.id}`,
       });
 
       postData = { ...postData, fileName: name, fileUrl: url, fileId };
@@ -774,7 +774,7 @@ export class FairService {
       const { url, name, fileId } = await uploadFile({
         file: body.files[0],
         mimetype: body.files[0].mimetype || "",
-        folder: `${EFolderName.FAIRS}/posts/${fairData.id}`,
+        folder: `sanble/${EFolderName.FAIRS}/posts/${fairData.id}`,
       });
 
       if (body.files.length && currentPostData.fileId) {

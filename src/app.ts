@@ -1,6 +1,6 @@
+import cors from "cors";
 import express from "express";
 import morgan from "morgan";
-import cors from "cors";
 // const pino = require("pino-http")();
 
 import { PORT } from "./config/env";

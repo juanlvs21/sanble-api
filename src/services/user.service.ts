@@ -158,7 +158,7 @@ export class UserService {
     const { url } = await uploadFile({
       file: body.files[0],
       mimetype: body.files[0].mimetype || "",
-      folder: `${EFolderName.USERS}/${userAuth.uid}`,
+      folder: `sanble/${EFolderName.USERS}/${userAuth.uid}`,
     });
 
     for (let i = 0; i < list.length; i++) {
