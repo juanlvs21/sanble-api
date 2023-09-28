@@ -29,6 +29,7 @@ import { standDataFormat } from "../utils/utilsStand";
 import { getOwnerUserData } from "../utils/utilsOwner";
 import { IPost, IPostForm } from "../interfaces/IPost";
 import { postFormat, validPostForm } from "../utils/utilsPosts";
+import { sendNotification } from "../utils/sendNotification";
 
 export class StandService {
   static async saveStand(body: IStandForm, uid: string) {
@@ -624,6 +625,11 @@ export class StandService {
       .collection("stands_posts")
       .doc(postID)
       .set(postData, { merge: true });
+
+    await sendNotification({
+      title: `¡Ey! ${standData.name} tiene una nueva publicación`,
+      body: postData.text.slice(0, 120),
+    });
 
     return {
       post: postFormat(postData),

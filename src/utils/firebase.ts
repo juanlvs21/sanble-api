@@ -1,8 +1,10 @@
 import { initializeApp, ServiceAccount, cert } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
+import { getMessaging } from "firebase-admin/messaging";
 export * from "firebase-admin/auth";
 export * from "firebase-admin/firestore";
+export * from "firebase-admin/messaging";
 
 import {
   FIREBASE_CLIENT_EMAIL,
@@ -22,3 +24,4 @@ export const app = initializeApp({
 
 export const db = getFirestore(app);
 export const auth = getAuth(app);
+export const messaging = getMessaging(app);

@@ -30,6 +30,8 @@ import {
 } from "../utils/utilsPhotograph";
 import { postFormat, validPostForm } from "../utils/utilsPosts";
 import { standDataFormat } from "../utils/utilsStand";
+import { INotificationToken } from "../interfaces/INotification";
+import { sendNotification } from "../utils/sendNotification";
 
 export class FairService {
   static async saveFair(body: IFairForm, uid: string) {
@@ -711,6 +713,11 @@ export class FairService {
       .collection("fairs_posts")
       .doc(postID)
       .set(postData, { merge: true });
+
+    await sendNotification({
+      title: `¡Ey! ${fairData.name} tiene una nueva publicación`,
+      body: postData.text.slice(0, 120),
+    });
 
     return {
       post: postFormat(postData),

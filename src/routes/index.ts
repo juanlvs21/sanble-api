@@ -6,6 +6,7 @@ import fairRoutes from "./fair.routes";
 import standRoutes from "./stand.routes";
 import productRoutes from "./product.routes";
 import mySanbleRoutes from "./my-sanble.routes";
+import notificationRoutes from "./notification.routes";
 
 const router = Router();
 
@@ -15,6 +16,7 @@ router.use("/fairs", fairRoutes);
 router.use("/stands", standRoutes);
 router.use("/products", productRoutes);
 router.use("/my-sanble", mySanbleRoutes);
+router.use("/notification", notificationRoutes);
 
 router.get("/ping", (_req, res) => res.status(200).send("pong"));
 router.get("/healthcheck", (_req, res) => res.status(200).send("pong"));
