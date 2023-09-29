@@ -717,6 +717,7 @@ export class FairService {
     await sendNotification({
       title: `¡Ey! ${fairData.name} tiene una nueva publicación`,
       body: postData.text.slice(0, 120),
+      imageUrl: postData.fileUrl,
     });
 
     return {

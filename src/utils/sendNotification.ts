@@ -5,16 +5,14 @@ type TSendNotification = {
   title: string;
   body: string;
   uid?: string;
-  notificationIconUrl?: string;
+  imageUrl?: string | null;
 };
-
-const NOTIFICATION_ICON_URL = "https://ik.imagekit.io/juanldev/logo.png";
 
 export const sendNotification = async ({
   title,
   body,
   uid,
-  notificationIconUrl = NOTIFICATION_ICON_URL,
+  imageUrl,
 }: TSendNotification) => {
   if (uid) {
     const doc = await db.collection("notification_tokens").doc(uid).get();
@@ -26,7 +24,7 @@ export const sendNotification = async ({
         notification: {
           title,
           body,
-          imageUrl: notificationIconUrl,
+          imageUrl: imageUrl ?? undefined,
         },
         token,
       };
@@ -46,7 +44,7 @@ export const sendNotification = async ({
       notification: {
         title,
         body,
-        imageUrl: notificationIconUrl,
+        imageUrl: imageUrl ?? undefined,
       },
       tokens,
     };

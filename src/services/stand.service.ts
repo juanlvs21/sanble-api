@@ -629,6 +629,7 @@ export class StandService {
     await sendNotification({
       title: `¡Ey! ${standData.name} tiene una nueva publicación`,
       body: postData.text.slice(0, 120),
+      imageUrl: postData.fileUrl,
     });
 
     return {
