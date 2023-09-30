@@ -29,17 +29,13 @@ export const sendNotification = async ({
         token,
         android: {
           notification: {
-            bodyLocKey: "STOCK_NOTIFICATION_BODY",
-            bodyLocArgs: ["FooCorp", "11.80", "835.67", "1.43"],
+            clickAction: "news_intent",
           },
         },
         apns: {
           payload: {
             aps: {
-              alert: {
-                locKey: "STOCK_NOTIFICATION_BODY",
-                locArgs: ["FooCorp", "11.80", "835.67", "1.43"],
-              },
+              category: "INVITE_CATEGORY",
             },
           },
         },
@@ -66,17 +62,13 @@ export const sendNotification = async ({
         tokens,
         android: {
           notification: {
-            bodyLocKey: "STOCK_NOTIFICATION_BODY",
-            bodyLocArgs: ["FooCorp", "11.80", "835.67", "1.43"],
+            clickAction: "news_intent",
           },
         },
         apns: {
           payload: {
             aps: {
-              alert: {
-                locKey: "STOCK_NOTIFICATION_BODY",
-                locArgs: ["FooCorp", "11.80", "835.67", "1.43"],
-              },
+              category: "INVITE_CATEGORY",
             },
           },
         },
