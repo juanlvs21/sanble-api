@@ -5,14 +5,15 @@ import { v4 as uuidv4 } from "uuid";
 
 import { ErrorHandler } from "../error";
 import { EFolderName } from "../interfaces/IFile";
+import { ENotificationType } from "../interfaces/INotification";
 import { IPhotograph, IPhotographForm } from "../interfaces/IPhotograph";
+import { IPost, IPostForm } from "../interfaces/IPost";
 import { IQueryListRequest } from "../interfaces/IRequest";
 import { IReview } from "../interfaces/IReview";
 import { IStand, IStandForm } from "../interfaces/IStand";
 import { IUser } from "../interfaces/IUser";
 import {
   DocumentData,
-  DocumentReference,
   DocumentSnapshot,
   OrderByDirection,
   Timestamp,
@@ -21,15 +22,14 @@ import {
 } from "../utils/firebase";
 import { deleteFile, uploadFile } from "../utils/imagekit";
 import { DEFAULT_LIMIT_VALUE } from "../utils/pagination";
+import { sendNotification } from "../utils/sendNotification";
+import { getOwnerUserData } from "../utils/utilsOwner";
 import {
   photographFormat,
   validPhotographForm,
 } from "../utils/utilsPhotograph";
-import { standDataFormat } from "../utils/utilsStand";
-import { getOwnerUserData } from "../utils/utilsOwner";
-import { IPost, IPostForm } from "../interfaces/IPost";
 import { postFormat, validPostForm } from "../utils/utilsPosts";
-import { sendNotification } from "../utils/sendNotification";
+import { standDataFormat } from "../utils/utilsStand";
 
 export class StandService {
   static async saveStand(body: IStandForm, uid: string) {
@@ -63,6 +63,16 @@ export class StandService {
 
     let stand: IStand = standDataFormat(newStand as IStand);
     stand.owner = await getOwnerUserData(stand.ownerRef);
+
+    await sendNotification({
+      title: `${stand.name} es nuevo en Sanble, quizás tenga algo que te guste`,
+      body: stand.description.slice(0, 120),
+      data: {
+        type: ENotificationType.STAND_NEW,
+        standID: stand.id,
+        redirectURL: `/app/stands/${stand.id}`,
+      },
+    });
 
     return stand;
   }
@@ -373,6 +383,16 @@ export class StandService {
 
     await db.collection("stands").doc(standID).update({ photographs });
 
+    await sendNotification({
+      title: `${standData.name} tienes una nueva fotografía para mostrar`,
+      body: "Ve ha ver de que se trata",
+      data: {
+        type: ENotificationType.STAND_PHOTO,
+        photoID: newPhoto.id,
+        redirectURL: `/app/stands/${standData.id}/fotos`,
+      },
+    });
+
     return {
       photograph: photographFormat(newPhoto),
       ownerID: standData.ownerRef.id,
@@ -630,6 +650,11 @@ export class StandService {
       title: `¡Ey! ${standData.name} tiene una nueva publicación`,
       body: postData.text.slice(0, 120),
       imageUrl: postData.fileUrl,
+      data: {
+        type: ENotificationType.STAND_POST,
+        fairID: standData.id,
+        redirectURL: `/app/stands/${standData.id}?post_id=${postData.id}`,
+      },
     });
 
     return {

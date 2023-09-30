@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import { ErrorHandler } from "../error";
 import { IFair, IFairForm, IFairGeo } from "../interfaces/IFair";
 import { EFolderName } from "../interfaces/IFile";
+import { ENotificationType } from "../interfaces/INotification";
 import { IPhotograph, IPhotographForm } from "../interfaces/IPhotograph";
 import { IPost, IPostForm } from "../interfaces/IPost";
 import { IQueryListRequest } from "../interfaces/IRequest";
@@ -22,6 +23,7 @@ import {
 } from "../utils/firebase";
 import { deleteFile, uploadFile } from "../utils/imagekit";
 import { DEFAULT_LIMIT_VALUE } from "../utils/pagination";
+import { sendNotification } from "../utils/sendNotification";
 import { fairDataFormat, fairDataFormatGeo } from "../utils/utilsFair";
 import { getOwnerUserData } from "../utils/utilsOwner";
 import {
@@ -30,8 +32,6 @@ import {
 } from "../utils/utilsPhotograph";
 import { postFormat, validPostForm } from "../utils/utilsPosts";
 import { standDataFormat } from "../utils/utilsStand";
-import { INotificationToken } from "../interfaces/INotification";
-import { sendNotification } from "../utils/sendNotification";
 
 export class FairService {
   static async saveFair(body: IFairForm, uid: string) {
@@ -65,6 +65,16 @@ export class FairService {
 
     let fair: IFair = fairDataFormat(newFair as IFair);
     fair.owner = await getOwnerUserData(fair.ownerRef);
+
+    await sendNotification({
+      title: `${fair.name} se ha unido a Sanble, quizas te interese visitarla`,
+      body: fair.description.slice(0, 120),
+      data: {
+        type: ENotificationType.STAND_NEW,
+        fairID: fair.id,
+        redirectURL: `/app/ferias/${fair.id}`,
+      },
+    });
 
     return fair;
   }
@@ -461,6 +471,16 @@ export class FairService {
 
     await db.collection("fairs").doc(fairID).update({ photographs });
 
+    await sendNotification({
+      title: `${fairData.name} tienes una nueva fotografía para mostrar`,
+      body: "Ve ha ver de que se trata",
+      data: {
+        type: ENotificationType.FAIR_PHOTO,
+        photoID: newPhoto.id,
+        redirectURL: `/app/stands/${fairData.id}/fotos`,
+      },
+    });
+
     return {
       photograph: photographFormat(newPhoto),
       ownerID: fairData.ownerRef.id,
@@ -718,6 +738,11 @@ export class FairService {
       title: `¡Ey! ${fairData.name} tiene una nueva publicación`,
       body: postData.text.slice(0, 120),
       imageUrl: postData.fileUrl,
+      data: {
+        type: ENotificationType.FAIR_POST,
+        fairID: fairData.id,
+        redirectURL: `/app/ferias/${fairData.id}?post_id=${postData.id}`,
+      },
     });
 
     return {

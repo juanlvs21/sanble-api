@@ -1,4 +1,7 @@
-import { INotificationToken } from "../interfaces/INotification";
+import {
+  ENotificationType,
+  INotificationToken,
+} from "../interfaces/INotification";
 import { Message, MulticastMessage, db, messaging } from "./firebase";
 
 type TSendNotification = {
@@ -6,6 +9,10 @@ type TSendNotification = {
   body: string;
   uid?: string;
   imageUrl?: string | null;
+  data?: {
+    type: ENotificationType;
+    [key: string]: any;
+  };
 };
 
 export const sendNotification = async ({
@@ -27,18 +34,6 @@ export const sendNotification = async ({
           imageUrl: imageUrl ?? undefined,
         },
         token,
-        android: {
-          notification: {
-            clickAction: "news_intent",
-          },
-        },
-        apns: {
-          payload: {
-            aps: {
-              category: "INVITE_CATEGORY",
-            },
-          },
-        },
       };
 
       await messaging.send(message);
