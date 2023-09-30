@@ -40,15 +40,17 @@ export const sendNotification = async ({
       tokens.push(token);
     });
 
-    const message: MulticastMessage = {
-      notification: {
-        title,
-        body,
-        imageUrl: imageUrl ?? undefined,
-      },
-      tokens,
-    };
+    if (tokens.length) {
+      const message: MulticastMessage = {
+        notification: {
+          title,
+          body,
+          imageUrl: imageUrl ?? undefined,
+        },
+        tokens,
+      };
 
-    await messaging.sendMulticast(message);
+      await messaging.sendMulticast(message);
+    }
   }
 };
