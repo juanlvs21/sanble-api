@@ -27,6 +27,22 @@ export const sendNotification = async ({
           imageUrl: imageUrl ?? undefined,
         },
         token,
+        android: {
+          notification: {
+            bodyLocKey: "STOCK_NOTIFICATION_BODY",
+            bodyLocArgs: ["FooCorp", "11.80", "835.67", "1.43"],
+          },
+        },
+        apns: {
+          payload: {
+            aps: {
+              alert: {
+                locKey: "STOCK_NOTIFICATION_BODY",
+                locArgs: ["FooCorp", "11.80", "835.67", "1.43"],
+              },
+            },
+          },
+        },
       };
 
       await messaging.send(message);
@@ -48,6 +64,22 @@ export const sendNotification = async ({
           imageUrl: imageUrl ?? undefined,
         },
         tokens,
+        android: {
+          notification: {
+            bodyLocKey: "STOCK_NOTIFICATION_BODY",
+            bodyLocArgs: ["FooCorp", "11.80", "835.67", "1.43"],
+          },
+        },
+        apns: {
+          payload: {
+            aps: {
+              alert: {
+                locKey: "STOCK_NOTIFICATION_BODY",
+                locArgs: ["FooCorp", "11.80", "835.67", "1.43"],
+              },
+            },
+          },
+        },
       };
 
       await messaging.sendMulticast(message);
