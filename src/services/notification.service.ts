@@ -8,6 +8,6 @@ export class NotificationService {
     await db
       .collection("notification_tokens")
       .doc(deviceID)
-      .set({ uid: db.doc(`users/${uid}`), token }, { merge: true });
+      .set({ uid: db.doc(`users/${uid}`), deviceID, token }, { merge: true });
   }
 }
