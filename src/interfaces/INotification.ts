@@ -15,4 +15,5 @@ export enum ENotificationType {
 
 export interface INotificationToken {
   token: string;
+  deviceID: string;
 }

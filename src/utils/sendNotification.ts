@@ -20,56 +20,38 @@ export const sendNotification = async ({
   body,
   uid,
   imageUrl,
+  data,
 }: TSendNotification) => {
+  const tokens: string[] = [];
+  let snapshots: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>;
+
   if (uid) {
-    const doc = await db.collection("notification_tokens").doc(uid).get();
-
-    if (doc.exists) {
-      const { token } = doc.data() as INotificationToken;
-
-      const message: Message = {
-        notification: {
-          title,
-          body,
-          imageUrl: imageUrl ?? undefined,
-        },
-        token,
-      };
-
-      await messaging.send(message);
-    }
+    snapshots = await db
+      .collection("notification_tokens")
+      .where("uid", "==", db.doc(`users/${uid}`))
+      .get();
   } else {
-    const tokens: string[] = [];
-    const snapshots = await db.collection("notification_tokens").get();
+    snapshots = await db.collection("notification_tokens").get();
+  }
 
+  if (!snapshots.empty) {
     snapshots.forEach(async (doc) => {
       let { token } = doc.data() as INotificationToken;
       tokens.push(token);
     });
+  }
 
-    if (tokens.length) {
-      const message: MulticastMessage = {
-        notification: {
-          title,
-          body,
-          imageUrl: imageUrl ?? undefined,
-        },
-        tokens,
-        android: {
-          notification: {
-            clickAction: "news_intent",
-          },
-        },
-        apns: {
-          payload: {
-            aps: {
-              category: "INVITE_CATEGORY",
-            },
-          },
-        },
-      };
+  if (tokens.length) {
+    const message: MulticastMessage = {
+      notification: {
+        title,
+        body,
+        imageUrl: imageUrl ?? undefined,
+      },
+      tokens,
+      data,
+    };
 
-      await messaging.sendMulticast(message);
-    }
+    await messaging.sendMulticast(message);
   }
 };
