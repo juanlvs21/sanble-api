@@ -389,7 +389,7 @@ export class StandService {
       data: {
         type: ENotificationType.STAND_PHOTO,
         photoID: newPhoto.id,
-        redirectURL: `/app/stands/${standData.id}/fotos`,
+        redirectURL: `/app/stands/${standData.id}/fotos?photo_id=${newPhoto.id}`,
       },
     });
 

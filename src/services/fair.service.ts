@@ -477,7 +477,7 @@ export class FairService {
       data: {
         type: ENotificationType.FAIR_PHOTO,
         photoID: newPhoto.id,
-        redirectURL: `/app/stands/${fairData.id}/fotos`,
+        redirectURL: `/app/stands/${fairData.id}/fotos?photo_id=${newPhoto.id}`,
       },
     });
 
