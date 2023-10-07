@@ -783,25 +783,15 @@ export class FairService {
       throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
     }
 
-    const currentPostDoc = await db.collection("fairs_posts").doc(postID).get();
+    const postDoc = await db.collection("fairs_posts").doc(postID).get();
 
-    const currentPostData = currentPostDoc.data() as IPost;
-
-    if (!currentPostDoc.exists)
+    if (!postDoc.exists)
       throw new ErrorHandler(
         StatusCodes.NOT_FOUND,
         "Publicación no encontrada"
       );
 
-    let postDoc: DocumentSnapshot<DocumentData> | undefined = undefined;
-    let postData: IPost = {
-      id: "",
-      text: body.text,
-      parent: db.doc(`fairs/${fairID}`),
-      fileName: null,
-      fileUrl: null,
-      fileId: null,
-    };
+    let postData = postDoc.data() as IPost;
 
     if (body.files.length) {
       const { url, name, fileId } = await uploadFile({
@@ -810,47 +800,17 @@ export class FairService {
         folder: `sanble/${EFolderName.FAIRS}/posts/${fairData.id}`,
       });
 
-      if (body.files.length && currentPostData.fileId) {
-        await deleteFile(currentPostData.fileId);
+      if (postData.fileId) {
+        await deleteFile(postData.fileId);
       }
 
       postData = { ...postData, fileName: name, fileUrl: url, fileId };
     }
 
-    if (body.id) {
-      postDoc = await db.collection("fairs_posts").doc(body.id).get();
-    }
-
-    // TODO: Finish this service
-    // if (postDoc?.exists) {
-    //   const currentData = postDoc.data() as IPost;
-    //   postID = currentData.id ?? "";
-
-    //   postData = {
-    //     ...currentData,
-    //     ...postData,
-    //     id: postID,
-    //   };
-
-    //   if (body.files.length && currentData.fileId) {
-    //     await deleteFile(currentData.fileId);
-    //   }
-    // } else {
-    //   const time = dayjs().format();
-    //   postID = uuidv4();
-
-    //   postData = {
-    //     ...postData,
-    //     id: postID,
-    //     creationTimestamp: Timestamp.now(),
-    //     creationTime: time,
-    //   };
-    // }
-
     await db
       .collection("fairs_posts")
       .doc(postID)
-      .set(postData, { merge: true });
+      .set({ ...postData, text: body.text }, { merge: true });
 
     return {
       post: postFormat(postData),
