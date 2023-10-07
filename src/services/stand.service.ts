@@ -662,6 +662,73 @@ export class StandService {
     };
   }
 
+  static async updatePost(
+    uid: string,
+    params: ParamsDictionary,
+    body: IPostForm
+  ) {
+    const { standID, postID } = params;
+
+    const validatorResult = validPostForm(body);
+
+    if (validatorResult.length) {
+      throw new ErrorHandler(StatusCodes.UNPROCESSABLE_ENTITY, validatorResult);
+    }
+
+    if (!standID)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrado");
+
+    if (!postID)
+      throw new ErrorHandler(
+        StatusCodes.NOT_FOUND,
+        "Publicación no encontrada"
+      );
+
+    const standDoc = await db.collection("stands").doc(standID).get();
+
+    if (!standDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrado");
+
+    const standData = standDoc.data() as IStand;
+
+    if (standData.ownerRef.id !== uid) {
+      throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
+    }
+
+    const postDoc = await db.collection("stands_posts").doc(postID).get();
+
+    if (!postDoc.exists)
+      throw new ErrorHandler(
+        StatusCodes.NOT_FOUND,
+        "Publicación no encontrada"
+      );
+
+    let postData = postDoc.data() as IPost;
+
+    if (body.files.length) {
+      const { url, name, fileId } = await uploadFile({
+        file: body.files[0],
+        mimetype: body.files[0].mimetype || "",
+        folder: `sanble/${EFolderName.STANDS}/posts/${standData.id}`,
+      });
+
+      if (postData.fileId) {
+        await deleteFile(postData.fileId);
+      }
+
+      postData = { ...postData, fileName: name, fileUrl: url, fileId };
+    }
+
+    await db
+      .collection("stands_posts")
+      .doc(postID)
+      .set({ ...postData, text: body.text }, { merge: true });
+
+    return {
+      post: postFormat(postData),
+    };
+  }
+
   static async deletePost(uid: string, params: ParamsDictionary) {
     const { standID, postID } = params;
 

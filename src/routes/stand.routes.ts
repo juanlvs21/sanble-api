@@ -41,6 +41,11 @@ router.delete(
 );
 router.get("/:standID/posts", sessionMiddleware, StandController.getListPosts);
 router.post("/:standID/posts", sessionMiddleware, StandController.savePost);
+router.put(
+  "/:standID/posts/:postID",
+  sessionMiddleware,
+  StandController.updatePost
+);
 router.delete(
   "/:standID/posts/:postID",
   sessionMiddleware,

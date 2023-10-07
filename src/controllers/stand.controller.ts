@@ -133,6 +133,18 @@ export class StandController {
     });
   };
 
+  static updatePost: Handler = async (req, res) => {
+    const parse: any = await parseFormData(req);
+
+    const post = await StandService.updatePost(req.uid, req.params, parse);
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      data: post,
+      message: "Pubicación actualizada con éxito",
+    });
+  };
+
   static deletePost: Handler = async (req, res) => {
     const post = await StandService.deletePost(req.uid, req.params);
 
