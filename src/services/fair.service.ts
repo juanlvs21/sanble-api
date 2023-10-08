@@ -473,7 +473,7 @@ export class FairService {
 
     await sendNotification({
       title: `${fairData.name} tienes una nueva fotografía para mostrar`,
-      body: "Ve ha ver de que se trata",
+      body: "Ve a ver de que se trata",
       data: {
         type: ENotificationType.FAIR_PHOTO,
         photoID: newPhoto.id,

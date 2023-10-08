@@ -385,7 +385,7 @@ export class StandService {
 
     await sendNotification({
       title: `${standData.name} tienes una nueva fotografía para mostrar`,
-      body: "Ve ha ver de que se trata",
+      body: "Ve a ver de que se trata",
       data: {
         type: ENotificationType.STAND_PHOTO,
         photoID: newPhoto.id,
