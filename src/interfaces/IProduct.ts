@@ -1,5 +1,6 @@
 import { DocumentReference, Timestamp } from "../utils/firebase";
 import { File } from "formidable";
+import { IStand } from "./IStand";
 
 export enum EProductTypeKey {
   CLOTHES = "clothes",
@@ -40,4 +41,5 @@ export interface IProduct extends IProductBase {
   fileId: string | null;
   fileUrl: string | null;
   fileName: string | null;
+  stand?: IStand;
 }

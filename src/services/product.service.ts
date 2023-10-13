@@ -1,5 +1,6 @@
 import { IProduct, IProductType } from "../interfaces/IProduct";
 import { IQueryListRequest } from "../interfaces/IRequest";
+import { IStand } from "../interfaces/IStand";
 import { OrderByDirection, db } from "../utils/firebase";
 import { DEFAULT_LIMIT_VALUE } from "../utils/pagination";
 import { productFormat } from "../utils/utilsProduct";
@@ -22,8 +23,15 @@ export class ProductService {
 
     const products: IProduct[] = [];
 
-    snapshot.forEach((doc) => {
-      products.push(productFormat(doc.data() as IProduct));
+    snapshot.forEach(async (doc) => {
+      const product = productFormat(doc.data() as IProduct);
+      const parent = await product.parent.get();
+
+      if (parent.exists) {
+        product.stand = parent.data() as IStand;
+      }
+
+      products.push(product);
     });
 
     const list = products.length
