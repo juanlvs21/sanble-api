@@ -39,7 +39,7 @@ const validProductBase = (form: IProductForm) => {
   if (!price) {
     errors.push("El precio del producto es requerido");
   } else {
-    if (/^\$?(([1-9]\d{0,2}(,\d{3})*)|0)?\.\d{1,2}$/.test(price)) {
+    if (!/^\$?(([1-9]\d{0,2}(,\d{3})*)|0)?\.\d{1,2}$/.test(price)) {
       errors.push(`El precio del producto es inválido`);
     }
   }
