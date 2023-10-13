@@ -78,8 +78,8 @@ export class StandController {
       parse
     );
 
-    res.status(StatusCodes.CREATED).json({
-      statusCode: StatusCodes.CREATED,
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
       data: photograph,
       message: "Fotografía guardada con éxito",
     });
@@ -94,8 +94,8 @@ export class StandController {
       parse
     );
 
-    res.status(StatusCodes.CREATED).json({
-      statusCode: StatusCodes.CREATED,
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
       data: photograph,
       message: "Fotografía guardada con éxito",
     });
@@ -148,8 +148,8 @@ export class StandController {
   static deletePost: Handler = async (req, res) => {
     const post = await StandService.deletePost(req.uid, req.params);
 
-    res.status(StatusCodes.CREATED).json({
-      statusCode: StatusCodes.CREATED,
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
       data: post,
       message: "Pubicación eliminada con éxito",
     });
@@ -190,6 +190,16 @@ export class StandController {
       statusCode: StatusCodes.OK,
       data: { product },
       message: "Producto actualizado con éxito",
+    });
+  };
+
+  static deleteProduct: Handler = async (req, res) => {
+    const product = await StandService.deleteProduct(req.uid, req.params);
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      data: product,
+      message: "Producto eliminado con éxito",
     });
   };
 }

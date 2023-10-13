@@ -66,5 +66,10 @@ router.put(
   sessionMiddleware,
   StandController.updateProduct
 );
+router.delete(
+  "/:standID/products/:productID",
+  sessionMiddleware,
+  StandController.deleteProduct
+);
 
 export default router.router;
