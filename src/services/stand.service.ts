@@ -861,7 +861,7 @@ export class StandService {
 
     await sendNotification({
       title: `${standData.name} tiene un nuevo producto, ve a verlo`,
-      body: `${productData.name} ${productData.description.slice(0, 100)}`,
+      body: `${productData.name}: ${productData.description.slice(0, 100)}`,
       imageUrl: productData.fileUrl,
       data: {
         type: ENotificationType.STAND_POST,
