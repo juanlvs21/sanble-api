@@ -176,4 +176,20 @@ export class StandController {
       message: "Producto creado con éxito",
     });
   };
+
+  static updateProduct: Handler = async (req, res) => {
+    const parse: any = await parseFormData(req);
+
+    const product = await StandService.updateProduct(
+      req.uid,
+      req.params,
+      parse
+    );
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      data: { product },
+      message: "Producto actualizado con éxito",
+    });
+  };
 }

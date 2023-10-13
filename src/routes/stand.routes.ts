@@ -61,5 +61,10 @@ router.post(
   sessionMiddleware,
   StandController.saveProduct
 );
+router.put(
+  "/:standID/products/:productID",
+  sessionMiddleware,
+  StandController.updateProduct
+);
 
 export default router.router;

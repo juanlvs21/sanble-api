@@ -99,7 +99,7 @@ export const validProductPhotoFile = (form: IProductForm) => {
   return errors;
 };
 
-export const validProductForm = (form: IProductForm) => {
+export const validProductForm = (form: IProductForm): string[] => {
   let errors: string[] = [];
 
   errors = validProductBase(form);

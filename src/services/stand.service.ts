@@ -917,4 +917,73 @@ export class StandService {
 
     return productFormat(productData);
   }
+
+  static async updateProduct(
+    uid: string,
+    params: ParamsDictionary,
+    body: IProductForm
+  ) {
+    const { standID, postID } = params;
+
+    const validatorResult = validProductForm(body);
+
+    if (validatorResult.length) {
+      throw new ErrorHandler(StatusCodes.UNPROCESSABLE_ENTITY, validatorResult);
+    }
+
+    if (!standID)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrado");
+
+    if (!postID)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Producto no encontrado");
+
+    const standDoc = await db.collection("stands").doc(standID).get();
+
+    if (!standDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrado");
+
+    const standData = standDoc.data() as IStand;
+
+    if (standData.ownerRef.id !== uid) {
+      throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
+    }
+
+    const productDoc = await db.collection("stands_products").doc(postID).get();
+
+    if (!productDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Producto no encontrado");
+
+    let productData = productDoc.data() as IProduct;
+
+    if (body.files.length) {
+      const { url, name, fileId } = await uploadFile({
+        file: body.files[0],
+        mimetype: body.files[0].mimetype || "",
+        folder: `sanble/${EFolderName.STANDS}/${standData.id}/posts`,
+      });
+
+      if (productData.fileId) {
+        await deleteFile(productData.fileId);
+      }
+
+      productData = { ...productData, fileName: name, fileUrl: url, fileId };
+    }
+
+    await db
+      .collection("stands_posts")
+      .doc(postID)
+      .set(
+        {
+          ...productData,
+          name: body.name,
+          description: body.description,
+          amount: body.amount,
+          type: body.type,
+          currency: body.currency,
+        },
+        { merge: true }
+      );
+
+    return productFormat(productData);
+  }
 }
