@@ -112,10 +112,9 @@ export const validProductForm = (form: IProductForm): string[] => {
 };
 
 export const productFormat = ({
-  fileId,
   creationTimestamp,
   ...rest
-}: IProduct): Omit<IProduct, "fileId"> => ({
+}: IProduct): IProduct => ({
   ...rest,
   creationTime: dayjs((creationTimestamp?.seconds || 0) * 1000).format(),
 });
