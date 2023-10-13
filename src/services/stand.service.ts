@@ -923,7 +923,7 @@ export class StandService {
     params: ParamsDictionary,
     body: IProductForm
   ) {
-    const { standID, postID } = params;
+    const { standID, productID } = params;
 
     const validatorResult = validProductForm(body);
 
@@ -934,7 +934,7 @@ export class StandService {
     if (!standID)
       throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrado");
 
-    if (!postID)
+    if (!productID)
       throw new ErrorHandler(StatusCodes.NOT_FOUND, "Producto no encontrado");
 
     const standDoc = await db.collection("stands").doc(standID).get();
@@ -948,7 +948,10 @@ export class StandService {
       throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
     }
 
-    const productDoc = await db.collection("stands_products").doc(postID).get();
+    const productDoc = await db
+      .collection("stands_products")
+      .doc(productID)
+      .get();
 
     if (!productDoc.exists)
       throw new ErrorHandler(StatusCodes.NOT_FOUND, "Producto no encontrado");
@@ -971,7 +974,7 @@ export class StandService {
 
     await db
       .collection("stands_posts")
-      .doc(postID)
+      .doc(productID)
       .set(
         {
           ...productData,
@@ -985,5 +988,44 @@ export class StandService {
       );
 
     return productFormat(productData);
+  }
+
+  static async deleteProduct(uid: string, params: ParamsDictionary) {
+    const { standID, productID } = params;
+
+    if (!standID)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrado");
+
+    if (!productID)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Producto no encontrado");
+
+    const standDoc = await db.collection("stands").doc(standID).get();
+
+    if (!standDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrado");
+
+    const fairData = standDoc.data() as IStand;
+
+    if (fairData.ownerRef.id !== uid) {
+      throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
+    }
+
+    const productDoc = await db
+      .collection("stands_products")
+      .doc(productID)
+      .get();
+
+    if (!productDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Producto no encontrado");
+
+    const productData = productDoc.data() as IProduct;
+
+    if (productData.fileId) await deleteFile(productData.fileId);
+
+    await db.collection("stands_products").doc(productID).delete();
+
+    return {
+      productID,
+    };
   }
 }
