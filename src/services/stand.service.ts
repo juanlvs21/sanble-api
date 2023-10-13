@@ -30,6 +30,8 @@ import {
 } from "../utils/utilsPhotograph";
 import { postFormat, validPostForm } from "../utils/utilsPosts";
 import { standDataFormat } from "../utils/utilsStand";
+import { productFormat, validProductForm } from "../utils/utilsProduct";
+import { IProduct, IProductForm } from "../interfaces/IProduct";
 
 export class StandService {
   static async saveStand(body: IStandForm, uid: string) {
@@ -360,7 +362,7 @@ export class StandService {
     const { url, name, fileId } = await uploadFile({
       file: body.files[0],
       mimetype: body.files[0].mimetype || "",
-      folder: `sanble/${EFolderName.STANDS}/photos/${standData.id}`,
+      folder: `sanble/${EFolderName.STANDS}/${standData.id}/photos`,
     });
 
     body.isCover = body.isCover.toString() === "true";
@@ -606,7 +608,7 @@ export class StandService {
       const { url, name, fileId } = await uploadFile({
         file: body.files[0],
         mimetype: body.files[0].mimetype || "",
-        folder: `sanble/${EFolderName.STANDS}/posts/${standData.id}`,
+        folder: `sanble/${EFolderName.STANDS}/${standData.id}/posts`,
       });
 
       postData = { ...postData, fileName: name, fileUrl: url, fileId };
@@ -709,7 +711,7 @@ export class StandService {
       const { url, name, fileId } = await uploadFile({
         file: body.files[0],
         mimetype: body.files[0].mimetype || "",
-        folder: `sanble/${EFolderName.STANDS}/posts/${standData.id}`,
+        folder: `sanble/${EFolderName.STANDS}/${standData.id}/posts`,
       });
 
       if (postData.fileId) {
@@ -769,5 +771,105 @@ export class StandService {
     return {
       postID,
     };
+  }
+
+  static async saveProduct(
+    uid: string,
+    params: ParamsDictionary,
+    body: IProductForm
+  ) {
+    const { standID } = params;
+
+    const validatorResult = validProductForm(body);
+
+    if (validatorResult.length) {
+      throw new ErrorHandler(StatusCodes.UNPROCESSABLE_ENTITY, validatorResult);
+    }
+
+    if (!standID)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrado");
+
+    const standDoc = await db.collection("stands").doc(standID).get();
+
+    if (!standDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrado");
+
+    const standData = standDoc.data() as IStand;
+
+    if (standData.ownerRef.id !== uid) {
+      throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
+    }
+
+    let productID = "";
+    let productDoc: DocumentSnapshot<DocumentData> | undefined = undefined;
+    let productData: IProduct = {
+      id: "",
+      name: body.name,
+      description: body.description,
+      amount: body.amount,
+      type: body.type,
+      currency: body.currency,
+      parent: db.doc(`stands/${standID}`),
+      fileName: null,
+      fileUrl: null,
+      fileId: null,
+    };
+
+    if (body.files.length) {
+      const { url, name, fileId } = await uploadFile({
+        file: body.files[0],
+        mimetype: body.files[0].mimetype || "",
+        folder: `sanble/${EFolderName.STANDS}/${standData.id}/product`,
+      });
+
+      productData = { ...productData, fileName: name, fileUrl: url, fileId };
+    }
+
+    if (body.id) {
+      productDoc = await db.collection("stands_products").doc(body.id).get();
+    }
+
+    if (productDoc?.exists) {
+      const currentData = productDoc.data() as IPost;
+      productID = currentData.id ?? "";
+
+      productData = {
+        ...currentData,
+        ...productData,
+        id: productID,
+      };
+
+      if (body.files.length && currentData.fileId) {
+        await deleteFile(currentData.fileId);
+      }
+    } else {
+      const time = dayjs().format();
+      productID = uuidv4();
+
+      productData = {
+        ...productData,
+        id: productID,
+        creationTimestamp: Timestamp.now(),
+        creationTime: time,
+      };
+    }
+
+    await db
+      .collection("stands_products")
+      .doc(productID)
+      .set(productData, { merge: true });
+
+    await sendNotification({
+      title: `${standData.name} tiene un nuevo producto, ve a verlo`,
+      body: `${productData.name} ${productData.description.slice(0, 100)}`,
+      imageUrl: productData.fileUrl,
+      data: {
+        type: ENotificationType.STAND_POST,
+        fairID: standData.id,
+        redirectURL: `/app/stands/${standData.id}/productos/?product_id=${productData.id}`,
+      },
+    });
+
+    return productFormat(productData);
   }
 }

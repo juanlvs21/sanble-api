@@ -154,4 +154,16 @@ export class StandController {
       message: "Pubicación eliminada con éxito",
     });
   };
+
+  static saveProduct: Handler = async (req, res) => {
+    const parse: any = await parseFormData(req);
+
+    const product = await StandService.saveProduct(req.uid, req.params, parse);
+
+    res.status(StatusCodes.CREATED).json({
+      statusCode: StatusCodes.CREATED,
+      data: { product },
+      message: "Producto creado con éxito",
+    });
+  };
 }

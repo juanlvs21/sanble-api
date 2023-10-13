@@ -51,5 +51,10 @@ router.delete(
   sessionMiddleware,
   StandController.deletePost
 );
+router.post(
+  "/:standID/products",
+  sessionMiddleware,
+  StandController.saveProduct
+);
 
 export default router.router;
