@@ -42,6 +42,12 @@ const validProductBase = (form: IProductForm) => {
     if (!/^\$?(([1-9]\d{0,2}(,\d{3})*)|0)?\.\d{1,2}$/.test(price)) {
       errors.push(`El precio del producto es inválido`);
     }
+
+    const amountWithoutDecimals = price.split(".")[0];
+
+    if (amountWithoutDecimals.length > 7) {
+      errors.push(`El precio máximo del producto es 999,999.99`);
+    }
   }
 
   if (!currency) {
