@@ -51,6 +51,11 @@ router.delete(
   sessionMiddleware,
   StandController.deletePost
 );
+router.get(
+  "/:standID/products",
+  sessionMiddleware,
+  StandController.getListProducts
+);
 router.post(
   "/:standID/products",
   sessionMiddleware,

@@ -112,11 +112,11 @@ export class StandController {
   };
 
   static getListPosts: Handler = async (req, res) => {
-    const reviews = await StandService.getListPosts(req.params, req.query);
+    const posts = await StandService.getListPosts(req.params, req.query);
 
     res.status(StatusCodes.OK).json({
       statusCode: StatusCodes.OK,
-      data: reviews,
+      data: posts,
       message: "Listado de publicaciones",
     });
   };
@@ -152,6 +152,16 @@ export class StandController {
       statusCode: StatusCodes.CREATED,
       data: post,
       message: "Pubicación eliminada con éxito",
+    });
+  };
+
+  static getListProducts: Handler = async (req, res) => {
+    const products = await StandService.getListProducts(req.params, req.query);
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      data: products,
+      message: "Listado de publicaciones",
     });
   };
 

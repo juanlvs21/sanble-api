@@ -774,6 +774,50 @@ export class StandService {
     };
   }
 
+  static async getListProducts(
+    params: ParamsDictionary,
+    { limit, lastIndex }: IQueryListRequest
+  ) {
+    const { standID } = params;
+    const limitNumber = Number(limit) || DEFAULT_LIMIT_VALUE;
+    const firstIndexNumber = Number(lastIndex) || 0;
+
+    if (!standID)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrado");
+
+    const standDoc = await db.collection("stands").doc(standID).get();
+
+    if (!standDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrado");
+
+    const products: IProduct[] = [];
+
+    const snapshot = await db
+      .collection("stands_products")
+      .orderBy("creationTime", "desc")
+      .where("parent", "==", db.doc(`stands/${standID}`))
+      .get();
+
+    snapshot.forEach(async (doc) => {
+      let post = doc.data() as IProduct;
+
+      products.push(post);
+    });
+
+    const list = products.length
+      ? products.slice(firstIndexNumber, firstIndexNumber + limitNumber)
+      : [];
+
+    return {
+      list,
+      pagination: {
+        total: snapshot.docs.length || 0,
+        lastIndex: firstIndexNumber + list.length,
+        limit: limitNumber,
+      },
+    };
+  }
+
   static async saveProduct(
     uid: string,
     params: ParamsDictionary,
