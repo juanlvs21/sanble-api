@@ -41,5 +41,8 @@ export interface IProduct extends IProductBase {
   fileId: string | null;
   fileUrl: string | null;
   fileName: string | null;
-  stand?: IStand;
+  stand?: {
+    id: string;
+    name: string;
+  };
 }

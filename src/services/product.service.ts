@@ -23,16 +23,18 @@ export class ProductService {
 
     const products: IProduct[] = [];
 
-    snapshot.forEach(async (doc) => {
-      const product = productFormat(doc.data() as IProduct);
-      const parent = await product.parent.get();
-
-      if (parent.exists) {
-        product.stand = parent.data() as IStand;
-      }
-
-      products.push(product);
+    snapshot.forEach((doc) => {
+      products.push(productFormat(doc.data() as IProduct));
     });
+
+    for (let i = 0; i < products.length; i++) {
+      const parent = await products[i].parent.get();
+      const stand = parent.data() as IStand;
+      products[i].stand = {
+        id: parent.id,
+        name: stand.name,
+      };
+    }
 
     const list = products.length
       ? products.slice(firstIndexNumber, firstIndexNumber + limitNumber)
