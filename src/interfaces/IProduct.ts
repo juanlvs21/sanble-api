@@ -24,7 +24,7 @@ export interface IProductBase {
   id: string;
   name: string;
   description: string;
-  amount: string;
+  price: string;
   type: EProductTypeKey;
   currency: EProductCurrency;
   parent: DocumentReference;

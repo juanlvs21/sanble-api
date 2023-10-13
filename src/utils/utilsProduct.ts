@@ -14,7 +14,7 @@ const fileMax10MB = 10000000;
 const validProductBase = (form: IProductForm) => {
   const errors: string[] = [];
 
-  const { name, description, amount, currency, type } = form;
+  const { name, description, price, currency, type } = form;
 
   if (!name) {
     errors.push("El nombre del producto es requerido");
@@ -36,11 +36,11 @@ const validProductBase = (form: IProductForm) => {
     }
   }
 
-  if (!amount) {
-    errors.push("El monto del producto es requerido");
+  if (!price) {
+    errors.push("El precio del producto es requerido");
   } else {
-    if (/^\$?(([1-9]\d{0,2}(,\d{3})*)|0)?\.\d{1,2}$/.test(amount)) {
-      errors.push(`El monto del producto es inválido`);
+    if (/^\$?(([1-9]\d{0,2}(,\d{3})*)|0)?\.\d{1,2}$/.test(price)) {
+      errors.push(`El precio del producto es inválido`);
     }
   }
 
