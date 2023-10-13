@@ -972,6 +972,17 @@ export class StandService {
       productData = { ...productData, fileName: name, fileUrl: url, fileId };
     }
 
+    console.info({
+      updateProduct: {
+        ...productData,
+        name: body.name,
+        description: body.description,
+        price: body.price,
+        type: body.type,
+        currency: body.currency,
+      },
+    });
+
     await db
       .collection("stands_posts")
       .doc(productID)
