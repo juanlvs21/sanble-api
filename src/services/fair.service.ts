@@ -384,6 +384,23 @@ export class FairService {
 
     await db.collection("fairs_reviews").doc(reviewID).delete();
 
+    const snapshotReviews = await db
+      .collection("fairs_reviews")
+      .where("parent", "==", db.doc(`fairs/${fairID}`))
+      .get();
+
+    let reviewsCount = 0;
+    let reviewsStars = 0;
+
+    snapshotReviews.forEach((doc) => {
+      reviewsCount++;
+      reviewsStars = reviewsStars + doc.data().stars;
+    });
+
+    const fairNewStars = reviewsStars / reviewsCount;
+
+    await db.collection("fairs").doc(fairID).update({ stars: fairNewStars });
+
     return {
       reviewID,
     };

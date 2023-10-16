@@ -327,6 +327,23 @@ export class StandService {
 
     await db.collection("stands_reviews").doc(reviewID).delete();
 
+    const snapshotReviews = await db
+      .collection("stands_reviews")
+      .where("parent", "==", db.doc(`stands/${standID}`))
+      .get();
+
+    let reviewsCount = 0;
+    let reviewsStars = 0;
+
+    snapshotReviews.forEach((doc) => {
+      reviewsCount++;
+      reviewsStars = reviewsStars + doc.data().stars;
+    });
+
+    const standNewStars = reviewsStars / reviewsCount;
+
+    await db.collection("stands").doc(standID).update({ stars: standNewStars });
+
     return {
       reviewID,
     };
