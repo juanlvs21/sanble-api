@@ -4,10 +4,12 @@ import { StatusCodes } from "http-status-codes";
 import { v4 as uuidv4 } from "uuid";
 
 import { ErrorHandler } from "../error";
+import { IFair } from "../interfaces/IFair";
 import { EFolderName } from "../interfaces/IFile";
 import { ENotificationType } from "../interfaces/INotification";
 import { IPhotograph, IPhotographForm } from "../interfaces/IPhotograph";
 import { IPost, IPostForm } from "../interfaces/IPost";
+import { IProduct, IProductForm } from "../interfaces/IProduct";
 import { IQueryListRequest } from "../interfaces/IRequest";
 import { IReview } from "../interfaces/IReview";
 import { IStand, IStandForm } from "../interfaces/IStand";
@@ -23,15 +25,15 @@ import {
 import { deleteFile, uploadFile } from "../utils/imagekit";
 import { DEFAULT_LIMIT_VALUE } from "../utils/pagination";
 import { sendNotification } from "../utils/sendNotification";
+import { fairDataFormat } from "../utils/utilsFair";
 import { getOwnerUserData } from "../utils/utilsOwner";
 import {
   photographFormat,
   validPhotographForm,
 } from "../utils/utilsPhotograph";
 import { postFormat, validPostForm } from "../utils/utilsPosts";
-import { standDataFormat } from "../utils/utilsStand";
 import { productFormat, validProductForm } from "../utils/utilsProduct";
-import { IProduct, IProductForm } from "../interfaces/IProduct";
+import { standDataFormat } from "../utils/utilsStand";
 
 export class StandService {
   static async saveStand(body: IStandForm, uid: string) {
@@ -187,6 +189,53 @@ export class StandService {
     stand.owner = await getOwnerUserData(stand.ownerRef);
 
     return stand;
+  }
+
+  static async getFairs(
+    params: ParamsDictionary,
+    { limit, lastIndex }: IQueryListRequest
+  ) {
+    const { standID } = params;
+    const limitNumber = Number(limit) || DEFAULT_LIMIT_VALUE;
+    const firstIndexNumber = Number(lastIndex) || 0;
+
+    if (!standID)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrada");
+
+    const standDoc = await db.collection("stands").doc(standID).get();
+
+    if (!standDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrada");
+
+    const fairs: IFair[] = [];
+    const standFairsIDs = (standDoc.data() as IStand).fairs.map(
+      (fair) => fair.id
+    );
+
+    if (standFairsIDs.length) {
+      const snapshot = await db
+        .collection("fairs")
+        .where("id", "in", standFairsIDs)
+        .orderBy("name", "asc")
+        .get();
+
+      snapshot.forEach((doc) => {
+        fairs.push(fairDataFormat(doc.data() as IFair));
+      });
+    }
+
+    const list = fairs.length
+      ? fairs.slice(firstIndexNumber, firstIndexNumber + limitNumber)
+      : [];
+
+    return {
+      list,
+      pagination: {
+        total: fairs.length || 0,
+        lastIndex: firstIndexNumber + list.length,
+        limit: limitNumber,
+      },
+    };
   }
 
   static async getListReviews(

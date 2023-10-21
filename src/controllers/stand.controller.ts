@@ -35,6 +35,16 @@ export class StandController {
     });
   };
 
+  static getFairs: Handler = async (req, res) => {
+    const reviews = await StandService.getFairs(req.params, req.query);
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      data: reviews,
+      message: "Listado de ferias en donde participa el stand",
+    });
+  };
+
   static getListReviews: Handler = async (req, res) => {
     const reviews = await StandService.getListReviews(
       req.uid,

@@ -8,6 +8,7 @@ const router = new ErrorRouter();
 router.get("/", sessionMiddleware, StandController.getList);
 router.get("/best", sessionMiddleware, StandController.getBest);
 router.get("/:standID", sessionMiddleware, StandController.getDetails);
+router.get("/:standID/fairs", sessionMiddleware, StandController.getFairs);
 router.get(
   "/:standID/reviews",
   sessionMiddleware,
