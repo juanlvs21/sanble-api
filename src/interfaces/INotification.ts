@@ -6,6 +6,8 @@ export enum ENotificationType {
   STAND_POST = "STAND_POST",
   STAND_PHOTO = "STAND_PHOTO",
   STAND_PRODUCT = "STAND_PRODUCT",
+  INVITATION_RECEIVED = "INVITATION_RECEIVED",
+  REQUEST_RECEIVED = "REQUEST_RECEIVED",
 }
 
 export enum ENotificationType {
@@ -16,4 +18,15 @@ export enum ENotificationType {
 export interface INotificationToken {
   token: string;
   deviceID: string;
+}
+
+export interface ISendNotification {
+  title: string;
+  body: string;
+  uid?: string;
+  imageUrl?: string | null;
+  data: {
+    type: ENotificationType;
+    [key: string]: any;
+  };
 }

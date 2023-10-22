@@ -1,19 +1,8 @@
 import {
-  ENotificationType,
   INotificationToken,
+  ISendNotification,
 } from "../interfaces/INotification";
-import { Message, MulticastMessage, db, messaging } from "./firebase";
-
-type TSendNotification = {
-  title: string;
-  body: string;
-  uid?: string;
-  imageUrl?: string | null;
-  data?: {
-    type: ENotificationType;
-    [key: string]: any;
-  };
-};
+import { MulticastMessage, db, messaging } from "./firebase";
 
 export const sendNotification = async ({
   title,
@@ -21,7 +10,7 @@ export const sendNotification = async ({
   uid,
   imageUrl,
   data,
-}: TSendNotification) => {
+}: ISendNotification) => {
   const tokens: string[] = [];
   let snapshots: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>;
 
