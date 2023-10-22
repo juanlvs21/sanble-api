@@ -13,4 +13,24 @@ export class InvitationController {
       message: "Invitación/solicitud enviada exitosamente",
     });
   };
+
+  static getListStands: Handler = async (req, res) => {
+    const stands = await InvitationService.getListStands(req.query, req.uid);
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      data: stands,
+      message: "Listado de stands",
+    });
+  };
+
+  static getListFairs: Handler = async (req, res) => {
+    const fairs = await InvitationService.getListFairs(req.query, req.uid);
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      data: fairs,
+      message: "Listado de ferias",
+    });
+  };
 }
