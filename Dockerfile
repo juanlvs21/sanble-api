@@ -9,7 +9,7 @@ COPY ./src ./src
 RUN yarn install
 RUN npx tsc
 
-#########################
+########################
 
 FROM node:16.18
 
