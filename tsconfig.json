@@ -11,9 +11,9 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "strict": true,
-    "outDir": "api",
+    "outDir": "build",
     "rootDir": "src",
     "baseUrl": "src"
   },
-  "exclude": ["node_modules", "api", "diagram.ts"]
+  "exclude": ["node_modules", "build", "diagram.ts"]
 }
