@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "nodemon src/index.ts",
     "build": "rimraf build && tsc",
-    "start": "node build/src/index.js",
+    "start": "node api/index.js",
     "type-check": "tsc --pretty --noEmit"
   },
   "dependencies": {
