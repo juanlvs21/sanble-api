@@ -1,4 +1,4 @@
-FROM node: as build-image
+FROM node:20.14.0-alpine as build-image
 
 WORKDIR /usr/src/app
 
