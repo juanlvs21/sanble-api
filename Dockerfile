@@ -1,4 +1,4 @@
-FROM node:16.18 as build-image
+FROM node:20.14.0 as build-image
 
 WORKDIR /usr/src/app
 
@@ -11,7 +11,7 @@ RUN npx tsc
 
 ########################
 
-FROM node:16.18
+FROM node:20.14.0
 
 WORKDIR /usr/src/app
 
