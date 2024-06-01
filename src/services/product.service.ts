@@ -54,6 +54,31 @@ export class ProductService {
     };
   }
 
+  static async getRecent() {
+    const productsDoc = await db
+      .collection("stands_products")
+      .orderBy("creationTimestamp", "desc")
+      .limit(10)
+      .get();
+
+    const products: IProduct[] = [];
+
+    productsDoc.forEach((doc) =>
+      products.push(productFormat(doc.data() as IProduct))
+    );
+
+    for (let i = 0; i < products.length; i++) {
+      const parent = await products[i].parent.get();
+      const stand = parent.data() as IStand;
+      products[i].stand = {
+        id: parent.id,
+        name: stand.name,
+      };
+    }
+
+    return products;
+  }
+
   static async getTypes() {
     const standsDoc = await db.collection("types_products").get();
 

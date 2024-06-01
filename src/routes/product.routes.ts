@@ -6,5 +6,6 @@ const router = new ErrorRouter();
 
 router.get("/", sessionMiddleware, ProductController.getList);
 router.get("/types", sessionMiddleware, ProductController.getTypes);
+router.get("/recent", sessionMiddleware, ProductController.getRecent);
 
 export default router.router;

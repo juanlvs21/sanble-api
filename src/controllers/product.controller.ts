@@ -23,4 +23,14 @@ export class ProductController {
       message: "Listado de tipos de productos",
     });
   };
+
+  static getRecent: Handler = async (_req, res) => {
+    const productRecent = await ProductService.getRecent();
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      data: productRecent,
+      message: "Listado de productos recientes",
+    });
+  };
 }
