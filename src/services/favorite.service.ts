@@ -31,17 +31,22 @@ export class FavoriteService {
     if (!userDataDoc.exists)
       throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Usuario no existe");
 
-    const snapshot = await db
-      .collection("fairs")
-      .orderBy(orderField, orderDirection)
-      .where("id", "in", userDataDoc.data()?.favoriteFairs ?? [])
-      .get();
-
     const fairs: IFair[] = [];
+    let totalRecords = 0;
 
-    snapshot.forEach((doc) => {
-      fairs.push(fairDataFormat(doc.data() as IFair));
-    });
+    if (userDataDoc.data()?.favoriteFairs?.length > 0) {
+      const snapshot = await db
+        .collection("fairs")
+        .orderBy(orderField, orderDirection)
+        .where("id", "in", userDataDoc.data()?.favoriteFairs ?? [])
+        .get();
+
+      snapshot.forEach((doc) => {
+        fairs.push(fairDataFormat(doc.data() as IFair));
+      });
+
+      totalRecords = snapshot.docs.length;
+    }
 
     const list = fairs.length
       ? fairs.slice(firstIndexNumber, firstIndexNumber + limitNumber)
@@ -50,7 +55,7 @@ export class FavoriteService {
     return {
       list,
       pagination: {
-        total: snapshot.docs.length || 0,
+        total: totalRecords,
         lastIndex: firstIndexNumber + list.length,
         limit: limitNumber,
       },
@@ -81,17 +86,22 @@ export class FavoriteService {
     if (!userDataDoc.exists)
       throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Usuario no existe");
 
-    const snapshot = await db
-      .collection("stands")
-      .orderBy(orderField, orderDirection)
-      .where("id", "in", userDataDoc.data()?.favoriteStands ?? [])
-      .get();
-
     const stands: IStand[] = [];
+    let totalRecords = 0;
 
-    snapshot.forEach((doc) => {
-      stands.push(standDataFormat(doc.data() as IStand));
-    });
+    if (userDataDoc.data()?.favoriteStands.length > 0) {
+      const snapshot = await db
+        .collection("stands")
+        .orderBy(orderField, orderDirection)
+        .where("id", "in", userDataDoc.data()?.favoriteStands ?? [])
+        .get();
+
+      snapshot.forEach((doc) => {
+        stands.push(standDataFormat(doc.data() as IStand));
+      });
+
+      totalRecords = snapshot.docs.length;
+    }
 
     const list = stands.length
       ? stands.slice(firstIndexNumber, firstIndexNumber + limitNumber)
@@ -100,7 +110,7 @@ export class FavoriteService {
     return {
       list,
       pagination: {
-        total: snapshot.docs.length || 0,
+        total: totalRecords,
         lastIndex: firstIndexNumber + list.length,
         limit: limitNumber,
       },
