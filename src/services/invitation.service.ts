@@ -8,6 +8,7 @@ import {
   EInvitationType,
   IInvitation,
   IInvitationForm,
+  IInvitationFormatted,
   IInvitationInputFairs,
   IInvitationInputFairsQueryParams,
   IInvitationInputStands,
@@ -221,5 +222,97 @@ export class InvitationService {
   static async getReceived(
     { limit, lastIndex }: IQueryListRequest,
     uid: string
-  ) {}
+  ) {
+    const limitNumber = Number(limit) || DEFAULT_LIMIT_VALUE;
+    const firstIndexNumber = Number(lastIndex) || 0;
+
+    const userAuth = await auth.getUser(uid);
+
+    if (!userAuth)
+      throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Usuario no existe");
+
+    const userDataDoc = await db.collection("users").doc(userAuth.uid).get();
+
+    if (!userDataDoc.exists)
+      throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Usuario no existe");
+
+    const invitations: IInvitation[] = [];
+    const invitationsFormatted: IInvitationFormatted[] = [];
+    let totalRecords = 0;
+
+    const snapshot = await db
+      .collection("invitations")
+      .where("sentTo", "==", userDataDoc.id)
+      .get();
+
+    snapshot.forEach(async (doc) => {
+      invitations.push(doc.data() as IInvitation);
+    });
+
+    totalRecords = snapshot.docs.length;
+
+    const list = invitations.length
+      ? invitations.slice(firstIndexNumber, firstIndexNumber + limitNumber)
+      : [];
+
+    for (let i = 0; i < list.length; i++) {
+      invitationsFormatted.push(await invitationDataFormat(list[i]));
+    }
+
+    return {
+      list,
+      pagination: {
+        total: totalRecords,
+        lastIndex: firstIndexNumber + list.length,
+        limit: limitNumber,
+      },
+    };
+  }
+
+  static async getSent({ limit, lastIndex }: IQueryListRequest, uid: string) {
+    const limitNumber = Number(limit) || DEFAULT_LIMIT_VALUE;
+    const firstIndexNumber = Number(lastIndex) || 0;
+
+    const userAuth = await auth.getUser(uid);
+
+    if (!userAuth)
+      throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Usuario no existe");
+
+    const userDataDoc = await db.collection("users").doc(userAuth.uid).get();
+
+    if (!userDataDoc.exists)
+      throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Usuario no existe");
+
+    const invitations: IInvitation[] = [];
+    const invitationsFormatted: IInvitationFormatted[] = [];
+    let totalRecords = 0;
+
+    const snapshot = await db
+      .collection("invitations")
+      .where("sentBy", "==", userDataDoc.id)
+      .get();
+
+    snapshot.forEach(async (doc) => {
+      invitations.push(doc.data() as IInvitation);
+    });
+
+    totalRecords = snapshot.docs.length;
+
+    const list = invitations.length
+      ? invitations.slice(firstIndexNumber, firstIndexNumber + limitNumber)
+      : [];
+
+    for (let i = 0; i < list.length; i++) {
+      invitationsFormatted.push(await invitationDataFormat(list[i]));
+    }
+
+    return {
+      list: invitationsFormatted,
+      pagination: {
+        total: totalRecords,
+        lastIndex: firstIndexNumber + list.length,
+        limit: limitNumber,
+      },
+    };
+  }
 }

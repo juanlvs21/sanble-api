@@ -5,7 +5,7 @@ import { invitationValidator } from "../validators/invitation.validators";
 
 const router = new ErrorRouter();
 
-// router.get("/sent", sessionMiddleware, FavoriteController.getFavoriteFair);
+router.get("/sent", sessionMiddleware, InvitationController.getSent);
 router.get("/received", sessionMiddleware, InvitationController.getReceived);
 router.get("/form/fairs", sessionMiddleware, InvitationController.getListFairs);
 router.get(

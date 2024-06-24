@@ -43,4 +43,14 @@ export class InvitationController {
       message: "Listado de invitaciones recibidas",
     });
   };
+
+  static getSent: Handler = async (req, res) => {
+    const sent = await InvitationService.getSent(req.query, req.uid);
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      data: sent,
+      message: "Listado de invitaciones enviadas",
+    });
+  };
 }
