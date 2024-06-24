@@ -33,4 +33,14 @@ export class InvitationController {
       message: "Listado de ferias",
     });
   };
+
+  static getReceived: Handler = async (req, res) => {
+    const received = await InvitationService.getReceived(req.query, req.uid);
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      data: received,
+      message: "Listado de invitaciones recibidas",
+    });
+  };
 }

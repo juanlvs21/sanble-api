@@ -24,6 +24,7 @@ export const invitationDataFormat = async (
     fairID: invitation.fairID,
     standID: invitation.standID,
     sentBy: invitation.sentBy,
+    sentTo: invitation.sentTo,
     fair: fairDataFormat(fairData),
     stand: standDataFormat(standData),
     fairOwner: {

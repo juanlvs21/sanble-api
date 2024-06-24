@@ -12,6 +12,7 @@ const formInvitation = [
     .withMessage(
       `El tipo de invitación debe ser "Invitar a Stand" o "Solicitud a Feria"`
     ),
+  check("sentTo", "El usuario invitado").notEmpty(),
 ];
 
 export const invitationValidator = validate(formInvitation);

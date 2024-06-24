@@ -1,6 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import { v4 as uuidv4 } from "uuid";
 
+import { IQueryListRequest } from "interfaces/IRequest";
 import { ErrorHandler } from "../error";
 import { IFair } from "../interfaces/IFair";
 import {
@@ -16,12 +17,12 @@ import {
   ENotificationType,
   ISendNotification,
 } from "../interfaces/INotification";
-import { OrderByDirection, Timestamp, auth, db } from "../utils/firebase";
+import { IStand } from "../interfaces/IStand";
+import { Timestamp, auth, db } from "../utils/firebase";
 import { DEFAULT_LIMIT_VALUE } from "../utils/pagination";
 import { sendNotification } from "../utils/sendNotification";
 import { fairDataFormat } from "../utils/utilsFair";
 import { invitationDataFormat } from "../utils/utilsInvitation";
-import { IStand } from "../interfaces/IStand";
 import { standDataFormat } from "../utils/utilsStand";
 
 export class InvitationService {
@@ -173,6 +174,7 @@ export class InvitationService {
       type: body.type,
       fairID: body.fairID,
       standID: body.standID,
+      sentTo: body.sentTo,
       sentBy: user.uid,
       fairRef: db.doc(`fairs/${body.fairID}`),
       standRef: db.doc(`stands/${body.standID}`),
@@ -215,4 +217,9 @@ export class InvitationService {
 
     return invitationFormatted;
   }
+
+  static async getReceived(
+    { limit, lastIndex }: IQueryListRequest,
+    uid: string
+  ) {}
 }

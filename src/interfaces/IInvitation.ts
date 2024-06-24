@@ -13,11 +13,13 @@ export interface IInvitationForm {
   type: EInvitationType;
   fairID: string;
   standID: string;
+  sentTo: string;
 }
 
 export interface IInvitation extends IInvitationForm {
   id: string;
   sentBy: string;
+  sentTo: string;
   fairRef: DocumentReference;
   standRef: DocumentReference;
   fairOwnerRef: DocumentReference;
