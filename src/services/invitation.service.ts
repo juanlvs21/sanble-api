@@ -60,20 +60,24 @@ export class InvitationService {
     const stands: IInvitationInputStands[] = [];
 
     snapshotStands.forEach((doc) => {
-      const standData = standDataFormat(doc.data() as IStand);
-      const findInvitation = invitations.find(
-        (invitation) => invitation.standID === standData.id
-      );
-
-      stands.push({
-        ...standData,
-        invitationSent: Boolean(findInvitation),
-      });
+      stands.push(doc.data() as any);
     });
 
     const list = stands.length
       ? stands.slice(firstIndexNumber, firstIndexNumber + limitNumber)
       : [];
+
+    for (let i = 0; i < list.length; i++) {
+      const standData = standDataFormat(list[i]);
+      const findInvitation = invitations.find(
+        (invitation) => invitation.standID === standData.id
+      );
+
+      list[i] = {
+        ...standData,
+        invitationSent: Boolean(findInvitation),
+      };
+    }
 
     return {
       list,
@@ -118,20 +122,24 @@ export class InvitationService {
     const fairs: IInvitationInputFairs[] = [];
 
     snapshotFairs.forEach((doc) => {
-      const fairData = fairDataFormat(doc.data() as IFair);
-      const findInvitation = invitations.find(
-        (invitation) => invitation.fairID === fairData.id
-      );
-
-      fairs.push({
-        ...fairData,
-        requestSent: Boolean(findInvitation),
-      });
+      fairs.push(doc.data() as any);
     });
 
     const list = fairs.length
       ? fairs.slice(firstIndexNumber, firstIndexNumber + limitNumber)
       : [];
+
+    for (let i = 0; i < list.length; i++) {
+      const fairData = fairDataFormat(list[i]);
+      const findInvitation = invitations.find(
+        (invitation) => invitation.fairID === fairData.id
+      );
+
+      list[i] = {
+        ...fairData,
+        requestSent: Boolean(findInvitation),
+      };
+    }
 
     return {
       list,
@@ -260,7 +268,7 @@ export class InvitationService {
     }
 
     return {
-      list,
+      list: invitationsFormatted,
       pagination: {
         total: totalRecords,
         lastIndex: firstIndexNumber + list.length,
