@@ -61,8 +61,10 @@ export interface IInvitationInputFairsQueryParams
 
 export interface IInvitationInputFairs extends IFair {
   requestSent: boolean;
+  invitationId: string;
 }
 
 export interface IInvitationInputStands extends IStand {
   invitationSent: boolean;
+  invitationId: string;
 }

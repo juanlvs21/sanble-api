@@ -76,6 +76,7 @@ export class InvitationService {
       list[i] = {
         ...standData,
         invitationSent: Boolean(findInvitation),
+        invitationId: findInvitation?.id ?? "",
       };
     }
 
@@ -138,6 +139,7 @@ export class InvitationService {
       list[i] = {
         ...fairData,
         requestSent: Boolean(findInvitation),
+        invitationId: findInvitation?.id ?? "",
       };
     }
 
