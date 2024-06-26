@@ -323,4 +323,48 @@ export class InvitationService {
       },
     };
   }
+
+  static async unsendInvitation(id: string, uid: string) {
+    const userAuth = await auth.getUser(uid);
+
+    if (!userAuth)
+      throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Usuario no existe");
+
+    const invitationDoc = await db.collection("invitations").doc(id).get();
+
+    if (!invitationDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Invitación no existe");
+
+    const invitationData = invitationDoc.data() as IInvitation;
+
+    if (invitationData.sentBy !== userAuth.uid)
+      throw new ErrorHandler(
+        StatusCodes.UNAUTHORIZED,
+        "No tienes permisos para cancelar esta invitación"
+      );
+
+    await db.collection("invitations").doc(id).delete();
+  }
+
+  static async declineInvitation(id: string, uid: string) {
+    const userAuth = await auth.getUser(uid);
+
+    if (!userAuth)
+      throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Usuario no existe");
+
+    const invitationDoc = await db.collection("invitations").doc(id).get();
+
+    if (!invitationDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Invitación no existe");
+
+    const invitationData = invitationDoc.data() as IInvitation;
+
+    if (invitationData.sentTo !== userAuth.uid)
+      throw new ErrorHandler(
+        StatusCodes.UNAUTHORIZED,
+        "No tienes permisos para rechazar esta invitación"
+      );
+
+    await db.collection("invitations").doc(id).delete();
+  }
 }

@@ -19,4 +19,15 @@ router.post(
   invitationValidator,
   InvitationController.sendInvitation
 );
+router.delete(
+  "/:id/unsend",
+  sessionMiddleware,
+  InvitationController.unsendInvitation
+);
+router.delete(
+  "/:id/decline",
+  sessionMiddleware,
+  InvitationController.declineInvitation
+);
+
 export default router.router;

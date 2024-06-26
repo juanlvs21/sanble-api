@@ -53,4 +53,22 @@ export class InvitationController {
       message: "Listado de invitaciones enviadas",
     });
   };
+
+  static unsendInvitation: Handler = async (req, res) => {
+    await InvitationService.unsendInvitation(req.params.id, req.uid);
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      message: "Invitación cancelada exitosamente",
+    });
+  };
+
+  static declineInvitation: Handler = async (req, res) => {
+    await InvitationService.declineInvitation(req.params.id, req.uid);
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      message: "Invitación rechazada exitosamente",
+    });
+  };
 }
