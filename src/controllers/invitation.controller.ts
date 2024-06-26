@@ -71,4 +71,13 @@ export class InvitationController {
       message: "Invitación rechazada exitosamente",
     });
   };
+
+  static acceptInvitation: Handler = async (req, res) => {
+    await InvitationService.acceptInvitation(req.params.id, req.uid);
+
+    res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      message: "Invitación aceptada exitosamente",
+    });
+  };
 }

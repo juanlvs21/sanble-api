@@ -367,4 +367,59 @@ export class InvitationService {
 
     await db.collection("invitations").doc(id).delete();
   }
+
+  static async acceptInvitation(id: string, uid: string) {
+    const userAuth = await auth.getUser(uid);
+
+    if (!userAuth)
+      throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Usuario no existe");
+
+    const invitationDoc = await db.collection("invitations").doc(id).get();
+
+    if (!invitationDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Invitación no existe");
+
+    const invitationData = invitationDoc.data() as IInvitation;
+
+    if (invitationData.sentTo !== userAuth.uid)
+      throw new ErrorHandler(
+        StatusCodes.UNAUTHORIZED,
+        "No tienes permisos para aceptar esta invitación"
+      );
+
+    const standDoc = await db
+      .collection("stands")
+      .doc(invitationData.standID)
+      .get();
+
+    if (!standDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no existe");
+
+    const fairDoc = await db
+      .collection("fairs")
+      .doc(invitationData.fairID)
+      .get();
+
+    if (!fairDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no existe");
+
+    const standData = standDoc.data() as IStand;
+    const fairData = fairDoc.data() as IFair;
+
+    const newStand = {
+      ...standData,
+      fairs: [...standData.fairs, db.doc(`fairs/${invitationData.fairID}`)],
+    };
+
+    await db.collection("stands").doc(standData.id).update(newStand);
+
+    const newFair = {
+      ...fairData,
+      stands: [...fairData.stands, db.doc(`stands/${invitationData.standID}`)],
+    };
+
+    await db.collection("fairs").doc(fairData.id).update(newFair);
+
+    await db.collection("invitations").doc(id).delete();
+  }
 }

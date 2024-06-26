@@ -29,5 +29,6 @@ router.delete(
   sessionMiddleware,
   InvitationController.declineInvitation
 );
+router.patch("/:id", sessionMiddleware, InvitationController.acceptInvitation);
 
 export default router.router;
