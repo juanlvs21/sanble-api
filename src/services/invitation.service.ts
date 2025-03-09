@@ -423,5 +423,19 @@ export class InvitationService {
     await db.collection("fairs").doc(fairData.id).update(newFair);
 
     await db.collection("invitations").doc(id).delete();
+
+    // const sendTo = invitationData.type === EInvitationType.STAND_INVITATION ? fairData : standData;
+    // const sendBy = invitationData.type === EInvitationType.STAND_INVITATION ? standData : fairData;
+
+    // TODO: Uncomment and implement the notification sending logic
+    // await sendNotification({
+    //   title: `${sendTo.name} ha aceptado unirse a ${sendBy.name}`,
+    //   body: `¡Felicidades! ${sendTo.name} ahora es parte de ${sendBy.name}.`,
+    //   data: {
+    //     type: ENotificationType.INVITATION_ACCEPTED,
+    //     fairID: fair.id,
+    //     redirectURL: `/app/${}/${fair.id}`,
+    //   },
+    // });
   }
 }

@@ -41,6 +41,6 @@ export const sendNotification = async ({
       data,
     };
 
-    await messaging.sendMulticast(message);
+    await messaging.sendEachForMulticast(message);
   }
 };
