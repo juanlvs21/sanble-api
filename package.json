@@ -14,7 +14,6 @@
     "type-check": "tsc --pretty --noEmit"
   },
   "dependencies": {
-    "@sendgrid/mail": "7.7.0",
     "cors": "2.8.5",
     "cross-fetch": "4.0.0",
     "dayjs": "1.11.5",
@@ -29,6 +28,7 @@
     "node-cron": "3.0.2",
     "pino": "8.6.1",
     "randomstring": "1.2.2",
+    "resend": "4.6.0",
     "uuid": "9.0.0"
   },
   "devDependencies": {

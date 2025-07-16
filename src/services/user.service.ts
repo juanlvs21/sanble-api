@@ -10,7 +10,7 @@ import {
   IUserSignup,
   IUserUpdate,
 } from "../interfaces/IUser";
-import { sendEmail } from "../mail/sendgrid";
+import { sendEmail } from "../mail/resend";
 import { recoveryTemplate } from "../mail/templates/recovery";
 import { welcomeTemplate } from "../mail/templates/welcome";
 import { Timestamp, auth, db } from "../utils/firebase";
@@ -20,8 +20,10 @@ import {
   userAuthReturn,
   userVerifyGenerateToken,
 } from "../utils/utilsUser";
+import { RESEND_DOMAIN } from "../config/env";
 
-const welcomeEmailFrom = "Sanble <bienvenido@sanble.juanl.dev>";
+const welcomeEmailFrom = `Sanble <bienvenido@${RESEND_DOMAIN}>`;
+
 const welcomeEmailSubject = "¡Bienvenido a Sanble!";
 
 export class UserService {
@@ -199,7 +201,7 @@ export class UserService {
       userAuth?.email ?? "",
       "Recuperar contraseña",
       recoveryTemplate(userAuth?.displayName ?? "", verifyEmailLink),
-      "Sanble <soporte@sanble.juanl.dev>"
+      `Sanble <soporte@${RESEND_DOMAIN}>`
     );
   }
 }
