@@ -176,7 +176,7 @@ export class InvitationService {
       throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrada");
 
     const fairData = fairDoc.data() as IFair;
-    const standData = standDoc.data() as IFair;
+    const standData = standDoc.data() as IStand;
 
     const id = uuidv4();
 

@@ -58,5 +58,10 @@ router.delete(
   sessionMiddleware,
   FairController.deletePost
 );
+router.delete(
+  "/:fairID/stands/:standID",
+  sessionMiddleware,
+  FairController.removeStand
+);
 
 export default router.router;

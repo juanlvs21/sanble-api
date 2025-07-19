@@ -876,4 +876,60 @@ export class FairService {
       postID,
     };
   }
+  static async removeStand(uid: string, params: ParamsDictionary) {
+    const { fairID, standID } = params;
+
+    if (!fairID)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
+
+    if (!standID)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrado");
+
+    const fairDoc = await db.collection("fairs").doc(fairID).get();
+
+    if (!fairDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
+
+    const fairData = fairDoc.data() as IFair;
+
+    if (fairData.ownerRef.id !== uid) {
+      throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
+    }
+
+    const findStand = fairData.stands.find((stn) => stn.id === standID);
+
+    if (!findStand) {
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrado");
+    }
+
+    const standDoc = await db.collection("stands").doc(standID).get();
+
+    if (!standDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrada");
+
+    const standData = standDoc.data() as IStand;
+
+    const newStands = fairData.stands.filter((stn) => stn.id !== standID);
+
+    const newData = { ...fairData, stands: newStands };
+
+    await db.collection("fairs").doc(fairID).update(newData);
+
+    await sendNotification({
+      uid: standData.ownerRef.id,
+      title: `La feria ${fairData.name} te ha eliminado de su lista de stands`,
+      body: fairData.contactEmail
+        ? `Si tienes alguna duda, contacta a ${fairData.contactEmail} ${fairData.contactPhone ? `o al número ${fairData.contactPhone}` : ""}`
+        : "Si tienes alguna duda, contacta al administrador de la feria",
+      data: {
+        type: ENotificationType.FAIR_STAND_REMOVED,
+        fairID: fairData.id,
+        redirectURL: `/app/ferias/${fairData.id}`,
+      },
+    });
+
+    return {
+      standID,
+    };
+  }
 }

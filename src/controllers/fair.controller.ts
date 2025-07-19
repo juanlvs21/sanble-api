@@ -184,4 +184,14 @@ export class FairController {
       message: "Pubicación eliminada con éxito",
     });
   };
+
+  static removeStand: Handler = async (req, res) => {
+    const stand = await FairService.removeStand(req.uid, req.params);
+
+    res.status(StatusCodes.CREATED).json({
+      statusCode: StatusCodes.CREATED,
+      data: stand,
+      message: "Stand eliminado con éxito",
+    });
+  };
 }
