@@ -1,6 +1,6 @@
 import { check } from "express-validator";
 
-import { EFairType } from "../interfaces/IFair";
+import { EFairCelebrationType, EFairType } from "../interfaces/IFair";
 import { validate } from "../middlewares/validator.middleware";
 
 const lengthMaxLong = 500;
@@ -43,6 +43,29 @@ const formFairs = [
     .withMessage(
       `El teléfono de contacto debe tener ${lengthMaxPhone} caracteres`
     ),
+  check("celebrationType")
+    .isString()
+    .isIn([
+      EFairCelebrationType.WEEKLY,
+      EFairCelebrationType.MONTHLY,
+      EFairCelebrationType.SPECIFIC_DATE,
+      EFairCelebrationType.NOT_SPECIFIED,
+    ])
+    .withMessage(
+      `El tipo de celebración debe ser "Semanal", "Mensual", "Fecha Específica" o "No Especificado"`
+    ),
+  check(
+    "celebrationWeeklyDay",
+    "El dia de la semana debe ser un número del 1 al 7"
+  )
+    .isNumeric()
+    .optional(),
+  check(
+    "celebrationMonthlyDay",
+    "El dia del mes debe ser un número del 1 al 31"
+  )
+    .isNumeric()
+    .optional(),
   check("celebrationDate", "La fecha de celebración debe ser un texto")
     .isString()
     .optional(),

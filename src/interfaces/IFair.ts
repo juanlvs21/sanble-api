@@ -9,6 +9,13 @@ export enum EFairType {
   GASTRONOMIC = "gastronomic",
 }
 
+export enum EFairCelebrationType {
+  "WEEKLY" = "WEEKLY",
+  "MONTHLY" = "MONTHLY",
+  "SPECIFIC_DATE" = "SPECIFIC_DATE",
+  "NOT_SPECIFIED" = "NOT_SPECIFIED",
+}
+
 export interface IFair {
   id: string;
   name: string;
@@ -41,6 +48,9 @@ export interface IFairForm {
   id?: string;
   name: string;
   geopoint: [number, number];
+  celebrationType?: EFairCelebrationType;
+  celebrationWeeklyDay?: number;
+  celebrationMonthlyDay?: number;
   celebrationDate?: string;
   address: string;
   description: string;
