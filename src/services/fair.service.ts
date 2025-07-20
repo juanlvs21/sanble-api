@@ -905,22 +905,27 @@ export class FairService {
     const standDoc = await db.collection("stands").doc(standID).get();
 
     if (!standDoc.exists)
-      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrada");
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrado");
 
     const standData = standDoc.data() as IStand;
 
+    // Update fair
     const newStands = fairData.stands.filter((stn) => stn.id !== standID);
+    const newDataFair = { ...fairData, stands: newStands };
+    await db.collection("fairs").doc(fairID).update(newDataFair);
 
-    const newData = { ...fairData, stands: newStands };
-
-    await db.collection("fairs").doc(fairID).update(newData);
+    // Update stand
+    const newFairs = standData.fairs.filter((fr) => fr.id !== fairID);
+    const newDatafair = { ...fairData, fairs: newFairs };
+    await db.collection("stands").doc(standID).update(newDatafair);
 
     await sendNotification({
       uid: standData.ownerRef.id,
-      title: `La feria ${fairData.name} te ha eliminado de su lista de stands`,
-      body: fairData.contactEmail
-        ? `Si tienes alguna duda, contacta a ${fairData.contactEmail} ${fairData.contactPhone ? `o al número ${fairData.contactPhone}` : ""}`
-        : "Si tienes alguna duda, contacta al administrador de la feria",
+      title: `La feria ${fairData.name} ha eliminado tu stand ${standData.name} de su lista de stands`,
+      body:
+        standData.contactEmail || standData.contactPhone
+          ? `Si tienes alguna duda, contacta a ${[standData.contactPhone, standData.contactEmail].join(", ")}`
+          : "Si tienes alguna duda, contacta al administrador de la feria",
       data: {
         type: ENotificationType.FAIR_STAND_REMOVED,
         fairID: fairData.id,

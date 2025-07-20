@@ -72,5 +72,10 @@ router.delete(
   sessionMiddleware,
   StandController.deleteProduct
 );
+router.delete(
+  "/:standID/fairs/:fairID",
+  sessionMiddleware,
+  StandController.removeFair
+);
 
 export default router.router;

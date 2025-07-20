@@ -212,4 +212,14 @@ export class StandController {
       message: "Producto eliminado con éxito",
     });
   };
+
+  static removeFair: Handler = async (req, res) => {
+    const fair = await StandService.removeFair(req.uid, req.params);
+
+    res.status(StatusCodes.CREATED).json({
+      statusCode: StatusCodes.CREATED,
+      data: fair,
+      message: "Feria eliminado con éxito",
+    });
+  };
 }

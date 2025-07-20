@@ -1093,4 +1093,66 @@ export class StandService {
       productID,
     };
   }
+
+  static async removeFair(uid: string, params: ParamsDictionary) {
+    const { standID, fairID } = params;
+
+    if (!standID)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrado");
+
+    if (!fairID)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
+
+    const standDoc = await db.collection("stands").doc(standID).get();
+
+    if (!standDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Stand no encontrado");
+
+    const standData = standDoc.data() as IStand;
+
+    if (standData.ownerRef.id !== uid) {
+      throw new ErrorHandler(StatusCodes.UNAUTHORIZED, "Acción no permitida");
+    }
+
+    const findFair = standData.fairs.find((fr) => fr.id === fairID);
+
+    if (!findFair) {
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
+    }
+
+    const fairDoc = await db.collection("fairs").doc(fairID).get();
+
+    if (!fairDoc.exists)
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, "Feria no encontrada");
+
+    const fairData = fairDoc.data() as IFair;
+
+    // Update fair
+    const newStands = fairData.stands.filter((stn) => stn.id !== standID);
+    const newDataFair = { ...fairData, stands: newStands };
+    await db.collection("fairs").doc(fairID).update(newDataFair);
+
+    // Update stand
+    const newFairs = standData.fairs.filter((fr) => fr.id !== fairID);
+    const newDatafair = { ...fairData, fairs: newFairs };
+    await db.collection("stands").doc(standID).update(newDatafair);
+
+    await sendNotification({
+      uid: fairData.ownerRef.id,
+      title: `El stand ${standData.name} ha decidido abandonar tu feria ${fairData.name}`,
+      body:
+        fairData.contactEmail || fairData.contactPhone
+          ? `Si tienes alguna duda, contacta a ${[fairData.contactEmail, standData.contactPhone].join(", ")}`
+          : "Si tienes alguna duda, contacta al administrador del stand",
+      data: {
+        type: ENotificationType.STAND_FAIR_REMOVED,
+        fairID: standData.id,
+        redirectURL: `/app/stands/${standData.id}`,
+      },
+    });
+
+    return {
+      standID,
+    };
+  }
 }
