@@ -28,6 +28,7 @@
     "node-cron": "3.0.2",
     "pino": "8.6.1",
     "randomstring": "1.2.2",
+    "react": "19.1.0",
     "resend": "4.6.0",
     "uuid": "9.0.0"
   },
@@ -41,6 +42,7 @@
     "@types/node-cron": "3.0.6",
     "@types/nodemon": "1.19.2",
     "@types/randomstring": "1.1.8",
+    "@types/react": "19.1.8",
     "@types/uuid": "8.3.4",
     "nodemon": "2.0.19",
     "rimraf": "3.0.2",
